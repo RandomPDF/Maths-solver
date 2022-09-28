@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="78916647-f36c-4087-ab51-2f8b04d07454" ChangeDateTime="08/05/2022 21:01:43">
+    <Property Name="ElementName" Value="[dbo].[BasicDifferentials].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BasicDifferentials]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Origional Function" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d3cd5314-bc60-480c-a063-29b8837b857a" ChangeDateTime="08/06/2022 17:44:33">
+    <Property Name="ElementName" Value="[dbo].[BasicDifferentials].[Origional Function]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BasicDifferentials]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[OrigionalFunction]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c52e4092-1f54-49b6-8591-ffd0f43f50b6" ChangeDateTime="08/06/2022 17:44:44">
+    <Property Name="ElementName" Value="[dbo].[BasicDifferentials].[Origional Exponential]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BasicDifferentials]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[OrigionalExponential]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="22f969db-1213-414a-b793-b7464766aa3c" ChangeDateTime="08/06/2022 17:44:54">
+    <Property Name="ElementName" Value="[dbo].[BasicDifferentials].[Differential Coefficient]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BasicDifferentials]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[DifferentialCoefficient]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4802455a-0b0f-43d1-9427-a7a730ef001b" ChangeDateTime="08/06/2022 17:45:05">
+    <Property Name="ElementName" Value="[dbo].[BasicDifferentials].[Differential Function]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BasicDifferentials]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[DifferentialFunction]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3a6f91da-1285-4baa-a037-5b96a4ceb4d1" ChangeDateTime="08/06/2022 17:45:15">
+    <Property Name="ElementName" Value="[dbo].[BasicDifferentials].[Differential Exponential]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BasicDifferentials]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[DifferentialExponential]" />
+  </Operation>
+</Operations>
