@@ -5,6 +5,6 @@
 		Addition, 
 		Subtraction, 
 		Multiplication, 
-		Division 
+		Division
 	}
 }

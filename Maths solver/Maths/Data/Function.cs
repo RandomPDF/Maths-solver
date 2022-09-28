@@ -8,7 +8,8 @@
 		cosec, 
 		sec, 
 		cot, 
-		ln, 
+		ln,
+		a,
 		x
 	}
 }

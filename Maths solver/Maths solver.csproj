@@ -51,7 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Maths\Data\Function.cs" />
-    <Compile Include="Interfaces\IEquation.cs" />
     <Compile Include="Maths\Data\Operation.cs" />
     <Compile Include="Maths\Objects\Term.cs" />
     <Compile Include="Main Window.cs">
@@ -60,7 +59,6 @@
     <Compile Include="Main Window.Designer.cs">
       <DependentUpon>Main Window.cs</DependentUpon>
     </Compile>
-    <Compile Include="Maths\Objects\OperationObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Main Window.resx">

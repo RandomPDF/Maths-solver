@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Maths_solver
 {
-	public class Term : IEquation
+	public class Term
 	{
 		private int coeficient;
 		private Function function;
@@ -23,19 +23,11 @@ namespace Maths_solver
 
 		public Term(int coeficient, Function function, int exponent)
 		{
-			//x^a doesn't have an input so input can be null
-			if (function == Function.x)
-			{
-				this.coeficient = coeficient;
-				this.function = function;
-				this.exponent = exponent;
-				input = null;
-			}
-			//for a function requiring an input where none is given, set it to be x
-			else
-			{
-				input = new Term(1, Function.x, 1);
-			}
+			//only for if function doesn't require an input
+			this.coeficient = coeficient;
+			this.function = function;
+			this.exponent = exponent;
+			input = null;
 		}
 	}
 }
