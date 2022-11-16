@@ -26,7 +26,7 @@ namespace Maths_solver
 			Operation.Addition,
 
 			//5sin(x^2)^2
-			new Term(5, Function.sin, new Term(1, Function.x, 2) , 2)
+			new Term(5, Function.sin, new Term(1, Function.x, 2) ,2)
 		};
 	}
 }

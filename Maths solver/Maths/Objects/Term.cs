@@ -32,11 +32,18 @@ namespace Maths_solver
 		private int exponent;
 
 		public Term(int coeficient, Function function, Term input, int exponent)
-		{ 
-			this.coeficient = coeficient;
-			this.function = function;
-			this.input = input;
-			this.exponent = exponent;
+		{
+			if (Functions[function])
+			{
+				this.coeficient = coeficient;
+				this.function = function;
+				this.input = input;
+				this.exponent = exponent;
+			}
+            else
+            {
+				throw new Exception($"The function {function.ToString()} can't have an input.");
+            }
 		}
 
 		public Term(int coeficient, Function function, int exponent)
@@ -49,6 +56,10 @@ namespace Maths_solver
 				this.exponent = exponent;
 				input = null;
 			}
+            else
+            {
+				throw new Exception($"The function {function.ToString()} requires an input parameter");
+            }
 		}
 	}
 }
