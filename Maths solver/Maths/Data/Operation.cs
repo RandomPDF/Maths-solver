@@ -1,6 +1,6 @@
 ﻿namespace Maths_solver
 {
-	public enum Operation 
+	public enum Operation
 	{ 
 		Addition, 
 		Subtraction, 

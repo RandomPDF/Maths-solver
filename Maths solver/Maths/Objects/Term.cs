@@ -6,34 +6,16 @@ using System.Threading.Tasks;
 
 namespace Maths_solver
 {
-	public class Term
+	public class Term : Functions
 	{
-		//Dictionary of function names, and if they require an input
-		public Dictionary<Function, bool> Functions = new Dictionary<Function, bool>()
-		{
-			{Function.sin, true},
-			{Function.cos, true},
-			{Function.tan, true},
-			{Function.cosec, true},
-			{Function.sec, true},
-			{Function.cot, true},
-			{Function.arcsin, true},
-			{Function.arccos, true},
-			{Function.arctan, true},
-			{Function.ln, true},
-
-			{Function.a, false},
-			{Function.x, false}
-		};
-
 		private Function function;
-		private int coeficient;
+		private float coeficient;
 		private Term input;
-		private int exponent;
+		private float exponent;
 
-		public Term(int coeficient, Function function, Term input, int exponent)
+		public Term(float coeficient, Function function, Term input, float exponent)
 		{
-			if (Functions[function])
+			if (functions[function])
 			{
 				this.coeficient = coeficient;
 				this.function = function;
@@ -46,20 +28,27 @@ namespace Maths_solver
             }
 		}
 
-		public Term(int coeficient, Function function, int exponent)
+		public Term(float coeficient, Function function, float exponent)
 		{
-			if (!Functions[function])
+			this.coeficient = coeficient;
+			this.function = function;
+			this.exponent = exponent;
+
+			if (!functions[function])
 			{
-				//only for if function doesn't require an input
-				this.coeficient = coeficient;
-				this.function = function;
-				this.exponent = exponent;
+				//if function doesn't require an input
 				input = null;
 			}
             else
             {
-				throw new Exception($"The function {function.ToString()} requires an input parameter");
+				//if function requires an input
+				input = new Term(1, Function.x, 1);
             }
 		}
+
+		public Function GetFunction() { return function; }
+		public float GetCoeficient() { return coeficient; }
+		public Term GetInput() { return input; }
+		public float GetExponent() { return exponent; }
 	}
 }

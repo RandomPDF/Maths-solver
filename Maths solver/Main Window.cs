@@ -15,18 +15,7 @@ namespace Maths_solver
 		public Main()
 		{
 			InitializeComponent();
+			Maths.Run();
 		}
-
-		//3x^3 + 5sin(x^2)^2
-		List<object> equation = new List<object>()
-		{
-			//3x^3
-			new Term(3, Function.x, 3),
-
-			Operation.Addition,
-
-			//5sin(x^2)^2
-			new Term(5, Function.sin, new Term(1, Function.x, 2) ,2)
-		};
 	}
 }
