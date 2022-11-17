@@ -8,14 +8,15 @@ namespace Maths_solver
 {
 	internal class Maths : Functions
 	{
-		public Dictionary<List<object>, List<object>> Differentials = new Dictionary<List<object>, List<object>>()
+		public static Dictionary<List<object>, List<object>> Differentials = new Dictionary<List<object>, List<object>>()
 		{
-			{new List<object>(){new Term(1, Function.sin, 1) }, new List<object>(){new Term(1, Function.cos, 1) } }
+			{new List<object>(){new Term(1, Function.sin, 1) }, new List<object>(){new Term(1, Function.cos, 1) } },
+			{new List<object>(){new Term(1, Function.cos, 1) }, new List<object>(){new Term(-1, Function.sin, 1) } }
 		};
 
 		static List<object> test = new List<object>()
 		{
-			new Term(5, Function.sin, 1)
+			new Term(1, Function.cos, 1)
 		};
 
 		static List<object> easy = new List<object>()
@@ -41,6 +42,63 @@ namespace Maths_solver
 		{
 			List<object> newEquation = new List<object>();
 
+			//find term or operation in equation
+			foreach (object Object in equation)
+			{
+				if(Object.GetType() == typeof(Term))
+				{
+					Term term = (Term)Object;
+
+					List<object> differential = new List<object>();
+
+					//finds correct key value pair
+					foreach (List<object> key in Differentials.Keys.ToArray())
+					{
+						if (key.GetType() == typeof(List<object>))
+						{
+							//get each term in differential
+							foreach (object keyObject in key)
+							{
+								if (keyObject.GetType() == typeof(Term))
+								{
+									Term keyTerm = (Term)keyObject;
+
+									//check if correct key
+									if (term.GetFunction() == keyTerm.GetFunction() &&
+										term.GetExponent() == keyTerm.GetExponent())
+									{
+										//return correct value
+										differential = Differentials[key];
+									}
+								}
+							}
+						}
+					}
+
+					//for each term in the correct differential
+					foreach (object differentialObject in differential)
+					{
+						if (Object.GetType() == typeof(Term))
+						{
+							Term differentialTerm = (Term)differentialObject;
+
+							newEquation.Add(new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(), differentialTerm.GetFunction(), term.GetExponent()));
+						}
+					}
+				}
+
+				if(Object.GetType() == typeof(Operation))
+				{
+					newEquation.Add(Object);
+				}
+			}
+
+			Console.WriteLine("\n\nNew equation:");
+			DisplayEquation(newEquation);
+		}
+
+		private static void DisplayEquation(List<object> equation)
+		{
 			foreach (object item in equation)
 			{
 				if (item.GetType() == typeof(Term))
@@ -49,7 +107,7 @@ namespace Maths_solver
 					Console.Write(FormatTerm(term));
 				}
 
-				if(item.GetType() == typeof(Operation))
+				if (item.GetType() == typeof(Operation))
 				{
 					Operation operation = (Operation)item;
 					Console.Write(FormatTerm(operation));
@@ -61,7 +119,8 @@ namespace Maths_solver
 		{
 			string formatTerm = String.Empty;
 
-			if (term.GetCoeficient() != 1) formatTerm += term.GetCoeficient();
+			if (Math.Abs(term.GetCoeficient()) != 1) formatTerm += term.GetCoeficient();
+			else if (term.GetCoeficient() == -1) formatTerm += "-";
 
 			if (functions[term.GetFunction()]) formatTerm += $"{term.GetFunction()}({FormatTerm(term.GetInput())})";
 			else formatTerm += term.GetFunction();
@@ -98,7 +157,10 @@ namespace Maths_solver
 
 		public static void Run()
 		{
-			Differentiate(hard);
+			Console.WriteLine("Origional equation: ");
+			DisplayEquation(test);
+
+			Differentiate(test);
 		}
 	}
 }
