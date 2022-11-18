@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Maths\Data\EquationItem.cs" />
     <Compile Include="Maths\Maths.cs" />
     <Compile Include="Maths\Data\Operation.cs" />
     <Compile Include="Maths\Objects\Term.cs" />

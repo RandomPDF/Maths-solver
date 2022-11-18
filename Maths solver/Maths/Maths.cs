@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,19 +12,17 @@ namespace Maths_solver
 		public static Dictionary<List<object>, List<object>> Differentials = new Dictionary<List<object>, List<object>>()
 		{
 			{new List<object>(){new Term(1, Function.sin, 1) }, new List<object>(){new Term(1, Function.cos, 1) } },
-			{new List<object>(){new Term(1, Function.cos, 1) }, new List<object>(){new Term(-1, Function.sin, 1) } }
+			{new List<object>(){new Term(1, Function.cos, 1) }, new List<object>(){new Term(-1, Function.sin, 1) } },
+			{new List<object>(){new Term(1, Function.tan, 1)}, new List<object>(){new Term(1, Function.sec, 2)} }
 		};
 
 		static List<object> test = new List<object>()
 		{
-			new Term(1, Function.cos, 1)
-		};
-
-		static List<object> easy = new List<object>()
-		{
-			new Term(3, Function.sin, 1),
-			Operation.Addition,
-			new Term(5, Function.cos, 1)
+			new Term(4, Function.cos, 1),
+			new Operation(OperationEnum.Subtraction),
+			new Term(2, Function.sin, 1),
+			new Operation(OperationEnum.Addition),
+			new Term(3, Function.tan, 1)
 		};
 
 		//3x^3 + 5sin(x^2)^2
@@ -32,7 +31,7 @@ namespace Maths_solver
 			//3x^3
 			new Term(3, Function.x, 3),
 
-			Operation.Addition,
+			new Operation(OperationEnum.Addition),
 
 			//5sin(x^2)^2
 			new Term(5, Function.sin, new Term(1, Function.x, 2) ,2)
@@ -82,7 +81,38 @@ namespace Maths_solver
 						{
 							Term differentialTerm = (Term)differentialObject;
 
-							newEquation.Add(new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(), differentialTerm.GetFunction(), term.GetExponent()));
+							Term newTerm = new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(), differentialTerm.GetFunction(), differentialTerm.GetExponent());
+
+							newEquation.Add(newTerm);
+
+							//Checks if term is negative, and more than 2 items in the equation
+							if(newTerm.GetCoeficient() < 0 && newEquation.Count >= 2)
+							{
+								if(newEquation[newEquation.Count - 2].GetType() == typeof(Operation))
+								{
+									Operation previousOperation = (Operation)newEquation[newEquation.Count - 2];
+
+									//change coeficient to positive, and operation to subtraction
+									if (previousOperation.GetOperation() == OperationEnum.Addition)
+									{
+										newEquation.RemoveRange(newEquation.Count - 2, 2);
+										newEquation.Add(new Operation(OperationEnum.Subtraction));
+
+										newEquation.Add(new Term(-newTerm.GetCoeficient(), 
+											newTerm.GetFunction(), newTerm.GetExponent()));
+									}
+
+									//change coeficient to positive, and operation to addition
+									if (previousOperation.GetOperation() == OperationEnum.Subtraction)
+									{
+										newEquation.RemoveRange(newEquation.Count - 2, 2);
+										newEquation.Add(new Operation(OperationEnum.Addition));
+
+										newEquation.Add(new Term(-newTerm.GetCoeficient(),
+											newTerm.GetFunction(), newTerm.GetExponent()));
+									}
+								}
+							}
 						}
 					}
 				}
@@ -133,21 +163,21 @@ namespace Maths_solver
 		{
 			string formatTerm = String.Empty;
 
-			switch(operation)
+			switch(operation.GetOperation())
 			{
-				case Operation.Addition:
+				case OperationEnum.Addition:
 					formatTerm = " + ";
 					break;
 
-				case Operation.Subtraction:
+				case OperationEnum.Subtraction:
 					formatTerm = " - ";
 					break;
 
-				case Operation.Multiplication:
+				case OperationEnum.Multiplication:
 					formatTerm = " * ";
 					break;
 
-				case Operation.Division:
+				case OperationEnum.Division:
 					formatTerm = " / ";
 					break;
 			}

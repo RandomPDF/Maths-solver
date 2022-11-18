@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Maths_solver
 {
-	public class Term : Functions
+	public class Term : Functions, EquationItem
 	{
 		private Function function;
 		private float coeficient;
