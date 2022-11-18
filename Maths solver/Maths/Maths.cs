@@ -2,6 +2,7 @@
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,24 +10,35 @@ namespace Maths_solver
 {
 	internal class Maths : Functions
 	{
-		public static Dictionary<List<object>, List<object>> Differentials = new Dictionary<List<object>, List<object>>()
+		public static Dictionary<List<EquationItem>, List<EquationItem>> Differentials = new Dictionary<List<EquationItem>, List<EquationItem>>()
 		{
-			{new List<object>(){new Term(1, Function.sin, 1) }, new List<object>(){new Term(1, Function.cos, 1) } },
-			{new List<object>(){new Term(1, Function.cos, 1) }, new List<object>(){new Term(-1, Function.sin, 1) } },
-			{new List<object>(){new Term(1, Function.tan, 1)}, new List<object>(){new Term(1, Function.sec, 2)} }
+			{new List<EquationItem>(){new Term(1, Function.sin, 1) },
+				new List<EquationItem>(){new Term(1, Function.cos, 1) } },
+
+			{new List<EquationItem>(){new Term(1, Function.cos, 1) },
+				new List<EquationItem>(){new Term(-1, Function.sin, 1) } },
+
+			{new List<EquationItem>(){new Term(1, Function.tan, 1)},
+				new List<EquationItem>(){new Term(1, Function.sec, 2)} },
+
+			{new List<EquationItem>(){new Term(1, Function.cosec, 1)},
+			new List<EquationItem>(){new Term(-1, Function.cosec, 1),
+				new Operation(OperationEnum.Multiplication), new Term(1, Function.cot, 1)}}
 		};
 
-		static List<object> test = new List<object>()
+		static List<EquationItem> test = new List<EquationItem>()
 		{
 			new Term(4, Function.cos, 1),
 			new Operation(OperationEnum.Subtraction),
 			new Term(2, Function.sin, 1),
 			new Operation(OperationEnum.Addition),
-			new Term(3, Function.tan, 1)
+			new Term(3, Function.tan, 1),
+			new Operation(OperationEnum.Subtraction),
+			new Term(10, Function.cosec, 1)
 		};
 
 		//3x^3 + 5sin(x^2)^2
-		static List<object> hard = new List<object>()
+		static List<EquationItem> hard = new List<EquationItem>()
 		{
 			//3x^3
 			new Term(3, Function.x, 3),
@@ -37,51 +49,59 @@ namespace Maths_solver
 			new Term(5, Function.sin, new Term(1, Function.x, 2) ,2)
 		};
 
-		private static void Differentiate(List<object> equation)
+		private static List<EquationItem> Differentiate(List<EquationItem> equation)
 		{
-			List<object> newEquation = new List<object>();
+			List<EquationItem> newEquation = new List<EquationItem>();
 
 			//find term or operation in equation
-			foreach (object Object in equation)
+			foreach (EquationItem Object in equation)
 			{
 				if(Object.GetType() == typeof(Term))
 				{
 					Term term = (Term)Object;
 
-					List<object> differential = new List<object>();
+					List<EquationItem> differential = new List<EquationItem>();
 
 					//finds correct key value pair
-					foreach (List<object> key in Differentials.Keys.ToArray())
+					foreach (List<EquationItem> key in Differentials.Keys.ToArray())
 					{
-						if (key.GetType() == typeof(List<object>))
+						//get each term in differential
+						foreach (EquationItem keyObject in key)
 						{
-							//get each term in differential
-							foreach (object keyObject in key)
+							if (keyObject.GetType() == typeof(Term))
 							{
-								if (keyObject.GetType() == typeof(Term))
-								{
-									Term keyTerm = (Term)keyObject;
+								Term keyTerm = (Term)keyObject;
 
-									//check if correct key
-									if (term.GetFunction() == keyTerm.GetFunction() &&
-										term.GetExponent() == keyTerm.GetExponent())
-									{
-										//return correct value
-										differential = Differentials[key];
-									}
+								//check if correct key
+								if (term.GetFunction() == keyTerm.GetFunction() &&
+									term.GetExponent() == keyTerm.GetExponent())
+								{
+									//return correct value
+									differential = Differentials[key];
 								}
 							}
+
+							//should be no operations in key
 						}
 					}
 
 					//for each term in the correct differential
-					foreach (object differentialObject in differential)
+					foreach (EquationItem differentialObject in differential)
 					{
-						if (Object.GetType() == typeof(Term))
+						if (differentialObject.GetType() == typeof(Term))
 						{
 							Term differentialTerm = (Term)differentialObject;
+							Term newTerm;
 
-							Term newTerm = new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(), differentialTerm.GetFunction(), differentialTerm.GetExponent());
+							//if first term, add coefficient (change later)
+							if (differentialObject == differential[0])
+							{
+								newTerm = new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(), differentialTerm.GetFunction(), differentialTerm.GetExponent());
+							}
+							else
+							{
+								newTerm = new Term(1, differentialTerm.GetFunction(), differentialTerm.GetExponent());
+							}
 
 							newEquation.Add(newTerm);
 
@@ -114,6 +134,11 @@ namespace Maths_solver
 								}
 							}
 						}
+
+						if(differentialObject.GetType() == typeof(Operation))
+						{
+							newEquation.Add(differentialObject);
+						}
 					}
 				}
 
@@ -123,13 +148,12 @@ namespace Maths_solver
 				}
 			}
 
-			Console.WriteLine("\n\nNew equation:");
-			DisplayEquation(newEquation);
+			return newEquation;
 		}
 
-		private static void DisplayEquation(List<object> equation)
+		private static void DisplayEquation(List<EquationItem> equation)
 		{
-			foreach (object item in equation)
+			foreach (EquationItem item in equation)
 			{
 				if (item.GetType() == typeof(Term))
 				{
@@ -174,7 +198,7 @@ namespace Maths_solver
 					break;
 
 				case OperationEnum.Multiplication:
-					formatTerm = " * ";
+					formatTerm = String.Empty;
 					break;
 
 				case OperationEnum.Division:
@@ -190,7 +214,8 @@ namespace Maths_solver
 			Console.WriteLine("Origional equation: ");
 			DisplayEquation(test);
 
-			Differentiate(test);
+			Console.WriteLine("\n\nNew equation:");
+			DisplayEquation(Differentiate(test));
 		}
 	}
 }
