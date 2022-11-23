@@ -11,9 +11,9 @@ namespace Maths_solver
 		private Function function;
 		private float coeficient;
 		private Term input;
-		private Term exponent;
+		private List<EquationItem> exponent;
 
-		public Term(float coeficient, Function function, Term input, Term exponent)
+		public Term(float coeficient, Function function, Term input, List<EquationItem> exponent)
 		{
 			if (functions[function])
 			{
@@ -28,7 +28,7 @@ namespace Maths_solver
             }
 		}
 
-		public Term(float coeficient, Function function, Term exponent)
+		public Term(float coeficient, Function function, List<EquationItem> exponent)
 		{
 			this.coeficient = coeficient;
 			this.function = function;
@@ -39,10 +39,10 @@ namespace Maths_solver
 				//if function doesn't require an input
 				input = null;
 			}
-            else
-            {
+			else
+			{
 				//if function requires an input
-				input = new Term(1, Function.x, new Term(1, Function.a));
+				input = new Term(1, Function.x, new List<EquationItem> { new Term(1, Function.a)});
             }
 		}
 
@@ -64,6 +64,6 @@ namespace Maths_solver
 		public Function GetFunction() { return function; }
 		public float GetCoeficient() { return coeficient; }
 		public Term GetInput() { return input; }
-		public Term GetExponent() { return exponent; }
+		public List<EquationItem> GetExponent() { return exponent; }
 	}
 }

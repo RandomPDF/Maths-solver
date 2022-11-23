@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Maths_solver
 {
-	internal interface EquationItem
+	public interface EquationItem
 	{
 
 	}
