@@ -12,41 +12,41 @@ namespace Maths_solver
 	{
 		public static Dictionary<List<EquationItem>, List<EquationItem>> Differentials = new Dictionary<List<EquationItem>, List<EquationItem>>()
 		{
-			{new List<EquationItem>(){new Term(1, Function.sin, 1) },
-				new List<EquationItem>(){new Term(1, Function.cos, 1) } },
+			{new List<EquationItem>(){new Term(1, Function.sin, new Term(1, Function.a)) },
+				new List<EquationItem>(){new Term(1, Function.cos, new Term(1, Function.a)) } },
 
-			{new List<EquationItem>(){new Term(1, Function.cos, 1) },
-				new List<EquationItem>(){new Term(-1, Function.sin, 1) } },
+			{new List<EquationItem>(){new Term(1, Function.cos, new Term(1, Function.a)) },
+				new List<EquationItem>(){new Term(-1, Function.sin, new Term(1, Function.a)) } },
 
-			{new List<EquationItem>(){new Term(1, Function.tan, 1)},
-				new List<EquationItem>(){new Term(1, Function.sec, 2)} },
+			{new List<EquationItem>(){new Term(1, Function.tan, new Term(1, Function.a)) },
+				new List<EquationItem>(){new Term(1, Function.sec, new Term(2, Function.a)) } },
 
-			{new List<EquationItem>(){new Term(1, Function.cosec, 1)},
-			new List<EquationItem>(){new Term(-1, Function.cosec, 1),
-				new Operation(OperationEnum.Multiplication), new Term(1, Function.cot, 1)}}
+			{new List<EquationItem>(){new Term(1, Function.cosec, new Term(1, Function.a)) },
+			new List<EquationItem>(){new Term(-1, Function.cosec, new Term(1, Function.a)),
+				new Operation(OperationEnum.Multiplication), new Term(1, Function.cot, new Term(1, Function.a))}}
 		};
 
 		static List<EquationItem> test = new List<EquationItem>()
 		{
-			new Term(4, Function.cos, 1),
+			new Term(4, Function.cos, new Term(1, Function.a)),
 			new Operation(OperationEnum.Subtraction),
-			new Term(2, Function.sin, 1),
+			new Term(2, Function.sin, new Term(1, Function.a)),
 			new Operation(OperationEnum.Addition),
-			new Term(3, Function.tan, 1),
+			new Term(3, Function.tan, new Term(1, Function.a)),
 			new Operation(OperationEnum.Subtraction),
-			new Term(10, Function.cosec, 1)
+			new Term(10, Function.cosec, new Term(1, Function.a))
 		};
 
 		//3x^3 + 5sin(x^2)^2
 		static List<EquationItem> hard = new List<EquationItem>()
 		{
 			//3x^3
-			new Term(3, Function.x, 3),
+			new Term(3, Function.x, new Term(3, Function.a)),
 
 			new Operation(OperationEnum.Addition),
 
 			//5sin(x^2)^2
-			new Term(5, Function.sin, new Term(1, Function.x, 2) ,2)
+			new Term(5, Function.sin, new Term(1, Function.x, new Term(2, Function.a)) ,new Term(2, Function.a))
 		};
 
 		private static List<EquationItem> Differentiate(List<EquationItem> equation)
@@ -73,6 +73,7 @@ namespace Maths_solver
 								Term keyTerm = (Term)keyObject;
 
 								//check if correct key
+								//add function to test 2 terms and see if they match
 								if (term.GetFunction() == keyTerm.GetFunction() &&
 									term.GetExponent() == keyTerm.GetExponent())
 								{

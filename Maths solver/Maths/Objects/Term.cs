@@ -11,9 +11,9 @@ namespace Maths_solver
 		private Function function;
 		private float coeficient;
 		private Term input;
-		private float exponent;
+		private Term exponent;
 
-		public Term(float coeficient, Function function, Term input, float exponent)
+		public Term(float coeficient, Function function, Term input, Term exponent)
 		{
 			if (functions[function])
 			{
@@ -28,7 +28,7 @@ namespace Maths_solver
             }
 		}
 
-		public Term(float coeficient, Function function, float exponent)
+		public Term(float coeficient, Function function, Term exponent)
 		{
 			this.coeficient = coeficient;
 			this.function = function;
@@ -42,13 +42,28 @@ namespace Maths_solver
             else
             {
 				//if function requires an input
-				input = new Term(1, Function.x, 1);
+				input = new Term(1, Function.x, new Term(1, Function.a));
             }
 		}
+
+		public Term(float coeficient, Function function)
+        {
+			this.coeficient = coeficient;
+			this.function = function;
+
+			if (function == Function.a)
+			{
+				this.exponent = null;
+			}
+            else
+            {
+				throw new Exception($"The function {function.ToString()} must have an exponent and input.");
+			}
+        }
 
 		public Function GetFunction() { return function; }
 		public float GetCoeficient() { return coeficient; }
 		public Term GetInput() { return input; }
-		public float GetExponent() { return exponent; }
+		public Term GetExponent() { return exponent; }
 	}
 }
