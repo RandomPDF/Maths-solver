@@ -40,7 +40,30 @@ namespace Maths_solver
 			new List<EquationItem>()
 			{new Term(-1, Function.cosec, new List<EquationItem>{new Term(1, Function.a)}),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.cot, new List<EquationItem>{new Term(1, Function.a)})}}
+			new Term(1, Function.cot, new List<EquationItem>{new Term(1, Function.a)})}},
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.sec, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(1, Function.sec, new List<EquationItem>{new Term(1, Function.a)}),
+			new Operation(OperationEnum.Multiplication),
+			new Term(1, Function.tan, new List<EquationItem>{new Term(1, Function.a)})}},
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.cot, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(-1, Function.cosec, new List<EquationItem> { new Term(2, Function.a) }) } },
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.ln, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(1, Function.x, new List<EquationItem> { new Term(-1, Function.a) }) } },
 		};
 
 		static List<EquationItem> test = new List<EquationItem>()
@@ -53,7 +76,13 @@ namespace Maths_solver
 			new Operation(OperationEnum.Subtraction),
 			new Term(19, Function.cosec, new List<EquationItem>{new Term(1, Function.a)}),
 			new Operation(OperationEnum.Subtraction),
-			new Term(0.2f, Function.x, new List<EquationItem>{new Term(1.75f, Function.a)})
+			new Term(0.2f, Function.x, new List<EquationItem>{new Term(1.75f, Function.a)}),
+			new Operation(OperationEnum.Addition),
+			new Term(6.9f, Function.sec, new List<EquationItem>{new Term(1, Function.a)}),
+			new Operation(OperationEnum.Subtraction),
+			new Term(4.2f, Function.cot, new List<EquationItem>{new Term(1, Function.a)}),
+			new Operation(OperationEnum.Addition),
+			new Term(5.7f, Function.ln, new List<EquationItem>{new Term(1, Function.a)})
 		};
 
 		//3x^3 + 5sin(x^2)^2
