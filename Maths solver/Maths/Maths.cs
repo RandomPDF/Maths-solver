@@ -45,13 +45,15 @@ namespace Maths_solver
 
 		static List<EquationItem> test = new List<EquationItem>()
 		{
-			new Term(4, Function.cos, new List<EquationItem>{new Term(1, Function.a)}),
+			new Term(2.6f, Function.cos, new List<EquationItem>{new Term(1, Function.a)}),
 			new Operation(OperationEnum.Subtraction),
-			new Term(2, Function.sin, new List<EquationItem>{new Term(1, Function.a)}),
+			new Term(3.14f, Function.sin, new List<EquationItem>{new Term(1, Function.a)}),
 			new Operation(OperationEnum.Addition),
 			new Term(3, Function.tan, new List<EquationItem>{new Term(1, Function.a)}),
 			new Operation(OperationEnum.Subtraction),
-			new Term(10, Function.cosec, new List<EquationItem>{new Term(1, Function.a)})
+			new Term(19, Function.cosec, new List<EquationItem>{new Term(1, Function.a)}),
+			new Operation(OperationEnum.Subtraction),
+			new Term(0.2f, Function.x, new List<EquationItem>{new Term(1.75f, Function.a)})
 		};
 
 		//3x^3 + 5sin(x^2)^2
@@ -66,7 +68,7 @@ namespace Maths_solver
 			new Term(5, Function.sin, new Term(1, Function.x, new List<EquationItem>{new Term(2, Function.a)}) , new List<EquationItem>{new Term(2, Function.a)})
 		};
 
-		private static List<EquationItem> Differentiate(List<EquationItem> equation)
+		private static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
 		{
 			List<EquationItem> newEquation = new List<EquationItem>();
 
@@ -78,58 +80,95 @@ namespace Maths_solver
 					Term term = (Term)Object;
 					List<EquationItem> differential = new List<EquationItem>();
 
-					//finds correct key value pair
-					foreach (List<EquationItem> key in Differentials.Keys.ToArray())
+					if (term.GetFunction() != Function.x)
 					{
-						//get each term in differential
-						foreach (EquationItem keyObject in key)
+						//finds correct key value pair
+						foreach (List<EquationItem> key in Differentials.Keys.ToArray())
 						{
-							//should be no operations in key
-							if (keyObject.GetType() != typeof(Term)) continue;
+							//get each term in differential
+							foreach (EquationItem keyObject in key)
+							{
+								//should be no operations in key
+								if (keyObject.GetType() != typeof(Term)) continue;
 
-							Term keyTerm = (Term)keyObject;
+								Term keyTerm = (Term)keyObject;
 
-							//check if correct key and return correct value
-							if (TermsEqual(term, keyTerm, false)) differential = Differentials[key];
+								//check if correct key and return correct value
+								if (TermsEqual(term, keyTerm, false)) differential = Differentials[key];
+							}
 						}
 					}
 
-					//for each term in the correct differential
-					foreach (EquationItem differentialObject in differential)
-					{
-						if (differentialObject.GetType() == typeof(Term))
-						{
-							Term differentialTerm = (Term)differentialObject;
-							Term newTerm;
-
-							//if first term, add coefficient (change later)
-							if (differentialObject == differential[0])
-							{
-								newTerm = new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(),
-									differentialTerm.GetFunction(), differentialTerm.GetExponent());
-							}
-							else
-							{
-								newTerm = new Term(1, differentialTerm.GetFunction(),
-									differentialTerm.GetExponent());
-							}
-
-							newEquation.Add(newTerm);
-
-							FormatTerm(ref newTerm, ref newEquation);
-						}
-
-						if(differentialObject.GetType() == typeof(Operation))
-						{
-							newEquation.Add(differentialObject);
-						}
-					}
+					DifferentiateTerm(differential, term, ref newEquation);
 				}
 
 				if(Object.GetType() == typeof(Operation)) newEquation.Add(Object);
 			}
 
 			return newEquation;
+		}
+
+		private static void DifferentiateTerm(List<EquationItem> differential, Term term, 
+			ref List<EquationItem> newEquation)
+		{
+			Term newTerm = default;
+
+			//if differentiating x
+			if (term.GetFunction() == Function.x) DifferentiateX(term, ref newTerm, ref newEquation);
+			else
+			{
+				//for each term in the correct differential
+				foreach (EquationItem differentialObject in differential)
+				{
+					if (differentialObject.GetType() == typeof(Term))
+					{
+						Term differentialTerm = (Term)differentialObject;
+						newTerm = default;
+
+						//if first term, add coefficient (change later)
+						if (differentialObject == differential[0])
+						{
+							newTerm = new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(),
+								differentialTerm.GetFunction(), differentialTerm.GetExponent());
+						}
+						else
+						{
+							newTerm = new Term(1, differentialTerm.GetFunction(),
+								differentialTerm.GetExponent());
+						}
+
+						newEquation.Add(newTerm);
+
+						FormatTerm(newTerm, ref newEquation);
+					}
+
+					if (differentialObject.GetType() == typeof(Operation))
+					{
+						newEquation.Add(differentialObject);
+					}
+				}
+			}
+		}
+
+		private static void DifferentiateX(Term term, ref Term newTerm, ref List<EquationItem> newEquation)
+		{
+			//check if the exponent isn't a long equation
+			if (term.GetExponent()[0].GetType() == typeof(Term) && term.GetExponent().Count == 1)
+			{
+				Term exponent = (Term)term.GetExponent()[0];
+
+				//if exponent isn't constant
+				if (exponent.GetFunction() != Function.a) return;
+
+				//ax^n => anx^(n-1)
+				newTerm = new Term(term.GetCoeficient() * exponent.GetCoeficient(), Function.x,
+						new List<EquationItem> { new Term(exponent.GetCoeficient() - 1, Function.a) });
+
+
+				newEquation.Add(newTerm);
+
+				FormatTerm(newTerm, ref newEquation);
+			}
 		}
 
 		private static bool EquationsEqual(List<EquationItem> equation1, List<EquationItem> equation2)
@@ -252,7 +291,7 @@ namespace Maths_solver
 			return formatTerm;
 		}
 
-		private static void FormatTerm(ref Term newTerm, ref List<EquationItem> newEquation)
+		private static void FormatTerm(Term newTerm, ref List<EquationItem> newEquation)
 		{
 			//Checks if term is negative, and more than 2 items in the equation
 			if (newTerm.GetCoeficient() < 0 && newEquation.Count >= 2 && 
@@ -285,11 +324,13 @@ namespace Maths_solver
 
 		public static void Run()
 		{
+			List<EquationItem> equation = test;
+
 			Console.WriteLine("Origional equation: ");
-			DisplayEquation(test);
+			DisplayEquation(equation);
 
 			Console.WriteLine("\n\nNew equation:");
-			DisplayEquation(Differentiate(test));
+			DisplayEquation(DifferentiateEquation(equation));
 		}
 	}
 }
