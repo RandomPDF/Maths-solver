@@ -10,20 +10,37 @@ namespace Maths_solver
 {
 	internal class Maths : Functions
 	{
-		public static Dictionary<List<EquationItem>, List<EquationItem>> Differentials = new Dictionary<List<EquationItem>, List<EquationItem>>()
+		public static Dictionary<List<EquationItem>, List<EquationItem>> Differentials = 
+			new Dictionary<List<EquationItem>, List<EquationItem>>()
 		{
-			{new List<EquationItem>(){new Term(1, Function.sin, new List<EquationItem> {new Term(1, Function.a)}) },
-				new List<EquationItem>(){new Term(1, Function.cos, new List<EquationItem> { new Term(1, Function.a) } ) } },
+			{new List<EquationItem>()
+			{new Term(1, Function.sin, new List<EquationItem> {new Term(1, Function.a)}) },
 
-			{new List<EquationItem>(){new Term(1, Function.cos, new List<EquationItem> { new Term(1, Function.a) }) },
-				new List<EquationItem>(){new Term(-1, Function.sin, new List<EquationItem> { new Term(1, Function.a) }) } },
+			new List<EquationItem>()
+			{new Term(1, Function.cos, new List<EquationItem> { new Term(1, Function.a) } ) } },
 
-			{new List<EquationItem>(){new Term(1, Function.tan, new List<EquationItem> { new Term(1, Function.a) }) },
-				new List<EquationItem>(){new Term(1, Function.sec, new List<EquationItem> { new Term(2, Function.a) }) } },
 
-			{new List<EquationItem>(){new Term(1, Function.cosec, new List<EquationItem> { new Term(1, Function.a) }) },
-			new List<EquationItem>(){new Term(-1, Function.cosec, new List<EquationItem>{new Term(1, Function.a)}),
-				new Operation(OperationEnum.Multiplication), new Term(1, Function.cot, new List<EquationItem>{new Term(1, Function.a)})}}
+			{new List<EquationItem>()
+			{new Term(1, Function.cos, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(-1, Function.sin, new List<EquationItem> { new Term(1, Function.a) }) } },
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.tan, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(1, Function.sec, new List<EquationItem> { new Term(2, Function.a) }) } },
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.cosec, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(-1, Function.cosec, new List<EquationItem>{new Term(1, Function.a)}),
+			new Operation(OperationEnum.Multiplication),
+			new Term(1, Function.cot, new List<EquationItem>{new Term(1, Function.a)})}}
 		};
 
 		static List<EquationItem> test = new List<EquationItem>()
@@ -59,7 +76,6 @@ namespace Maths_solver
 				if(Object.GetType() == typeof(Term))
 				{
 					Term term = (Term)Object;
-
 					List<EquationItem> differential = new List<EquationItem>();
 
 					//finds correct key value pair
@@ -68,20 +84,13 @@ namespace Maths_solver
 						//get each term in differential
 						foreach (EquationItem keyObject in key)
 						{
-							if (keyObject.GetType() == typeof(Term))
-							{
-								Term keyTerm = (Term)keyObject;
-
-								//check if correct key
-								//add function to test 2 terms and see if they match
-								if (TermsEqual(term, keyTerm, false))
-								{
-									//return correct value
-									differential = Differentials[key];
-								}
-							}
-
 							//should be no operations in key
+							if (keyObject.GetType() != typeof(Term)) continue;
+
+							Term keyTerm = (Term)keyObject;
+
+							//check if correct key and return correct value
+							if (TermsEqual(term, keyTerm, false)) differential = Differentials[key];
 						}
 					}
 
@@ -96,43 +105,18 @@ namespace Maths_solver
 							//if first term, add coefficient (change later)
 							if (differentialObject == differential[0])
 							{
-								newTerm = new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(), differentialTerm.GetFunction(), differentialTerm.GetExponent());
+								newTerm = new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(),
+									differentialTerm.GetFunction(), differentialTerm.GetExponent());
 							}
 							else
 							{
-								newTerm = new Term(1, differentialTerm.GetFunction(), differentialTerm.GetExponent());
+								newTerm = new Term(1, differentialTerm.GetFunction(),
+									differentialTerm.GetExponent());
 							}
 
 							newEquation.Add(newTerm);
 
-							//Checks if term is negative, and more than 2 items in the equation
-							if(newTerm.GetCoeficient() < 0 && newEquation.Count >= 2)
-							{
-								if(newEquation[newEquation.Count - 2].GetType() == typeof(Operation))
-								{
-									Operation previousOperation = (Operation)newEquation[newEquation.Count - 2];
-
-									//change coeficient to positive, and operation to subtraction
-									if (previousOperation.GetOperation() == OperationEnum.Addition)
-									{
-										newEquation.RemoveRange(newEquation.Count - 2, 2);
-										newEquation.Add(new Operation(OperationEnum.Subtraction));
-
-										newEquation.Add(new Term(-newTerm.GetCoeficient(), 
-											newTerm.GetFunction(), newTerm.GetExponent()));
-									}
-
-									//change coeficient to positive, and operation to addition
-									if (previousOperation.GetOperation() == OperationEnum.Subtraction)
-									{
-										newEquation.RemoveRange(newEquation.Count - 2, 2);
-										newEquation.Add(new Operation(OperationEnum.Addition));
-
-										newEquation.Add(new Term(-newTerm.GetCoeficient(),
-											newTerm.GetFunction(), newTerm.GetExponent()));
-									}
-								}
-							}
+							FormatTerm(ref newTerm, ref newEquation);
 						}
 
 						if(differentialObject.GetType() == typeof(Operation))
@@ -142,10 +126,7 @@ namespace Maths_solver
 					}
 				}
 
-				if(Object.GetType() == typeof(Operation))
-				{
-					newEquation.Add(Object);
-				}
+				if(Object.GetType() == typeof(Operation)) newEquation.Add(Object);
 			}
 
 			return newEquation;
@@ -155,20 +136,29 @@ namespace Maths_solver
         {
             for (int i = 0; i < equation1.Count; i++)
             {
-                for (int j = 0; j < equation2.Count; j++)
-                {
-					if(equation1[i].GetType() == typeof(Term) && equation2[j].GetType() == typeof(Term))
-                    {
-						Term term1 = (Term)equation1[i];
-						Term term2 = (Term)equation2[j];
+				//check if terms equal
+				if (equation1[i].GetType() == typeof(Term) && equation2[i].GetType() == typeof(Term))
+				{
+					Term term1 = (Term)equation1[i];
+					Term term2 = (Term)equation2[i];
 
-						if (!TermsEqual(term1, term2, false))
-						{
-							return false;
-						}
-					}
-                }
-            }
+					if (!TermsEqual(term1, term2, false)) return false;
+				}
+
+				//check if operations equal
+				if (equation1[i].GetType() == typeof(Operation) &&
+				equation2[i].GetType() == typeof(Operation) &&
+				(Operation)equation1[i] != (Operation)equation2[i])
+				{
+					Operation term1 = (Operation)equation1[i];
+					Operation term2 = (Operation)equation2[i];
+
+					if (term1.GetOperation() != term2.GetOperation()) return false;
+				}
+
+				//check if same type
+				if (equation1[i].GetType() != equation2[i].GetType()) return false;
+			}
 
 			return true;
         }
@@ -178,32 +168,14 @@ namespace Maths_solver
 			//check if functions match
 			if(!areExponents && term1.GetFunction() == term2.GetFunction())
             {
-				//check if exponents match
-				if(term1.GetExponent() != null && term2.GetExponent() != null &&
-					term1.GetExponent().Count == 1 && term1.GetExponent().Count == 1 &&
-					term1.GetExponent()[0].GetType() == typeof(Term) &&
-					term1.GetExponent()[0].GetType() == typeof(Term))
-				{
-					Term term1Exponent = (Term)term1.GetExponent()[0];
-					Term term2Exponent = (Term)term2.GetExponent()[0];
+				if (term1.GetExponent() != null && term2.GetExponent() != null &&
+					EquationsEqual(term1.GetExponent(), term2.GetExponent())) return true;
 
-					if (TermsEqual(term1Exponent, term2Exponent, true))
-                    {
-						return true;
-                    }
-                }
-
-				if(term1.GetExponent() == null && term2.GetExponent() == null)
-                {
-					return true;
-                }
+				if (term1.GetExponent() == null && term2.GetExponent() == null) return true;
             }
 
 			if(areExponents && term1.GetFunction() == term2.GetFunction() &&
-				term1.GetCoeficient() == term2.GetCoeficient())
-            {
-				return true;
-            }
+				term1.GetCoeficient() == term2.GetCoeficient()) return true;
 
 			return false;
         }
@@ -215,27 +187,32 @@ namespace Maths_solver
 				if (item.GetType() == typeof(Term))
 				{
 					Term term = (Term)item;
-					Console.Write(FormatTerm(term));
+					Console.Write(TermStr(term));
 				}
 
 				if (item.GetType() == typeof(Operation))
 				{
 					Operation operation = (Operation)item;
-					Console.Write(FormatTerm(operation));
+					Console.Write(TermStr(operation));
 				}
 			}
 		}
 
-		private static string FormatTerm(Term term)
+		private static string TermStr(Term term)
 		{
 			string formatTerm = String.Empty;
 
+			//format coefficient
 			if (Math.Abs(term.GetCoeficient()) != 1) formatTerm += term.GetCoeficient();
 			else if (term.GetCoeficient() == -1) formatTerm += "-";
 
-			if (functions[term.GetFunction()]) formatTerm += $"{term.GetFunction()}({FormatTerm(term.GetInput())})";
+			//format input
+			if (functions[term.GetFunction()]) 
+				formatTerm += $"{term.GetFunction()}({TermStr(term.GetInput())})";
+
 			else formatTerm += term.GetFunction();
 
+			//format exponent
 			if (term.GetExponent().Count == 1 && term.GetExponent()[0].GetType() == typeof(Term))
 			{
 				Term termExponent = (Term)term.GetExponent()[0];
@@ -249,7 +226,7 @@ namespace Maths_solver
 			return formatTerm;
 		}
 
-		private static string FormatTerm(Operation operation)
+		private static string TermStr(Operation operation)
 		{
 			string formatTerm = String.Empty;
 
@@ -275,13 +252,44 @@ namespace Maths_solver
 			return formatTerm;
 		}
 
+		private static void FormatTerm(ref Term newTerm, ref List<EquationItem> newEquation)
+		{
+			//Checks if term is negative, and more than 2 items in the equation
+			if (newTerm.GetCoeficient() < 0 && newEquation.Count >= 2 && 
+				newEquation[newEquation.Count - 2].GetType() == typeof(Operation))
+			{
+				Operation previousOperation =
+							(Operation)newEquation[newEquation.Count - 2];
+
+				//change coeficient to positive, and operation to subtraction
+				if (previousOperation.GetOperation() == OperationEnum.Addition)
+				{
+					newEquation.RemoveRange(newEquation.Count - 2, 2);
+					newEquation.Add(new Operation(OperationEnum.Subtraction));
+
+					newEquation.Add(new Term(-newTerm.GetCoeficient(),
+						newTerm.GetFunction(), newTerm.GetExponent()));
+				}
+
+				//change coeficient to positive, and operation to addition
+				if (previousOperation.GetOperation() == OperationEnum.Subtraction)
+				{
+					newEquation.RemoveRange(newEquation.Count - 2, 2);
+					newEquation.Add(new Operation(OperationEnum.Addition));
+
+					newEquation.Add(new Term(-newTerm.GetCoeficient(),
+						newTerm.GetFunction(), newTerm.GetExponent()));
+				}
+			}
+		}
+
 		public static void Run()
 		{
 			Console.WriteLine("Origional equation: ");
 			DisplayEquation(test);
 
 			Console.WriteLine("\n\nNew equation:");
-            DisplayEquation(Differentiate(test));
+			DisplayEquation(Differentiate(test));
 		}
 	}
 }
