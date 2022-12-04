@@ -66,38 +66,7 @@ namespace Maths_solver
 			{new Term(1, Function.x, new List<EquationItem> { new Term(-1, Function.a) }) } },
 		};
 
-		static List<EquationItem> test = new List<EquationItem>()
-		{
-			new Term(2.6f, Function.cos, new List<EquationItem>{new Term(1, Function.a)}),
-			new Operation(OperationEnum.Subtraction),
-			new Term(3.14f, Function.sin, new List<EquationItem>{new Term(1, Function.a)}),
-			new Operation(OperationEnum.Addition),
-			new Term(3, Function.tan, new List<EquationItem>{new Term(1, Function.a)}),
-			new Operation(OperationEnum.Subtraction),
-			new Term(19, Function.cosec, new List<EquationItem>{new Term(1, Function.a)}),
-			new Operation(OperationEnum.Subtraction),
-			new Term(0.2f, Function.x, new List<EquationItem>{new Term(1.75f, Function.a)}),
-			new Operation(OperationEnum.Addition),
-			new Term(6.9f, Function.sec, new List<EquationItem>{new Term(1, Function.a)}),
-			new Operation(OperationEnum.Subtraction),
-			new Term(4.2f, Function.cot, new List<EquationItem>{new Term(1, Function.a)}),
-			new Operation(OperationEnum.Addition),
-			new Term(5.7f, Function.ln, new List<EquationItem>{new Term(1, Function.a)})
-		};
-
-		//3x^3 + 5sin(x^2)^2
-		static List<EquationItem> hard = new List<EquationItem>()
-		{
-			//3x^3
-			new Term(3, Function.x, new List<EquationItem>{new Term(3, Function.a)}),
-
-			new Operation(OperationEnum.Addition),
-
-			//5sin(x^2)^2
-			new Term(5, Function.sin, new Term(1, Function.x, new List<EquationItem>{new Term(2, Function.a)}) , new List<EquationItem>{new Term(2, Function.a)})
-		};
-
-		private static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
+		public static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
 		{
 			List<EquationItem> newEquation = new List<EquationItem>();
 
@@ -231,7 +200,7 @@ namespace Maths_solver
 			return true;
         }
 
-		public static bool TermsEqual(Term term1, Term term2, bool areExponents)
+		private static bool TermsEqual(Term term1, Term term2, bool areExponents)
         {
 			//check if functions match
 			if(!areExponents && term1.GetFunction() == term2.GetFunction())
@@ -247,78 +216,6 @@ namespace Maths_solver
 
 			return false;
         }
-
-		private static void DisplayEquation(List<EquationItem> equation)
-		{
-			foreach (EquationItem item in equation)
-			{
-				if (item.GetType() == typeof(Term))
-				{
-					Term term = (Term)item;
-					Console.Write(TermStr(term));
-				}
-
-				if (item.GetType() == typeof(Operation))
-				{
-					Operation operation = (Operation)item;
-					Console.Write(TermStr(operation));
-				}
-			}
-		}
-
-		private static string TermStr(Term term)
-		{
-			string formatTerm = String.Empty;
-
-			//format coefficient
-			if (Math.Abs(term.GetCoeficient()) != 1) formatTerm += term.GetCoeficient();
-			else if (term.GetCoeficient() == -1) formatTerm += "-";
-
-			//format input
-			if (functions[term.GetFunction()]) 
-				formatTerm += $"{term.GetFunction()}({TermStr(term.GetInput())})";
-
-			else formatTerm += term.GetFunction();
-
-			//format exponent
-			if (term.GetExponent().Count == 1 && term.GetExponent()[0].GetType() == typeof(Term))
-			{
-				Term termExponent = (Term)term.GetExponent()[0];
-
-				if (termExponent.GetCoeficient() != 1)
-				{
-					formatTerm += $"^{termExponent.GetCoeficient()}";
-				}
-			}
-
-			return formatTerm;
-		}
-
-		private static string TermStr(Operation operation)
-		{
-			string formatTerm = String.Empty;
-
-			switch(operation.GetOperation())
-			{
-				case OperationEnum.Addition:
-					formatTerm = " + ";
-					break;
-
-				case OperationEnum.Subtraction:
-					formatTerm = " - ";
-					break;
-
-				case OperationEnum.Multiplication:
-					formatTerm = String.Empty;
-					break;
-
-				case OperationEnum.Division:
-					formatTerm = " / ";
-					break;
-			}
-
-			return formatTerm;
-		}
 
 		private static void FormatTerm(Term newTerm, ref List<EquationItem> newEquation)
 		{
@@ -349,17 +246,6 @@ namespace Maths_solver
 						newTerm.GetFunction(), newTerm.GetExponent()));
 				}
 			}
-		}
-
-		public static void Run()
-		{
-			List<EquationItem> equation = test;
-
-			Console.WriteLine("Origional equation: ");
-			DisplayEquation(equation);
-
-			Console.WriteLine("\n\nNew equation:");
-			DisplayEquation(DifferentiateEquation(equation));
 		}
 	}
 }
