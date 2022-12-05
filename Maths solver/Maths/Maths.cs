@@ -66,6 +66,12 @@ namespace Maths_solver
 			{new Term(1, Function.x, new List<EquationItem> { new Term(-1, Function.a) }) } },
 		};
 
+		public static Dictionary<char, OperationEnum> operations = 
+			new Dictionary<char, OperationEnum>
+		{   {'+', OperationEnum.Addition},
+			{'-', OperationEnum.Subtraction},
+			{'/', OperationEnum.Division} };
+
 		public static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
 		{
 			List<EquationItem> newEquation = new List<EquationItem>();

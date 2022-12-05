@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
@@ -25,27 +26,6 @@ namespace Maths_solver
 		{
 			InitializeComponent();
 
-			List<EquationItem> test = new List<EquationItem>()
-			{
-				new Term(2.6f, Function.cos, new List<EquationItem>{new Term(1, Function.a)}),
-				new Operation(OperationEnum.Subtraction),
-				new Term(3.14f, Function.sin, new List<EquationItem>{new Term(1, Function.a)}),
-				new Operation(OperationEnum.Addition),
-				new Term(3, Function.tan, new List<EquationItem>{new Term(1, Function.a)}),
-				new Operation(OperationEnum.Subtraction),
-				new Term(19, Function.cosec, new List<EquationItem>{new Term(1, Function.a)}),
-				new Operation(OperationEnum.Subtraction),
-				new Term(0.2f, Function.x, new List<EquationItem>{new Term(-1.75f, Function.a)}),
-				new Operation(OperationEnum.Addition),
-				new Term(6.9f, Function.sec, new List<EquationItem>{new Term(1, Function.a)}),
-				new Operation(OperationEnum.Subtraction),
-				new Term(4.2f, Function.cot, new List<EquationItem>{new Term(1, Function.a)}),
-				new Operation(OperationEnum.Addition),
-				new Term(5.7f, Function.ln, new List<EquationItem>{new Term(1, Function.a)})
-			};
-
-			InputBox.Text = EquationStr(test);
-			OutputBox.Text = EquationStr(Maths.DifferentiateEquation(test));
 		}
 
 		private static string EquationStr(List<EquationItem> equation)
@@ -127,6 +107,89 @@ namespace Maths_solver
 			}
 
 			return formatTerm;
+		}
+
+		private static List<EquationItem> stringToEquation(string input)
+		{
+			List<EquationItem> equation = new List<EquationItem>();
+
+			float coefficient = 1;
+			Function function = Function.NONE;
+			Term funcInput = null;
+
+			string part = String.Empty;
+			for (int i = 0; i < input.Length; i++)
+			{
+				if (input[i] == ' ') continue;
+
+				//find coefficient
+				if (int.TryParse(part, out int _coefficient) &&
+					!int.TryParse(input[i].ToString(), out int _))
+				{
+					coefficient = _coefficient;
+					part = String.Empty;
+				}
+
+				//seperate into seperate parts
+				switch (input[i])
+				{
+					//find function
+					case '(':
+						if (Enum.TryParse(part, out Function f)) function = f;
+						part = String.Empty;
+						break;
+
+					//find input
+					case ')':
+						funcInput = stringToTerm(part, 1);
+						part = String.Empty;
+						break;
+
+					default:
+						part += input[i];
+						break;
+				}
+
+				
+
+				//if operation, new term
+				if (Maths.operations.ContainsKey(input[i]))
+				{
+					coefficient = 1;
+					function = Function.NONE;
+					funcInput = null;
+					part = String.Empty;
+
+					equation.Add(new Operation(Maths.operations[input[i]]));
+				}
+
+				if (function != Function.NONE && funcInput != null)
+				{
+					equation.Add(new Term(coefficient, function, funcInput,
+						new List<EquationItem> { new Term(1, Function.a)}));
+				}
+			}
+
+			return equation;
+		}
+
+		private static Term stringToTerm(string part, float coefficient)
+		{
+			if (!Enum.TryParse(part, out Function function)) return null;
+
+			return new Term(coefficient, function, new List<EquationItem> { new Term(1, Function.a) });
+		}
+
+		private void InputBox_TextChanged(object sender, EventArgs e)
+		{
+			RichTextBox senderBox = sender as RichTextBox;
+			//OutputBox.Text = senderBox.Text;
+		}
+
+		private void DifferentaiteButton_Click(object sender, EventArgs e)
+		{
+			OutputBox.Text = 
+				EquationStr(Maths.DifferentiateEquation((stringToEquation(InputBox.Text))));
 		}
 	}
 }

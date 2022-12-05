@@ -17,7 +17,8 @@ namespace Maths_solver
 			x,
 			arcsin,
 			arccos,
-			arctan
+			arctan,
+			NONE
 		}
 
 		//Dictionary of function names, and if they require an input
