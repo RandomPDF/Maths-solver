@@ -22,6 +22,8 @@ namespace Maths_solver
 			{'6', (char)0X2076}, {'7', (char)0X2077}, {'8', (char)0X2078}, {'9', (char)0X2079}
 		};
 
+		private bool isSuperscript = false;
+
 		public Main()
 		{
 			InitializeComponent();
@@ -122,35 +124,15 @@ namespace Maths_solver
 			{
 				if (input[i] == ' ') continue;
 
-				//find coefficient
-				if (int.TryParse(part, out int _coefficient) &&
-					!int.TryParse(input[i].ToString(), out int _))
-				{
-					coefficient = _coefficient;
-					part = String.Empty;
-				}
+				FindCoefficient(ref part, input, i, ref coefficient);
 
-				//seperate into seperate parts
-				switch (input[i])
-				{
-					//find function
-					case '(':
-						if (Enum.TryParse(part, out Function f)) function = f;
-						part = String.Empty;
-						break;
+				bool superscript = IsSuperscript(input, i);
 
-					//find input
-					case ')':
-						funcInput = stringToTerm(part, 1);
-						part = String.Empty;
-						break;
+				SeparateString(input, i, ref part, ref funcInput);
 
-					default:
-						part += input[i];
-						break;
-				}
+				FindFunction(input, i, superscript, ref function, ref part);
 
-				
+				//continue separating code into functions...
 
 				//if operation, new term
 				if (Maths.operations.ContainsKey(input[i]))
@@ -163,14 +145,83 @@ namespace Maths_solver
 					equation.Add(new Operation(Maths.operations[input[i]]));
 				}
 
-				if (function != Function.NONE && funcInput != null)
+				if (function != Function.NONE)
 				{
-					equation.Add(new Term(coefficient, function, funcInput,
-						new List<EquationItem> { new Term(1, Function.a)}));
+					//if has input and requires input
+					if(funcInput != null && functions[function])
+                    {
+						equation.Add(new Term(coefficient, function, funcInput,
+						new List<EquationItem> { new Term(1, Function.a) }));
+					}
+
+					//if has no input but doesnt require input
+					if (funcInput == null && !functions[function])
+                    {
+						equation.Add(new Term(coefficient, function,
+						new List<EquationItem> { new Term(1, Function.a) }));
+					}
 				}
+				
 			}
 
 			return equation;
+		}
+
+		private static void FindCoefficient(ref string part, string input, int i, ref float coefficient)
+        {
+			if (int.TryParse(part, out int _coefficient) &&
+				!int.TryParse(input[i].ToString(), out int _))
+			{
+				coefficient = _coefficient;
+				part = String.Empty;
+			}
+		}
+
+		private static bool IsSuperscript(string input, int i)
+        {
+			bool superscript = false;
+			char[] superscriptValues = Superscript.Values.ToArray();
+
+			for (int x = 0; x < superscriptValues.Length; x++)
+			{
+				if (input[i] == superscriptValues[x])
+				{
+					superscript = true;
+					break;
+				}
+			}
+
+			return superscript;
+		}
+
+		private static void SeparateString(string input, int i, ref string part, ref Term funcInput)
+        {
+			switch (input[i])
+			{
+				//find input
+				case ')':
+					funcInput = stringToTerm(part, 1);
+					part = String.Empty;
+					break;
+
+				default:
+					part += input[i];
+					break;
+			}
+		}
+
+		private static void FindFunction(string input, int i, bool superscript, ref Function function, ref string part)
+        {
+			if (input[i] == '(' || superscript)
+			{
+				if (function == Function.NONE &&
+					Enum.TryParse(part.Substring(0, part.Length - 1), out Function f))
+				{
+					function = f;
+				}
+
+				part = String.Empty;
+			}
 		}
 
 		private static Term stringToTerm(string part, float coefficient)
@@ -183,7 +234,27 @@ namespace Maths_solver
 		private void InputBox_TextChanged(object sender, EventArgs e)
 		{
 			RichTextBox senderBox = sender as RichTextBox;
-			//OutputBox.Text = senderBox.Text;
+
+			string input = senderBox.Text;
+
+			if (input[input.Length - 1] == '^')
+			{
+				isSuperscript = !isSuperscript;
+
+				UpdateBox(senderBox, input.Remove(input.Length - 1));
+			}
+			else if (isSuperscript)
+			{
+				UpdateBox(senderBox, input.Substring(0,
+					input.Length - 1) + Superscript[input[input.Length - 1]]);
+			}
+		}
+
+		private void UpdateBox(RichTextBox box, string text)
+        {
+			box.Text = text;
+			box.SelectionStart = text.Length;
+			box.SelectionLength = 0;
 		}
 
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
