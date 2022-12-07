@@ -115,9 +115,12 @@ namespace Maths_solver
 		{
 			List<EquationItem> equation = new List<EquationItem>();
 
+			bool foundExponent = false;
+
 			float coefficient = 1;
 			Function function = Function.NONE;
 			Term funcInput = null;
+			float exponent = 1;
 
 			string part = String.Empty;
 			for (int i = 0; i < input.Length; i++)
@@ -126,13 +129,11 @@ namespace Maths_solver
 
 				FindCoefficient(ref part, input, i, ref coefficient);
 
-				bool superscript = IsSuperscript(input, i);
-
 				SeparateString(input, i, ref part, ref funcInput);
 
-				FindFunction(input, i, superscript, ref function, ref part);
+				FindFunction(input, i, ref function, ref part);
 
-				//continue separating code into functions...
+				FindExponent(part, i , input, ref foundExponent, ref exponent);
 
 				//if operation, new term
 				if (Maths.operations.ContainsKey(input[i]))
@@ -140,27 +141,13 @@ namespace Maths_solver
 					coefficient = 1;
 					function = Function.NONE;
 					funcInput = null;
+					exponent = 1;
 					part = String.Empty;
 
 					equation.Add(new Operation(Maths.operations[input[i]]));
 				}
 
-				if (function != Function.NONE)
-				{
-					//if has input and requires input
-					if(funcInput != null && functions[function])
-                    {
-						equation.Add(new Term(coefficient, function, funcInput,
-						new List<EquationItem> { new Term(1, Function.a) }));
-					}
-
-					//if has no input but doesnt require input
-					if (funcInput == null && !functions[function])
-                    {
-						equation.Add(new Term(coefficient, function,
-						new List<EquationItem> { new Term(1, Function.a) }));
-					}
-				}
+				CreateEquation(function, coefficient, funcInput, exponent, foundExponent, ref equation);
 				
 			}
 
@@ -177,7 +164,7 @@ namespace Maths_solver
 			}
 		}
 
-		private static bool IsSuperscript(string input, int i)
+		private static bool IsSuperscript(string input, int i, ref char character)
         {
 			bool superscript = false;
 			char[] superscriptValues = Superscript.Values.ToArray();
@@ -186,6 +173,7 @@ namespace Maths_solver
 			{
 				if (input[i] == superscriptValues[x])
 				{
+					character = Superscript.Keys.ToArray()[x];
 					superscript = true;
 					break;
 				}
@@ -210,9 +198,20 @@ namespace Maths_solver
 			}
 		}
 
-		private static void FindFunction(string input, int i, bool superscript, ref Function function, ref string part)
+		private static void FindFunction(string input, int i, ref Function function, ref string part)
         {
-			if (input[i] == '(' || superscript)
+			char _ = default;
+			if (IsSuperscript(input, i, ref _))
+			{
+				if (function == Function.NONE &&
+					Enum.TryParse(part.Substring(0, part.Length - 1), out Function f))
+				{
+					function = f;
+				}
+
+				part = part[part.Length - 1].ToString();
+			}
+			else if(input[i] == '(')
 			{
 				if (function == Function.NONE &&
 					Enum.TryParse(part.Substring(0, part.Length - 1), out Function f))
@@ -221,6 +220,47 @@ namespace Maths_solver
 				}
 
 				part = String.Empty;
+			}
+		}
+
+		private static void FindExponent(string part, int x, string input, ref bool foundExponent, ref float exponent)
+		{
+			string exponentStr = String.Empty;
+			for (int i = 0; i < part.Length; i++)
+			{
+				char character = default;
+				if (IsSuperscript(part, i, ref character))
+				{
+					exponentStr += character;
+				}
+			}
+
+			//all characters exponents
+			if(exponentStr.Length == part.Length && int.TryParse(exponentStr, out int _exponent))
+			{
+				exponent = _exponent;
+				foundExponent = true;
+			}
+		}
+
+		private static void CreateEquation(Function function, float coefficient, Term funcInput, float exponent, bool foundExponent,
+			ref List<EquationItem> equation)
+		{
+			if (function != Function.NONE)
+			{
+				//if has input and requires input
+				if (funcInput != null && functions[function])
+				{
+					equation.Add(new Term(coefficient, function, funcInput,
+					new List<EquationItem> { new Term(exponent, Function.a) }));
+				}
+
+				//if has no input but doesnt require input
+				if (funcInput == null && !functions[function] && foundExponent)
+				{
+					equation.Add(new Term(coefficient, function,
+					new List<EquationItem> { new Term(exponent, Function.a) }));
+				}
 			}
 		}
 
@@ -237,7 +277,7 @@ namespace Maths_solver
 
 			string input = senderBox.Text;
 
-			if (input[input.Length - 1] == '^')
+			if (input.Length != 0 && input[input.Length - 1] == '^')
 			{
 				isSuperscript = !isSuperscript;
 
@@ -245,8 +285,12 @@ namespace Maths_solver
 			}
 			else if (isSuperscript)
 			{
-				UpdateBox(senderBox, input.Substring(0,
+				if(Superscript.ContainsKey(input[input.Length - 1]))
+				{
+					UpdateBox(senderBox, input.Substring(0,
 					input.Length - 1) + Superscript[input[input.Length - 1]]);
+				}
+				else isSuperscript = false;
 			}
 		}
 
