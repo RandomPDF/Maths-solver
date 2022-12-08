@@ -60,6 +60,14 @@ namespace Maths_solver
 			if (Math.Abs(term.GetCoeficient()) != 1) formatTerm += term.GetCoeficient();
 			else if (term.GetCoeficient() == -1) formatTerm += "-";
 
+			//check if exponent 0
+			if (term.GetExponent().Count == 1 && term.GetExponent()[0].GetType() == typeof(Term))
+			{
+				Term termExponent = (Term)term.GetExponent()[0];
+
+				if (termExponent.GetCoeficient() == 0) return formatTerm;
+			}
+
 			//format function
 			if (functions[term.GetFunction()]) formatTerm += term.GetFunction();
 
@@ -129,9 +137,9 @@ namespace Maths_solver
 
 				FindCoefficient(ref part, input, i, ref coefficient);
 
-				SeparateString(input, i, ref part, ref funcInput);
-
 				FindFunction(input, i, ref function, ref part);
+
+				SeparateString(input, i, ref part, ref funcInput);
 
 				FindExponent(part, i , input, ref foundExponent, ref exponent);
 
@@ -204,15 +212,13 @@ namespace Maths_solver
 			if (IsSuperscript(input, i, ref _))
 			{
 				if (function == Function.NONE &&
-					Enum.TryParse(part.Substring(0, part.Length - 1), out Function f))
+					Enum.TryParse(part, out Function f))
 				{
 					function = f;
-					part = part[part.Length - 1].ToString();
+					part = String.Empty;
 				}
-
-				
 			}
-			else if(input[i] == '(')
+			else if (input[i] == '(')
 			{
 				if (function == Function.NONE &&
 					Enum.TryParse(part.Substring(0, part.Length - 1), out Function f))
@@ -220,8 +226,16 @@ namespace Maths_solver
 					function = f;
 					part = String.Empty;
 				}
-
-				
+			}
+			else if (i + 1 == input.Length || (i + 1 <= input.Length && input[i + 1] == ' ') ||
+				(i + 1 <= input.Length && Maths.operations.ContainsKey(input[i + 1])))
+            {
+				if (function == Function.NONE &&
+					Enum.TryParse(input[i + 1].ToString(), out Function f))
+				{
+					function = f;
+					part = String.Empty;
+				}
 			}
 		}
 
@@ -249,6 +263,8 @@ namespace Maths_solver
 					foundExponent = true;
 				}
 			}
+
+			if (x == input.Length - 1) foundExponent = true;
 		}
 
 		private static void CreateEquation(Function function, float coefficient, Term funcInput, float exponent, bool foundExponent,

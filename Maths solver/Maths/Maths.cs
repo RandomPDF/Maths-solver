@@ -234,7 +234,7 @@ namespace Maths_solver
 		private static void FormatEquation(ref List<EquationItem> equation)
         {
 			//if first term is addition
-			if (equation[0].GetType() == typeof(Operation) &&
+			if (equation.Count > 0 && equation[0].GetType() == typeof(Operation) &&
 				((Operation)equation[0]).GetOperation() == OperationEnum.Addition)
 			{
 				equation.RemoveAt(0);
