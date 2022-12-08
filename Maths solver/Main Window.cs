@@ -207,9 +207,10 @@ namespace Maths_solver
 					Enum.TryParse(part.Substring(0, part.Length - 1), out Function f))
 				{
 					function = f;
+					part = part[part.Length - 1].ToString();
 				}
 
-				part = part[part.Length - 1].ToString();
+				
 			}
 			else if(input[i] == '(')
 			{
@@ -217,36 +218,45 @@ namespace Maths_solver
 					Enum.TryParse(part.Substring(0, part.Length - 1), out Function f))
 				{
 					function = f;
+					part = String.Empty;
 				}
 
-				part = String.Empty;
+				
 			}
 		}
 
 		private static void FindExponent(string part, int x, string input, ref bool foundExponent, ref float exponent)
 		{
-			string exponentStr = String.Empty;
-			for (int i = 0; i < part.Length; i++)
+			char _ = default;
+			//if at end of string
+			if (x + 1 >= input.Length ||
+				(x + 1 < input.Length && !IsSuperscript(input, x + 1, ref _)))
 			{
-				char character = default;
-				if (IsSuperscript(part, i, ref character))
+				string exponentStr = String.Empty;
+				for (int i = 0; i < part.Length; i++)
 				{
-					exponentStr += character;
+					char character = default;
+					if (IsSuperscript(part, i, ref character))
+					{
+						exponentStr += character;
+					}
 				}
-			}
 
-			//all characters exponents
-			if(exponentStr.Length == part.Length && int.TryParse(exponentStr, out int _exponent))
-			{
-				exponent = _exponent;
-				foundExponent = true;
+				//all characters exponents
+				if (exponentStr.Length == part.Length && int.TryParse(exponentStr, out int _exponent))
+				{
+					exponent = _exponent;
+					foundExponent = true;
+				}
 			}
 		}
 
 		private static void CreateEquation(Function function, float coefficient, Term funcInput, float exponent, bool foundExponent,
 			ref List<EquationItem> equation)
 		{
-			if (function != Function.NONE)
+			//???????????????????????????
+			//try to make it ignore term with 0 coefficient
+			if (function != Function.NONE && coefficient != 0)
 			{
 				//if has input and requires input
 				if (funcInput != null && functions[function])
