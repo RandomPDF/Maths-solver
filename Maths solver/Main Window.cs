@@ -254,9 +254,7 @@ namespace Maths_solver
 		private static void CreateEquation(Function function, float coefficient, Term funcInput, float exponent, bool foundExponent,
 			ref List<EquationItem> equation)
 		{
-			//???????????????????????????
-			//try to make it ignore term with 0 coefficient
-			if (function != Function.NONE && coefficient != 0)
+			if (function != Function.NONE)
 			{
 				//if has input and requires input
 				if (funcInput != null && functions[function])

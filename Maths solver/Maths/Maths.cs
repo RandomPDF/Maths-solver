@@ -109,6 +109,8 @@ namespace Maths_solver
 				if(Object.GetType() == typeof(Operation)) newEquation.Add(Object);
 			}
 
+			FormatEquation(ref newEquation);
+
 			return newEquation;
 		}
 
@@ -141,9 +143,8 @@ namespace Maths_solver
 								differentialTerm.GetExponent());
 						}
 
-						newEquation.Add(newTerm);
+						AddTerm(newTerm, ref newEquation);
 
-						FormatTerm(newTerm, ref newEquation);
 					}
 
 					if (differentialObject.GetType() == typeof(Operation))
@@ -168,7 +169,14 @@ namespace Maths_solver
 				newTerm = new Term(term.GetCoeficient() * exponent.GetCoeficient(), Function.x,
 						new List<EquationItem> { new Term(exponent.GetCoeficient() - 1, Function.a) });
 
+				AddTerm(newTerm, ref newEquation);
+			}
+		}
 
+		private static void AddTerm(Term newTerm, ref List<EquationItem> newEquation)
+        {
+			if (newTerm.GetCoeficient() != 0)
+			{
 				newEquation.Add(newTerm);
 
 				FormatTerm(newTerm, ref newEquation);
@@ -222,6 +230,16 @@ namespace Maths_solver
 
 			return false;
         }
+
+		private static void FormatEquation(ref List<EquationItem> equation)
+        {
+			//if first term is addition
+			if (equation[0].GetType() == typeof(Operation) &&
+				((Operation)equation[0]).GetOperation() == OperationEnum.Addition)
+			{
+				equation.RemoveAt(0);
+			}
+		}
 
 		private static void FormatTerm(Term newTerm, ref List<EquationItem> newEquation)
 		{
