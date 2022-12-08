@@ -27,7 +27,6 @@ namespace Maths_solver
 		public Main()
 		{
 			InitializeComponent();
-
 		}
 
 		private static string EquationStr(List<EquationItem> equation)
@@ -65,7 +64,7 @@ namespace Maths_solver
 			{
 				Term termExponent = (Term)term.GetExponent()[0];
 
-				if (termExponent.GetCoeficient() == 0) return formatTerm;
+				if (termExponent.GetCoeficient() == 0) return term.GetCoeficient().ToString();
 			}
 
 			//format function
@@ -137,9 +136,10 @@ namespace Maths_solver
 
 				FindCoefficient(ref part, input, i, ref coefficient);
 
-				FindFunction(input, i, ref function, ref part);
-
 				SeparateString(input, i, ref part, ref funcInput);
+
+				//must be after separate string
+				FindFunction(input, i, ref function, ref part);
 
 				FindExponent(part, i , input, ref foundExponent, ref exponent);
 
@@ -212,10 +212,10 @@ namespace Maths_solver
 			if (IsSuperscript(input, i, ref _))
 			{
 				if (function == Function.NONE &&
-					Enum.TryParse(part, out Function f))
+					Enum.TryParse(part.Substring(0, part.Length - 1), out Function f))
 				{
 					function = f;
-					part = String.Empty;
+					part = part[part.Length - 1].ToString();
 				}
 			}
 			else if (input[i] == '(')
@@ -227,8 +227,8 @@ namespace Maths_solver
 					part = String.Empty;
 				}
 			}
-			else if (i + 1 == input.Length || (i + 1 <= input.Length && input[i + 1] == ' ') ||
-				(i + 1 <= input.Length && Maths.operations.ContainsKey(input[i + 1])))
+			else if (i + 1 == input.Length || (i + 1 < input.Length && input[i + 1] == ' ') ||
+				(i + 1 < input.Length && Maths.operations.ContainsKey(input[i + 1])))
             {
 				if (function == Function.NONE &&
 					Enum.TryParse(input[i + 1].ToString(), out Function f))
