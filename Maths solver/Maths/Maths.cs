@@ -60,6 +60,52 @@ namespace Maths_solver
 
 
 			{new List<EquationItem>()
+			{new Term(1, Function.sinh, new List<EquationItem> {new Term(1, Function.a)}) },
+
+			new List<EquationItem>()
+			{new Term(1, Function.cosh, new List<EquationItem> { new Term(1, Function.a) } ) } },
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.cosh, new List<EquationItem> {new Term(1, Function.a)}) },
+
+			new List<EquationItem>()
+			{new Term(1, Function.sinh, new List<EquationItem> { new Term(1, Function.a) } ) } },
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.tanh, new List<EquationItem> {new Term(1, Function.a)}) },
+
+			new List<EquationItem>()
+			{new Term(1, Function.sech, new List<EquationItem> { new Term(2, Function.a) } ) } },
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.cosech, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(-1, Function.cosech, new List<EquationItem>{new Term(1, Function.a)}),
+			new Operation(OperationEnum.Multiplication),
+			new Term(1, Function.coth, new List<EquationItem>{new Term(1, Function.a)})}},
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.sech, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(-1, Function.sech, new List<EquationItem>{new Term(1, Function.a)}),
+			new Operation(OperationEnum.Multiplication),
+			new Term(1, Function.tanh, new List<EquationItem>{new Term(1, Function.a)})}},
+
+
+			{new List<EquationItem>()
+			{new Term(1, Function.coth, new List<EquationItem> { new Term(1, Function.a) }) },
+
+			new List<EquationItem>()
+			{new Term(-1, Function.cosech, new List<EquationItem> { new Term(2, Function.a) }) } },
+
+
+			{new List<EquationItem>()
 			{new Term(1, Function.ln, new List<EquationItem> { new Term(1, Function.a) }) },
 
 			new List<EquationItem>()
