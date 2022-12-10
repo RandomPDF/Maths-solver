@@ -8,10 +8,10 @@ namespace Maths_solver
 {
 	public class Term : Functions, EquationItem
 	{
-		private Function function;
-		private float coeficient;
-		private Term input;
-		private List<EquationItem> exponent;
+		public Function function { get; }
+		public float coeficient { get; }
+		public Term input { get; }
+		public List<EquationItem> exponent { get; }
 
 		public Term(float coeficient, Function function, Term input, List<EquationItem> exponent)
 		{
@@ -42,7 +42,7 @@ namespace Maths_solver
 			else
 			{
 				//if function requires an input
-				input = new Term(1, Function.x, new List<EquationItem> { new Term(1, Function.a)});
+				input = new Term(1, Function.x, new List<EquationItem> { new Term(1, Function.constant)});
             }
 		}
 
@@ -51,7 +51,7 @@ namespace Maths_solver
 			this.coeficient = coeficient;
 			this.function = function;
 
-			if (function == Function.a)
+			if (function == Function.constant)
 			{
 				this.exponent = null;
 			}
@@ -60,10 +60,5 @@ namespace Maths_solver
 				throw new Exception($"The function {function.ToString()} must have an exponent and input.");
 			}
         }
-
-		public Function GetFunction() { return function; }
-		public float GetCoeficient() { return coeficient; }
-		public Term GetInput() { return input; }
-		public List<EquationItem> GetExponent() { return exponent; }
 	}
 }

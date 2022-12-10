@@ -10,13 +10,11 @@
 
 	public class Operation : EquationItem
 	{
-		private OperationEnum operation;
+		public OperationEnum operation { get; }
 
 		public Operation(OperationEnum operation)
 		{
 			this.operation = operation;
 		}
-
-		public OperationEnum GetOperation() { return operation; }
 	}
 }

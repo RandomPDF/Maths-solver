@@ -19,7 +19,7 @@ namespace Maths_solver
 			sec,
 			cot,
 			ln,
-			a,
+			constant,
 			x,
 			arcsin,
 			arccos,
@@ -47,7 +47,7 @@ namespace Maths_solver
 			{Function.arctan, true},
 			{Function.ln, true},
 
-			{Function.a, false},
+			{Function.constant, false},
 			{Function.x, false}
 		};
 	}

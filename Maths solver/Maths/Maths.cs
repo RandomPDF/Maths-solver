@@ -10,106 +10,67 @@ namespace Maths_solver
 {
 	internal class Maths : Functions
 	{
-		public static Dictionary<List<EquationItem>, List<EquationItem>> Differentials = 
-			new Dictionary<List<EquationItem>, List<EquationItem>>()
+		public static Dictionary<Function, List<EquationItem>> Differentials = 
+			new Dictionary<Function, List<EquationItem>>()
 		{
-			{new List<EquationItem>()
-			{new Term(1, Function.sin, new List<EquationItem> {new Term(1, Function.a)}) },
-
-			new List<EquationItem>()
-			{new Term(1, Function.cos, new List<EquationItem> { new Term(1, Function.a) } ) } },
+			{Function.sin, new List<EquationItem>()
+			{new Term(1, Function.cos, new List<EquationItem> { new Term(1, Function.constant) } ) } },
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.cos, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(-1, Function.sin, new List<EquationItem> { new Term(1, Function.a) }) } },
+			{Function.cos, new List<EquationItem>()
+			{new Term(-1, Function.sin, new List<EquationItem> { new Term(1, Function.constant) }) } },
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.tan, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(1, Function.sec, new List<EquationItem> { new Term(2, Function.a) }) } },
+			{Function.tan, new List<EquationItem>()
+			{new Term(1, Function.sec, new List<EquationItem> { new Term(2, Function.constant) }) } },
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.cosec, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(-1, Function.cosec, new List<EquationItem>{new Term(1, Function.a)}),
+			{Function.cosec, new List<EquationItem>()
+			{new Term(-1, Function.cosec, new List<EquationItem>{new Term(1, Function.constant)}),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.cot, new List<EquationItem>{new Term(1, Function.a)})}},
+			new Term(1, Function.cot, new List<EquationItem>{new Term(1, Function.constant)})}},
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.sec, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(1, Function.sec, new List<EquationItem>{new Term(1, Function.a)}),
+			{Function.sec, new List<EquationItem>()
+			{new Term(1, Function.sec, new List<EquationItem>{new Term(1, Function.constant)}),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.tan, new List<EquationItem>{new Term(1, Function.a)})}},
+			new Term(1, Function.tan, new List<EquationItem>{new Term(1, Function.constant)})}},
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.cot, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(-1, Function.cosec, new List<EquationItem> { new Term(2, Function.a) }) } },
+			{Function.cot, new List<EquationItem>()
+			{new Term(-1, Function.cosec, new List<EquationItem> { new Term(2, Function.constant) }) } },
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.sinh, new List<EquationItem> {new Term(1, Function.a)}) },
-
-			new List<EquationItem>()
-			{new Term(1, Function.cosh, new List<EquationItem> { new Term(1, Function.a) } ) } },
+			{Function.sinh, new List<EquationItem>()
+			{new Term(1, Function.cosh, new List<EquationItem> { new Term(1, Function.constant) } ) } },
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.cosh, new List<EquationItem> {new Term(1, Function.a)}) },
-
-			new List<EquationItem>()
-			{new Term(1, Function.sinh, new List<EquationItem> { new Term(1, Function.a) } ) } },
+			{Function.cosh, new List<EquationItem>()
+			{new Term(1, Function.sinh, new List<EquationItem> { new Term(1, Function.constant) } ) } },
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.tanh, new List<EquationItem> {new Term(1, Function.a)}) },
-
-			new List<EquationItem>()
-			{new Term(1, Function.sech, new List<EquationItem> { new Term(2, Function.a) } ) } },
+			{Function.tanh, new List<EquationItem>()
+			{new Term(1, Function.sech, new List<EquationItem> { new Term(2, Function.constant) } ) } },
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.cosech, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(-1, Function.cosech, new List<EquationItem>{new Term(1, Function.a)}),
+			{Function.cosech, new List<EquationItem>()
+			{new Term(-1, Function.cosech, new List<EquationItem>{new Term(1, Function.constant)}),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.coth, new List<EquationItem>{new Term(1, Function.a)})}},
+			new Term(1, Function.coth, new List<EquationItem>{new Term(1, Function.constant)})}},
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.sech, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(-1, Function.sech, new List<EquationItem>{new Term(1, Function.a)}),
+			{Function.sech, new List<EquationItem>()
+			{new Term(-1, Function.sech, new List<EquationItem>{new Term(1, Function.constant)}),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.tanh, new List<EquationItem>{new Term(1, Function.a)})}},
+			new Term(1, Function.tanh, new List<EquationItem>{new Term(1, Function.constant)})}},
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.coth, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(-1, Function.cosech, new List<EquationItem> { new Term(2, Function.a) }) } },
+			{Function.coth, new List<EquationItem>()
+			{new Term(-1, Function.cosech, new List<EquationItem> { new Term(2, Function.constant) }) } },
 
 
-			{new List<EquationItem>()
-			{new Term(1, Function.ln, new List<EquationItem> { new Term(1, Function.a) }) },
-
-			new List<EquationItem>()
-			{new Term(1, Function.x, new List<EquationItem> { new Term(-1, Function.a) }) } },
+			{Function.ln, new List<EquationItem>()
+			{new Term(1, Function.x, new List<EquationItem> { new Term(-1, Function.constant) }) } },
 		};
 
 		public static Dictionary<char, OperationEnum> operations = 
@@ -130,23 +91,10 @@ namespace Maths_solver
 					Term term = (Term)Object;
 					List<EquationItem> differential = new List<EquationItem>();
 
-					if (term.GetFunction() != Function.x)
+					//find differential by function
+					if (Differentials.ContainsKey(term.function))
 					{
-						//finds correct key value pair
-						foreach (List<EquationItem> key in Differentials.Keys.ToArray())
-						{
-							//get each term in differential
-							foreach (EquationItem keyObject in key)
-							{
-								//should be no operations in key
-								if (keyObject.GetType() != typeof(Term)) continue;
-
-								Term keyTerm = (Term)keyObject;
-
-								//check if correct key and return correct value
-								if (TermsEqual(term, keyTerm, false)) differential = Differentials[key];
-							}
-						}
+						differential = Differentials[term.function];
 					}
 
 					DifferentiateTerm(differential, term, ref newEquation);
@@ -165,9 +113,7 @@ namespace Maths_solver
 		{
 			Term newTerm = default;
 
-			//if differentiating x
-			if (term.GetFunction() == Function.x) DifferentiateX(term, ref newTerm, ref newEquation);
-			else
+			if (Differentials.ContainsKey(term.function))
 			{
 				//for each term in the correct differential
 				foreach (EquationItem differentialObject in differential)
@@ -177,16 +123,16 @@ namespace Maths_solver
 						Term differentialTerm = (Term)differentialObject;
 						newTerm = default;
 
-						//if first term, add coefficient (change later)
+						//if first term, add coefficient (all operatins in value are Multiplication
 						if (differentialObject == differential[0])
 						{
-							newTerm = new Term(term.GetCoeficient() * differentialTerm.GetCoeficient(),
-								differentialTerm.GetFunction(), differentialTerm.GetExponent());
+							newTerm = new Term(term.coeficient * differentialTerm.coeficient,
+								differentialTerm.function, differentialTerm.exponent);
 						}
 						else
 						{
-							newTerm = new Term(1, differentialTerm.GetFunction(),
-								differentialTerm.GetExponent());
+							newTerm = new Term(1, differentialTerm.function,
+								differentialTerm.exponent);
 						}
 
 						AddTerm(newTerm, ref newEquation);
@@ -199,21 +145,28 @@ namespace Maths_solver
 					}
 				}
 			}
+			else
+			{
+				switch(term.function)
+				{
+					case Function.x:
+						DifferentiateX(term, ref newTerm, ref newEquation);
+						break;
+				}
+			}
 		}
 
 		private static void DifferentiateX(Term term, ref Term newTerm, ref List<EquationItem> newEquation)
 		{
-			//check if the exponent isn't a long equation
-			if (term.GetExponent()[0].GetType() == typeof(Term) && term.GetExponent().Count == 1)
+			//if term is ax^n only
+			if (term.exponent[0].GetType() == typeof(Term) && term.exponent.Count == 1 &&
+				((Term)term.exponent[0]).function == Function.constant)
 			{
-				Term exponent = (Term)term.GetExponent()[0];
-
-				//if exponent isn't constant
-				if (exponent.GetFunction() != Function.a) return;
+				Term exponent = (Term)term.exponent[0];
 
 				//ax^n => anx^(n-1)
-				newTerm = new Term(term.GetCoeficient() * exponent.GetCoeficient(), Function.x,
-						new List<EquationItem> { new Term(exponent.GetCoeficient() - 1, Function.a) });
+				newTerm = new Term(term.coeficient * exponent.coeficient, Function.x,
+						new List<EquationItem> { new Term(exponent.coeficient - 1, Function.constant) });
 
 				AddTerm(newTerm, ref newEquation);
 			}
@@ -221,7 +174,7 @@ namespace Maths_solver
 
 		private static void AddTerm(Term newTerm, ref List<EquationItem> newEquation)
         {
-			if (newTerm.GetCoeficient() != 0)
+			if (newTerm.coeficient != 0)
 			{
 				newEquation.Add(newTerm);
 
@@ -229,7 +182,7 @@ namespace Maths_solver
 			}
 		}
 
-		private static bool EquationsEqual(List<EquationItem> equation1, List<EquationItem> equation2)
+		/*private static bool EquationsEqual(List<EquationItem> equation1, List<EquationItem> equation2)
         {
             for (int i = 0; i < equation1.Count; i++)
             {
@@ -275,13 +228,13 @@ namespace Maths_solver
 				term1.GetCoeficient() == term2.GetCoeficient()) return true;
 
 			return false;
-        }
+        }*/
 
 		private static void FormatEquation(ref List<EquationItem> equation)
         {
 			//if first term is addition
 			if (equation.Count > 0 && equation[0].GetType() == typeof(Operation) &&
-				((Operation)equation[0]).GetOperation() == OperationEnum.Addition)
+				((Operation)equation[0]).operation == OperationEnum.Addition)
 			{
 				equation.RemoveAt(0);
 			}
@@ -290,30 +243,30 @@ namespace Maths_solver
 		private static void FormatTerm(Term newTerm, ref List<EquationItem> newEquation)
 		{
 			//Checks if term is negative, and more than 2 items in the equation
-			if (newTerm.GetCoeficient() < 0 && newEquation.Count >= 2 && 
+			if (newTerm.coeficient < 0 && newEquation.Count >= 2 && 
 				newEquation[newEquation.Count - 2].GetType() == typeof(Operation))
 			{
 				Operation previousOperation =
 							(Operation)newEquation[newEquation.Count - 2];
 
 				//change coeficient to positive, and operation to subtraction
-				if (previousOperation.GetOperation() == OperationEnum.Addition)
+				if (previousOperation.operation == OperationEnum.Addition)
 				{
 					newEquation.RemoveRange(newEquation.Count - 2, 2);
 					newEquation.Add(new Operation(OperationEnum.Subtraction));
 
-					newEquation.Add(new Term(-newTerm.GetCoeficient(),
-						newTerm.GetFunction(), newTerm.GetExponent()));
+					newEquation.Add(new Term(-newTerm.coeficient,
+						newTerm.function, newTerm.exponent));
 				}
 
 				//change coeficient to positive, and operation to addition
-				if (previousOperation.GetOperation() == OperationEnum.Subtraction)
+				if (previousOperation.operation == OperationEnum.Subtraction)
 				{
 					newEquation.RemoveRange(newEquation.Count - 2, 2);
 					newEquation.Add(new Operation(OperationEnum.Addition));
 
-					newEquation.Add(new Term(-newTerm.GetCoeficient(),
-						newTerm.GetFunction(), newTerm.GetExponent()));
+					newEquation.Add(new Term(-newTerm.coeficient,
+						newTerm.function, newTerm.exponent));
 				}
 			}
 		}

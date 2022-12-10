@@ -56,30 +56,30 @@ namespace Maths_solver
 			string formatTerm = String.Empty;
 
 			//format coefficient
-			if (Math.Abs(term.GetCoeficient()) != 1) formatTerm += term.GetCoeficient();
-			else if (term.GetCoeficient() == -1) formatTerm += "-";
+			if (Math.Abs(term.coeficient) != 1) formatTerm += term.coeficient;
+			else if (term.coeficient == -1) formatTerm += "-";
 
 			//check if exponent 0
-			if (term.GetExponent().Count == 1 && term.GetExponent()[0].GetType() == typeof(Term))
+			if (term.exponent.Count == 1 && term.exponent[0].GetType() == typeof(Term))
 			{
-				Term termExponent = (Term)term.GetExponent()[0];
+				Term termExponent = (Term)term.exponent[0];
 
-				if (termExponent.GetCoeficient() == 0) return term.GetCoeficient().ToString();
+				if (termExponent.coeficient == 0) return term.coeficient.ToString();
 			}
 
 			//format function
-			if (functions[term.GetFunction()]) formatTerm += term.GetFunction();
+			if (functions[term.function]) formatTerm += term.function;
 
-			else formatTerm += term.GetFunction();
+			else formatTerm += term.function;
 
 			//format exponent
-			if (term.GetExponent().Count == 1 && term.GetExponent()[0].GetType() == typeof(Term))
+			if (term.exponent.Count == 1 && term.exponent[0].GetType() == typeof(Term))
 			{
-				Term termExponent = (Term)term.GetExponent()[0];
+				Term termExponent = (Term)term.exponent[0];
 
-				if (termExponent.GetCoeficient() != 1)
+				if (termExponent.coeficient != 1)
 				{
-					string exponentStr = termExponent.GetCoeficient().ToString();
+					string exponentStr = termExponent.coeficient.ToString();
 
 					//turn float into multiple superscript characters
 					for (int i = 0; i < exponentStr.Length; i++) formatTerm += Superscript[exponentStr[i]];
@@ -87,7 +87,7 @@ namespace Maths_solver
 			}
 
 			//format input
-			if (functions[term.GetFunction()]) formatTerm += $"({TermStr(term.GetInput())})";
+			if (functions[term.function]) formatTerm += $"({TermStr(term.input)})";
 
 			return formatTerm;
 		}
@@ -96,7 +96,7 @@ namespace Maths_solver
 		{
 			string formatTerm = String.Empty;
 
-			switch (operation.GetOperation())
+			switch (operation.operation)
 			{
 				case OperationEnum.Addition:
 					formatTerm = " + ";
@@ -276,14 +276,14 @@ namespace Maths_solver
 				if (funcInput != null && functions[function])
 				{
 					equation.Add(new Term(coefficient, function, funcInput,
-					new List<EquationItem> { new Term(exponent, Function.a) }));
+					new List<EquationItem> { new Term(exponent, Function.constant) }));
 				}
 
 				//if has no input but doesnt require input
 				if (funcInput == null && !functions[function] && foundExponent)
 				{
 					equation.Add(new Term(coefficient, function,
-					new List<EquationItem> { new Term(exponent, Function.a) }));
+					new List<EquationItem> { new Term(exponent, Function.constant) }));
 				}
 			}
 		}
@@ -292,7 +292,7 @@ namespace Maths_solver
 		{
 			if (!Enum.TryParse(part, out Function function)) return null;
 
-			return new Term(coefficient, function, new List<EquationItem> { new Term(1, Function.a) });
+			return new Term(coefficient, function, new List<EquationItem> { new Term(1, Function.constant) });
 		}
 
 		private void InputBox_TextChanged(object sender, EventArgs e)
