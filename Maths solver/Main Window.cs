@@ -9,9 +9,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Maths_solver.Functions;
+using Maths_solver.Maths;
+using static Maths_solver.Maths.Functions;
 
-namespace Maths_solver
+namespace Maths_solver.UI
 {
 	public partial class Main : Form
 	{
@@ -35,17 +36,9 @@ namespace Maths_solver
 
 			foreach (EquationItem item in equation)
 			{
-				if (item.GetType() == typeof(Term))
-				{
-					Term term = (Term)item;
-					equationStr += TermStr(term);
-				}
+				if (item.GetType() == typeof(Term)) equationStr += TermStr((Term)item);
 
-				if (item.GetType() == typeof(Operation))
-				{
-					Operation operation = (Operation)item;
-					equationStr += TermStr(operation);
-				}
+				else if (item.GetType() == typeof(Operation)) equationStr += TermStr((Operation)item);
 			}
 
 			return equationStr;
@@ -67,10 +60,7 @@ namespace Maths_solver
 				if (termExponent.coeficient == 0) return term.coeficient.ToString();
 			}
 
-			//format function
-			if (functions[term.function]) formatTerm += term.function;
-
-			else formatTerm += term.function;
+			formatTerm += term.function;
 
 			//format exponent
 			if (term.exponent.Count == 1 && term.exponent[0].GetType() == typeof(Term))
@@ -144,7 +134,28 @@ namespace Maths_solver
 				FindExponent(part, i , input, ref foundExponent, ref exponent);
 
 				//if operation, new term
-				if (Maths.operations.ContainsKey(input[i]))
+				OperationEnum operationEnum = OperationEnum.NONE;
+
+				switch(input[i])
+				{
+					case '+':
+						operationEnum = OperationEnum.Addition;
+						break;
+
+					case '-':
+						operationEnum = OperationEnum.Subtraction;
+						break;
+
+					case '/':
+						operationEnum = OperationEnum.Division;
+						break;
+
+					/*default:
+						operationEnum = OperationEnum.Multiplication;
+						break;*/
+				}
+
+				if (operationEnum != OperationEnum.NONE)
 				{
 					coefficient = 1;
 					function = Function.NONE;
@@ -152,7 +163,7 @@ namespace Maths_solver
 					exponent = 1;
 					part = String.Empty;
 
-					equation.Add(new Operation(Maths.operations[input[i]]));
+					equation.Add(new Operation(operationEnum));
 				}
 
 				CreateEquation(function, coefficient, funcInput, exponent, foundExponent, ref equation);
@@ -228,7 +239,7 @@ namespace Maths_solver
 				}
 			}
 			else if (i + 1 == input.Length || (i + 1 < input.Length && input[i + 1] == ' ') ||
-				(i + 1 < input.Length && Maths.operations.ContainsKey(input[i + 1])))
+				(i + 1 < input.Length && (input[i + 1] == '+' || input[i+1] == '-' || input[i+1] == '/')))
             {
 				if (function == Function.NONE &&
 					Enum.TryParse(input[i + 1].ToString(), out Function f))
@@ -328,7 +339,7 @@ namespace Maths_solver
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
 			OutputBox.Text = 
-				EquationStr(Maths.DifferentiateEquation((stringToEquation(InputBox.Text))));
+				EquationStr(Maths.Maths.DifferentiateEquation((stringToEquation(InputBox.Text))));
 		}
 	}
 }

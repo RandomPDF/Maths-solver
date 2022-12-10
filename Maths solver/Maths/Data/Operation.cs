@@ -1,11 +1,12 @@
-﻿namespace Maths_solver
+﻿namespace Maths_solver.Maths
 {
 	public enum OperationEnum
 	{ 
 		Addition, 
 		Subtraction, 
 		Multiplication, 
-		Division
+		Division,
+		NONE
 	}
 
 	public class Operation : EquationItem

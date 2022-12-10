@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Maths_solver
+namespace Maths_solver.Maths
 {
 	public class Functions
 	{

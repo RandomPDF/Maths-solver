@@ -1,4 +1,4 @@
-﻿namespace Maths_solver
+﻿namespace Maths_solver.UI
 {
 	partial class Main
 	{

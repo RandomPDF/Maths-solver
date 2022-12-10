@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Maths_solver
+namespace Maths_solver.Maths
 {
 	internal class Maths : Functions
 	{
@@ -72,12 +72,6 @@ namespace Maths_solver
 			{Function.ln, new List<EquationItem>()
 			{new Term(1, Function.x, new List<EquationItem> { new Term(-1, Function.constant) }) } },
 		};
-
-		public static Dictionary<char, OperationEnum> operations = 
-			new Dictionary<char, OperationEnum>
-		{   {'+', OperationEnum.Addition},
-			{'-', OperationEnum.Subtraction},
-			{'/', OperationEnum.Division} };
 
 		public static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
 		{
@@ -246,28 +240,21 @@ namespace Maths_solver
 			if (newTerm.coeficient < 0 && newEquation.Count >= 2 && 
 				newEquation[newEquation.Count - 2].GetType() == typeof(Operation))
 			{
-				Operation previousOperation =
-							(Operation)newEquation[newEquation.Count - 2];
-
-				//change coeficient to positive, and operation to subtraction
-				if (previousOperation.operation == OperationEnum.Addition)
+				//Negate operation
+				switch(((Operation)newEquation[newEquation.Count - 2]).operation)
 				{
-					newEquation.RemoveRange(newEquation.Count - 2, 2);
-					newEquation.Add(new Operation(OperationEnum.Subtraction));
+					case OperationEnum.Addition:
+						newEquation[newEquation.Count - 2] = new Operation(OperationEnum.Subtraction);
+						break;
 
-					newEquation.Add(new Term(-newTerm.coeficient,
-						newTerm.function, newTerm.exponent));
+					case OperationEnum.Subtraction:
+						newEquation[newEquation.Count - 2] = new Operation(OperationEnum.Addition);
+						break;
 				}
 
-				//change coeficient to positive, and operation to addition
-				if (previousOperation.operation == OperationEnum.Subtraction)
-				{
-					newEquation.RemoveRange(newEquation.Count - 2, 2);
-					newEquation.Add(new Operation(OperationEnum.Addition));
-
-					newEquation.Add(new Term(-newTerm.coeficient,
-						newTerm.function, newTerm.exponent));
-				}
+				//negate coefficient
+				newEquation[newEquation.Count - 1] =
+						new Term(-newTerm.coeficient, newTerm.function, newTerm.exponent);
 			}
 		}
 	}
