@@ -158,11 +158,15 @@ namespace Maths_solver.Maths
 			{
 				Term exponent = (Term)term.exponent[0];
 
-				//ax^n => anx^(n-1)
-				newTerm = new Term(term.coeficient * exponent.coeficient, Function.x,
-						new List<EquationItem> { new Term(exponent.coeficient - 1, Function.constant) });
+				if (exponent.coeficient != 0)
+				{
+					//ax^n => anx^(n-1)
+					newTerm = new Term(term.coeficient * exponent.coeficient, Function.x,
+							new List<EquationItem> 
+							{ new Term(exponent.coeficient - 1, Function.constant) });
 
-				AddTerm(newTerm, ref newEquation);
+					AddTerm(newTerm, ref newEquation);
+				}
 			}
 		}
 
@@ -224,6 +228,8 @@ namespace Maths_solver.Maths
 			return false;
         }*/
 
+
+		//failure case x³ - x⁰ + x
 		private static void FormatEquation(ref List<EquationItem> equation)
         {
 			//if first term is addition
@@ -232,6 +238,38 @@ namespace Maths_solver.Maths
 			{
 				equation.RemoveAt(0);
 			}
+
+			//if last term is operation
+			if (equation[equation.Count - 1].GetType() == typeof(Operation))
+			{
+				equation.RemoveAt(equation.Count - 1);
+			}
+
+            for (int i = 0; i < equation.Count - 1; i++)
+            {
+				if(equation[i].GetType() == typeof(Operation) && 
+					equation[i+1].GetType() == typeof(Operation))
+                {
+					equation.RemoveAt(i + 1);
+
+					//if equal and both subtaction
+					if (((Operation)(equation[i])).operation == 
+						((Operation)(equation[i+1])).operation &&
+						((Operation)(equation[i])).operation == OperationEnum.Subtraction)
+					{
+						//change to one addition
+						equation[i] = new Operation(OperationEnum.Addition);
+					}
+					//operations different. (one must be addition, the other subtraction)
+                    else
+                    {
+						//change to one subraction
+						equation[i] = new Operation(OperationEnum.Subtraction);
+					}
+
+					FormatEquation(ref equation);
+				}
+            }
 		}
 
 		private static void FormatTerm(Term newTerm, ref List<EquationItem> newEquation)

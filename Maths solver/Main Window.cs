@@ -208,24 +208,36 @@ namespace Maths_solver.UI
 
 		private static void FindFunction(string input, int i, ref Function function, ref string part)
         {
-			//if next character is superscript
-			if (IsSuperscript(input[i].ToString(), out string _))
+			if (function != Function.NONE) return;
+
+			OperationEnum nextOperation = OperationEnum.NONE;
+			Function f = Function.NONE;
+
+			switch(input[i])
+            {
+				case '+':
+					nextOperation = OperationEnum.Addition;
+					break;
+
+				case '-':
+					nextOperation = OperationEnum.Subtraction;
+					break;
+
+				case '/':
+					nextOperation = OperationEnum.Division;
+					break;
+            }
+
+			//if next character is superscript or next char is input
+			//or next is at end of string
+			if (((IsSuperscript(input[i].ToString(), out string _) || input[i] == '(') &&
+				Enum.TryParse(part, out f)) ||
+
+				(i >= input.Length - 1 ||  nextOperation != OperationEnum.NONE) 
+				&& Enum.TryParse(input[i].ToString(), out f))
 			{
-				if (function == Function.NONE &&
-					Enum.TryParse(part, out Function f))
-				{
-					function = f;
-					part = String.Empty;
-				}
-			}
-			else if (input[i] == '(')
-			{
-				if (function == Function.NONE &&
-					Enum.TryParse(part, out Function f))
-				{
-					function = f;
-					part = String.Empty;
-				}
+				function = f;
+				part = String.Empty;
 			}
 		}
 
@@ -241,12 +253,17 @@ namespace Maths_solver.UI
 				part = String.Empty;
 			}
 
-			//if next is end of string, and superscript
-			if (i == input.Length - 1 && IsSuperscript(input[i].ToString(), out string _))
+			//if next is end of string
+			if (i == input.Length - 1)
 			{
-				//check previous exponents, and next exponents
-				check = part + input[i].ToString();
-				part = String.Empty;
+				//if next is superscript
+				if (IsSuperscript(input[i].ToString(), out string _))
+				{
+					//check previous exponents, and next exponents
+					check = part + input[i].ToString();
+					part = String.Empty;
+				}
+				else foundExponent = true;
 			}
 
 			//if at end of string, part must be exponent
