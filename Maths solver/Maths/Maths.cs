@@ -167,6 +167,13 @@ namespace Maths_solver.Maths
 
 					AddTerm(newTerm, ref newEquation);
 				}
+				else
+                {
+					if(newEquation.Count > 1)
+                    {
+						newEquation.RemoveAt(newEquation.Count - 1);
+					}
+                }
 			}
 		}
 
@@ -250,8 +257,6 @@ namespace Maths_solver.Maths
 				if(equation[i].GetType() == typeof(Operation) && 
 					equation[i+1].GetType() == typeof(Operation))
                 {
-					equation.RemoveAt(i + 1);
-
 					//if equal and both subtaction
 					if (((Operation)(equation[i])).operation == 
 						((Operation)(equation[i+1])).operation &&
@@ -266,6 +271,8 @@ namespace Maths_solver.Maths
 						//change to one subraction
 						equation[i] = new Operation(OperationEnum.Subtraction);
 					}
+
+					equation.RemoveAt(i + 1);
 
 					FormatEquation(ref equation);
 				}

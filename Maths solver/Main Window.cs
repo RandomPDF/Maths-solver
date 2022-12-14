@@ -134,14 +134,14 @@ namespace Maths_solver.UI
 
 				FindFunction(input, i, ref function, ref part);
 
-				FindExponent(i ,input, function, ref part, ref foundExponent, ref exponent);
+				FindExponent(i ,input, function, ref part, ref foundExponent, out exponent);
 
-				SeparateString(input[i], ref part, ref funcInput);
+				SeparateString(input[i], ref part, out funcInput);
 
 				CreateEquation(function, coefficient, funcInput, exponent, foundExponent, ref equation);
 
 				CheckOperation(input[i], ref coefficient, ref function, ref funcInput, ref exponent,
-					ref part, ref equation);
+					ref part, ref equation, ref foundExponent);
 
 			}
 
@@ -189,7 +189,7 @@ namespace Maths_solver.UI
 			return true;
 		}
 
-		private static void SeparateString(char next, ref string part, ref Term funcInput)
+		private static void SeparateString(char next, ref string part, out Term funcInput)
         {
 			switch (next)
 			{
@@ -201,6 +201,7 @@ namespace Maths_solver.UI
 
 				//move onto next char
 				default:
+					funcInput = null;
 					part += next;
 					break;
 			}
@@ -233,8 +234,8 @@ namespace Maths_solver.UI
 			if (((IsSuperscript(input[i].ToString(), out string _) || input[i] == '(') &&
 				Enum.TryParse(part, out f)) ||
 
-				(i >= input.Length - 1 ||  nextOperation != OperationEnum.NONE) 
-				&& Enum.TryParse(input[i].ToString(), out f))
+				(i >= input.Length - 1 && Enum.TryParse(input[i].ToString(), out f)) ||
+				nextOperation != OperationEnum.NONE && Enum.TryParse(part.ToString(), out f))
 			{
 				function = f;
 				part = String.Empty;
@@ -242,8 +243,9 @@ namespace Maths_solver.UI
 		}
 
 		private static void FindExponent(int i, string input, Function function, ref string part,
-			ref bool foundExponent, ref float exponent)
+			ref bool foundExponent, out float exponent)
 		{
+			exponent = 1;
 			string check = String.Empty;
 
 			//if within string and no more exponents and function is x
@@ -251,6 +253,7 @@ namespace Maths_solver.UI
 			{
 				check = part.ToString();
 				part = String.Empty;
+				foundExponent = true;
 			}
 
 			//if next is end of string
@@ -286,7 +289,7 @@ namespace Maths_solver.UI
 
 		private static void CheckOperation(char operation, 
 			ref float coefficient, ref Function function, ref Term funcInput, ref float exponent,
-			ref string part, ref List<EquationItem> equation)
+			ref string part, ref List<EquationItem> equation, ref bool foundExponent)
 		{
 			//if operation, new term
 			OperationEnum operationEnum = OperationEnum.NONE;
@@ -318,6 +321,7 @@ namespace Maths_solver.UI
 				funcInput = null;
 				exponent = 1;
 				part = String.Empty;
+				foundExponent = false;
 
 				if(operationEnum != OperationEnum.NONE) equation.Add(new Operation(operationEnum));
 			}
@@ -389,8 +393,8 @@ namespace Maths_solver.UI
 
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
-			OutputBox.Text = 
-				EquationStr(Maths.Maths.DifferentiateEquation((stringToEquation(InputBox.Text))));
+			//OutputBox.Text = EquationStr(Maths.Maths.DifferentiateEquation((stringToEquation(InputBox.Text))));
+			OutputBox.Text = EquationStr(stringToEquation(InputBox.Text));
 		}
 	}
 }
