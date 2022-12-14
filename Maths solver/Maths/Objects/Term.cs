@@ -10,10 +10,10 @@ namespace Maths_solver.Maths
 	{
 		public Function function { get; }
 		public float coeficient { get; }
-		public Term input { get; }
+		public List<EquationItem> input { get; }
 		public List<EquationItem> exponent { get; }
 
-		public Term(float coeficient, Function function, Term input, List<EquationItem> exponent)
+		public Term(float coeficient, Function function, List<EquationItem> input, List<EquationItem> exponent)
 		{
 			if (functions[function])
 			{
@@ -42,7 +42,9 @@ namespace Maths_solver.Maths
 			else
 			{
 				//if function requires an input
-				input = new Term(1, Function.x, new List<EquationItem> { new Term(1, Function.constant)});
+				input = new Term(1, new List<EquationItem>{new Term(1, Function.x,
+					new List<EquationItem> { new Term(1, Function.constant)}}, 
+					new List<EquationItem> { new Term(1, Function.constant)});
             }
 		}
 
