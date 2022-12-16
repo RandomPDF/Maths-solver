@@ -37,7 +37,6 @@ namespace Maths_solver.UI
 			foreach (EquationItem item in equation)
 			{
 				if (item.GetType() == typeof(Term)) equationStr += TermStr((Term)item);
-
 				else if (item.GetType() == typeof(Operation)) equationStr += TermStr((Operation)item);
 			}
 
@@ -131,6 +130,17 @@ namespace Maths_solver.UI
 			string part = String.Empty;
 			for (int i = 0; i < input.Length; i++)
 			{
+				//finding input
+				if (part.Length > 0 && part[0] == '(')
+				{
+					SeparateString(input[i], ref part, out funcInput);
+
+					if(funcInput != null) CreateEquation(function, coefficient, funcInput, 
+						exponent, foundExponent, ref equation);
+
+					continue;
+				}
+
 				FindCoefficient(ref part, input[i], ref coefficient);
 
 				FindFunction(input, i, ref function, ref part);
