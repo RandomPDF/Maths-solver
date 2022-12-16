@@ -52,8 +52,9 @@ namespace Maths_solver.UI
 			if (Math.Abs(term.coeficient) != 1) formatTerm += term.coeficient;
 			else if (term.coeficient == -1) formatTerm += "-";
 
-			//check if exponent 0
-			if (term.exponent.Count == 1 && term.exponent[0].GetType() == typeof(Term))
+			//check if exponent 0. Then just return coefficient
+			if (term.exponent != null && term.exponent.Count == 1 && 
+				term.exponent[0].GetType() == typeof(Term))
 			{
 				Term termExponent = (Term)term.exponent[0];
 
@@ -63,7 +64,7 @@ namespace Maths_solver.UI
 			formatTerm += term.function;
 
 			//format exponent
-			if (term.exponent.Count == 1 && term.exponent[0].GetType() == typeof(Term))
+			if (term.exponent != null && term.exponent.Count == 1 && term.exponent[0].GetType() == typeof(Term))
 			{
 				Term termExponent = (Term)term.exponent[0];
 
@@ -391,7 +392,10 @@ namespace Maths_solver.UI
 
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
-			OutputBox.Text = EquationStr(Maths.Maths.DifferentiateEquation(stringToEquation(InputBox.Text)));
+			/*OutputBox.Text = 
+				EquationStr(Maths.Maths.DifferentiateEquation(stringToEquation(InputBox.Text)));*/
+
+			OutputBox.Text = EquationStr(stringToEquation(InputBox.Text));
 		}
 	}
 }

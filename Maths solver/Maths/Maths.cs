@@ -181,56 +181,6 @@ namespace Maths_solver.Maths
 			}
 		}
 
-		/*private static bool EquationsEqual(List<EquationItem> equation1, List<EquationItem> equation2)
-        {
-            for (int i = 0; i < equation1.Count; i++)
-            {
-				//check if terms equal
-				if (equation1[i].GetType() == typeof(Term) && equation2[i].GetType() == typeof(Term))
-				{
-					Term term1 = (Term)equation1[i];
-					Term term2 = (Term)equation2[i];
-
-					if (!TermsEqual(term1, term2, false)) return false;
-				}
-
-				//check if operations equal
-				if (equation1[i].GetType() == typeof(Operation) &&
-				equation2[i].GetType() == typeof(Operation) &&
-				(Operation)equation1[i] != (Operation)equation2[i])
-				{
-					Operation term1 = (Operation)equation1[i];
-					Operation term2 = (Operation)equation2[i];
-
-					if (term1.GetOperation() != term2.GetOperation()) return false;
-				}
-
-				//check if same type
-				if (equation1[i].GetType() != equation2[i].GetType()) return false;
-			}
-
-			return true;
-        }
-
-		private static bool TermsEqual(Term term1, Term term2, bool areExponents)
-        {
-			//check if functions match
-			if(!areExponents && term1.GetFunction() == term2.GetFunction())
-            {
-				if (term1.GetExponent() != null && term2.GetExponent() != null &&
-					EquationsEqual(term1.GetExponent(), term2.GetExponent())) return true;
-
-				if (term1.GetExponent() == null && term2.GetExponent() == null) return true;
-            }
-
-			if(areExponents && term1.GetFunction() == term2.GetFunction() &&
-				term1.GetCoeficient() == term2.GetCoeficient()) return true;
-
-			return false;
-        }*/
-
-
-		//failure case x³ - x⁰ + x
 		private static void FormatEquation(ref List<EquationItem> equation)
         {
 			//if first term is addition
