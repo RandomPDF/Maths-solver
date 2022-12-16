@@ -13,64 +13,59 @@ namespace Maths_solver.Maths
 		public static Dictionary<Function, List<EquationItem>> Differentials = 
 			new Dictionary<Function, List<EquationItem>>()
 		{
-			{Function.sin, new List<EquationItem>()
-			{new Term(1, Function.cos, new List<EquationItem> { new Term(1, Function.constant) } ) } },
+			{Function.sin, new List<EquationItem>() {new Term(Function.cos) } },
 
-
-			{Function.cos, new List<EquationItem>()
-			{new Term(-1, Function.sin, new List<EquationItem> { new Term(1, Function.constant) }) } },
+			{Function.cos, new List<EquationItem>() {new Term(-1, Function.sin)} },
 
 
 			{Function.tan, new List<EquationItem>()
-			{new Term(1, Function.sec, new List<EquationItem> { new Term(2, Function.constant) }) } },
+			{new Term(Function.sec, new List<EquationItem> { new Term(2) }) } },
 
 
 			{Function.cosec, new List<EquationItem>()
-			{new Term(-1, Function.cosec, new List<EquationItem>{new Term(1, Function.constant)}),
+			{new Term(-1, Function.cosec),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.cot, new List<EquationItem>{new Term(1, Function.constant)})}},
+			new Term(Function.cot)}},
 
 
 			{Function.sec, new List<EquationItem>()
-			{new Term(1, Function.sec, new List<EquationItem>{new Term(1, Function.constant)}),
+			{new Term(Function.sec),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.tan, new List<EquationItem>{new Term(1, Function.constant)})}},
+			new Term(Function.tan)}},
 
 
 			{Function.cot, new List<EquationItem>()
-			{new Term(-1, Function.cosec, new List<EquationItem> { new Term(2, Function.constant) }) } },
+			{new Term(-1, Function.cosec, new List<EquationItem> { new Term(2) }) } },
 
 
-			{Function.sinh, new List<EquationItem>()
-			{new Term(1, Function.cosh, new List<EquationItem> { new Term(1, Function.constant) } ) } },
+			{Function.sinh, new List<EquationItem>() {new Term(Function.cosh) } },
 
 
-			{Function.cosh, new List<EquationItem>()
-			{new Term(1, Function.sinh, new List<EquationItem> { new Term(1, Function.constant) } ) } },
+			{Function.cosh, new List<EquationItem>() {new Term(Function.sinh) } },
 
 
 			{Function.tanh, new List<EquationItem>()
-			{new Term(1, Function.sech, new List<EquationItem> { new Term(2, Function.constant) } ) } },
+			{new Term(Function.sech, new List<EquationItem> { new Term(2) } ) } },
 
 
 			{Function.cosech, new List<EquationItem>()
-			{new Term(-1, Function.cosech, new List<EquationItem>{new Term(1, Function.constant)}),
+			{new Term(-1, Function.cosech),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.coth, new List<EquationItem>{new Term(1, Function.constant)})}},
+			new Term(Function.coth)}},
 
 
 			{Function.sech, new List<EquationItem>()
-			{new Term(-1, Function.sech, new List<EquationItem>{new Term(1, Function.constant)}),
+			{new Term(-1, Function.sech),
 			new Operation(OperationEnum.Multiplication),
-			new Term(1, Function.tanh, new List<EquationItem>{new Term(1, Function.constant)})}},
+			new Term(Function.tanh)}},
 
 
 			{Function.coth, new List<EquationItem>()
-			{new Term(-1, Function.cosech, new List<EquationItem> { new Term(2, Function.constant) }) } },
+			{new Term(-1, Function.cosech) } },
 
 
 			{Function.ln, new List<EquationItem>()
-			{new Term(1, Function.x, new List<EquationItem> { new Term(-1, Function.constant) }) } },
+			{new Term(Function.x, new List<EquationItem> { new Term(-1) }) } },
 		};
 
 		public static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
@@ -162,8 +157,7 @@ namespace Maths_solver.Maths
 				{
 					//ax^n => anx^(n-1)
 					newTerm = new Term(term.coeficient * exponent.coeficient, Function.x,
-							new List<EquationItem> 
-							{ new Term(exponent.coeficient - 1, Function.constant) });
+							new List<EquationItem> { new Term(exponent.coeficient - 1) });
 
 					AddTerm(newTerm, ref newEquation);
 				}

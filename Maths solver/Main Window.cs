@@ -77,7 +77,7 @@ namespace Maths_solver.UI
 			}
 
 			//format input
-			if (functions[term.function]) formatTerm += $"({TermStr(term.input)})";
+			if (requiresInput[term.function]) formatTerm += $"({EquationStr(term.input)})";
 
 			return formatTerm;
 		}
@@ -116,7 +116,7 @@ namespace Maths_solver.UI
 
 			float coefficient = 1;
 			Function function = Function.NONE;
-			Term funcInput = null;
+			List<EquationItem> funcInput = new List<EquationItem>();
 			float exponent = 1;
 
 			//remove spaces
@@ -189,13 +189,13 @@ namespace Maths_solver.UI
 			return true;
 		}
 
-		private static void SeparateString(char next, ref string part, out Term funcInput)
+		private static void SeparateString(char next, ref string part, out List<EquationItem> funcInput)
         {
 			switch (next)
 			{
 				//find input
 				case ')':
-					funcInput = stringToTerm(part.Substring(1), 1);
+					funcInput = stringToEquation(part.Substring(1));
 					part = String.Empty;
 					break;
 
@@ -288,7 +288,7 @@ namespace Maths_solver.UI
 		}
 
 		private static void CheckOperation(char operation, 
-			ref float coefficient, ref Function function, ref Term funcInput, ref float exponent,
+			ref float coefficient, ref Function function, ref List<EquationItem> funcInput, ref float exponent,
 			ref string part, ref List<EquationItem> equation, ref bool foundExponent)
 		{
 			//if operation, new term
@@ -327,23 +327,21 @@ namespace Maths_solver.UI
 			}
 		}
 
-		private static void CreateEquation(Function function, float coefficient, Term funcInput, float exponent, bool foundExponent,
+		private static void CreateEquation(Function function, float coefficient, List<EquationItem> funcInput, float exponent, bool foundExponent,
 			ref List<EquationItem> equation)
 		{
 			if (function != Function.NONE)
 			{
 				//if has input and requires input
-				if (funcInput != null && functions[function])
+				if (funcInput != null && requiresInput[function])
 				{
-					equation.Add(new Term(coefficient, function, funcInput,
-					new List<EquationItem> { new Term(exponent, Function.constant) }));
+					equation.Add(new Term(coefficient, function, funcInput, new List<EquationItem> { new Term(exponent) }));
 				}
 
 				//if has no input but doesnt require input
-				if (funcInput == null && !functions[function] && foundExponent)
+				if (funcInput == null && !requiresInput[function] && foundExponent)
 				{
-					equation.Add(new Term(coefficient, function,
-					new List<EquationItem> { new Term(exponent, Function.constant) }));
+					equation.Add(new Term(coefficient, function, new List<EquationItem> { new Term(exponent) }));
 				}
 			}
 		}
@@ -353,7 +351,7 @@ namespace Maths_solver.UI
 		{
 			if (!Enum.TryParse(part, out Function function)) return null;
 
-			return new Term(coefficient, function, new List<EquationItem> { new Term(1, Function.constant) });
+			return new Term(coefficient, function);
 		}
 
 		private void InputBox_TextChanged(object sender, EventArgs e)
@@ -393,8 +391,7 @@ namespace Maths_solver.UI
 
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
-			//OutputBox.Text = EquationStr(Maths.Maths.DifferentiateEquation((stringToEquation(InputBox.Text))));
-			OutputBox.Text = EquationStr(stringToEquation(InputBox.Text));
+			OutputBox.Text = EquationStr(Maths.Maths.DifferentiateEquation(stringToEquation(InputBox.Text)));
 		}
 	}
 }

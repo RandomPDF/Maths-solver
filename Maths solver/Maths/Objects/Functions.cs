@@ -28,7 +28,7 @@ namespace Maths_solver.Maths
 		}
 
 		//Dictionary of function names, and if they require an input
-		public static Dictionary<Function, bool> functions = new Dictionary<Function, bool>()
+		public static Dictionary<Function, bool> requiresInput = new Dictionary<Function, bool>()
 		{
 			{Function.sin, true},
 			{Function.cos, true},
