@@ -105,6 +105,14 @@ namespace Maths_solver.UI
 				case OperationEnum.Division:
 					formatTerm = " / ";
 					break;
+
+				case OperationEnum.OpenBracket:
+					formatTerm = "(";
+					break;
+
+				case OperationEnum.ClosedBracket:
+					formatTerm = ")";
+					break;
 			}
 
 			return formatTerm;
@@ -421,6 +429,7 @@ namespace Maths_solver.UI
 			box.SelectionLength = 0;
 		}
 
+		//fail case cos(x²)
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
 			OutputBox.Text =

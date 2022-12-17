@@ -104,6 +104,29 @@ namespace Maths_solver.Maths
 
 			if (Differentials.ContainsKey(term.function))
 			{
+				//chain rule
+				List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
+
+				Term first = (Term)inputDifferential[0];
+				Term firstExponent = (Term)first.exponent[0];
+
+				//if a constant with a coefficient of 0 or 1, ignore adding
+				if ((first.function != Function.constant &&
+					(first.function != Function.x && firstExponent.coeficient != 0)) ||
+					(first.coeficient != 0 && first.coeficient != 1))
+				{
+					if (inputDifferential.Count > 1)
+						newEquation.Add(new Operation(OperationEnum.OpenBracket));
+
+					for (int i = 0; i < inputDifferential.Count; i++)
+						newEquation.Add(inputDifferential[i]);
+
+					if (inputDifferential.Count > 1)
+						newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
+					newEquation.Add(new Operation(OperationEnum.Multiplication));
+				}
+
 				//for each term in the correct differential
 				foreach (EquationItem differentialObject in differential)
 				{
@@ -116,11 +139,11 @@ namespace Maths_solver.Maths
 						if (differentialObject == differential[0])
 						{
 							newTerm = new Term(term.coeficient * differentialTerm.coeficient,
-								differentialTerm.function, differentialTerm.exponent);
+								differentialTerm.function, term.input, differentialTerm.exponent);
 						}
 						else
 						{
-							newTerm = new Term(1, differentialTerm.function,
+							newTerm = new Term(1, differentialTerm.function, term.input,
 								differentialTerm.exponent);
 						}
 
@@ -201,17 +224,23 @@ namespace Maths_solver.Maths
 				if(equation[i].GetType() == typeof(Operation) && 
 					equation[i+1].GetType() == typeof(Operation))
                 {
+					Operation first = (Operation)(equation[i]);
+					Operation second = (Operation)(equation[i+1]);
+
 					//if equal and both subtaction
-					if (((Operation)(equation[i])).operation == 
-						((Operation)(equation[i+1])).operation &&
-						((Operation)(equation[i])).operation == OperationEnum.Subtraction)
+					if (first.operation == second.operation &&
+						first.operation == OperationEnum.Subtraction)
 					{
 						//change to one addition
 						equation[i] = new Operation(OperationEnum.Addition);
 					}
-					//operations different. (one must be addition, the other subtraction)
-                    else
-                    {
+					//one operation addition and the other subtraction
+                    else if((first.operation == OperationEnum.Addition &&
+						second.operation == OperationEnum.Subtraction) ||
+						(first.operation == OperationEnum.Subtraction &&
+						second.operation == OperationEnum.Addition))
+
+					{
 						//change to one subraction
 						equation[i] = new Operation(OperationEnum.Subtraction);
 					}

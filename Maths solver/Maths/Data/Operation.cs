@@ -6,6 +6,8 @@
 		Subtraction, 
 		Multiplication, 
 		Division,
+		OpenBracket,
+		ClosedBracket,
 		NONE
 	}
 
