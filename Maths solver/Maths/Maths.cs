@@ -102,27 +102,45 @@ namespace Maths_solver.Maths
 		{
 			Term newTerm = default;
 
-			if (Differentials.ContainsKey(term.function))
+			if (Differentials.ContainsKey(term.function)) 
 			{
 				//chain rule
 				List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
 
-				Term first = (Term)inputDifferential[0];
+				//checks if equation is one term all multiplied
+				bool oneTerm = true;
+				for (int i = 0; i < inputDifferential.Count; i++)
+				{
+					if (inputDifferential[i].GetType() == typeof(Operation) &&
+						((Operation)inputDifferential[i]).operation != OperationEnum.Multiplication)
+
+						oneTerm = false;
+				}
+
+				int firstIndex = 0;
+				for (int i = 0; i < inputDifferential.Count; i++)
+				{
+					if (inputDifferential[i].GetType() == typeof(Term))
+					{
+						firstIndex = i;
+						break;
+					}
+				}
+
+				Term first = (Term)inputDifferential[firstIndex];
 				Term firstExponent = (Term)first.exponent[0];
 
 				//if a constant with a coefficient of 0 or 1, ignore adding
 				if ((first.function != Function.constant &&
-					(first.function != Function.x && firstExponent.coeficient != 0)) ||
+					!(first.function == Function.x && firstExponent.coeficient == 0)) ||
 					(first.coeficient != 0 && first.coeficient != 1))
 				{
-					if (inputDifferential.Count > 1)
-						newEquation.Add(new Operation(OperationEnum.OpenBracket));
+					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 
 					for (int i = 0; i < inputDifferential.Count; i++)
 						newEquation.Add(inputDifferential[i]);
 
-					if (inputDifferential.Count > 1)
-						newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 
 					newEquation.Add(new Operation(OperationEnum.Multiplication));
 				}
@@ -135,7 +153,7 @@ namespace Maths_solver.Maths
 						Term differentialTerm = (Term)differentialObject;
 						newTerm = default;
 
-						//if first term, add coefficient (all operatins in value are Multiplication
+						//if first term, add coefficient (all operations in value are Multiplication)
 						if (differentialObject == differential[0])
 						{
 							newTerm = new Term(term.coeficient * differentialTerm.coeficient,
@@ -219,37 +237,85 @@ namespace Maths_solver.Maths
 				equation.RemoveAt(equation.Count - 1);
 			}
 
+			float newCoefficient = 1;
+			int startTerm = -1;
+
             for (int i = 0; i < equation.Count - 1; i++)
             {
-				if(equation[i].GetType() == typeof(Operation) && 
-					equation[i+1].GetType() == typeof(Operation))
+				//format operations
+				if (equation[i].GetType() == typeof(Operation))
                 {
 					Operation first = (Operation)(equation[i]);
-					Operation second = (Operation)(equation[i+1]);
 
-					//if equal and both subtaction
-					if (first.operation == second.operation &&
-						first.operation == OperationEnum.Subtraction)
+					if (equation[i + 1].GetType() == typeof(Operation))
 					{
-						//change to one addition
-						equation[i] = new Operation(OperationEnum.Addition);
-					}
-					//one operation addition and the other subtraction
-                    else if((first.operation == OperationEnum.Addition &&
-						second.operation == OperationEnum.Subtraction) ||
-						(first.operation == OperationEnum.Subtraction &&
-						second.operation == OperationEnum.Addition))
+						bool formatted = false;
+						Operation second = (Operation)(equation[i + 1]);
 
+						//if equal and both subtaction
+						if (first.operation == second.operation &&
+							first.operation == OperationEnum.Subtraction)
+						{
+							//change to one addition
+							equation[i] = new Operation(OperationEnum.Addition);
+							equation.RemoveAt(i + 1);
+							formatted = true;
+						}
+						//one operation addition and the other subtraction
+						else if ((first.operation == OperationEnum.Addition &&
+							second.operation == OperationEnum.Subtraction) ||
+							(first.operation == OperationEnum.Subtraction &&
+							second.operation == OperationEnum.Addition))
+
+						{
+							//change to one subraction
+							equation[i] = new Operation(OperationEnum.Subtraction);
+							equation.RemoveAt(i + 1);
+							formatted = true;
+						}
+
+						if(formatted) FormatEquation(ref equation);
+					}
+
+					if (first.operation == OperationEnum.Multiplication &&
+						((Term)equation[i + 1]).coeficient != 1 && 
+						equation[i-1].GetType() == typeof(Term) &&
+						equation[i+1].GetType() == typeof(Term))
 					{
-						//change to one subraction
-						equation[i] = new Operation(OperationEnum.Subtraction);
+						Term firstTerm = (Term)equation[i - 1];
+						Term secondTerm = (Term)equation[i + 1];
+
+						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
+							firstTerm.function, firstTerm.input, firstTerm.exponent);
+
+						equation[i + 1] = new Term(1, secondTerm.function, secondTerm.input, secondTerm.exponent);
+
+						FormatEquation(ref equation);
 					}
-
-					equation.RemoveAt(i + 1);
-
-					FormatEquation(ref equation);
 				}
-            }
+
+				//struggles with brackets
+				//format coefficients with multiple multiplied terms
+				if (equation[i+1].GetType() == typeof(Operation) && equation[i].GetType() == typeof(Term))
+				{
+					Term currentTerm = (Term)equation[i];
+					Term startingTerm = new Term();
+
+					if (startTerm != -1) startingTerm = (Term)equation[startTerm];
+
+					if (((Operation)equation[i+1]).operation == OperationEnum.Multiplication)
+					{
+						if (startTerm == -1) startTerm = i;
+						newCoefficient *= currentTerm.coeficient;
+					}
+					else if(startTerm != -1)
+					{
+						equation[startTerm] = new Term(newCoefficient, startingTerm.function, startingTerm.input, startingTerm.exponent);
+
+						newCoefficient = 1;
+					}
+				}
+			}
 		}
 
 		private static void FormatTerm(Term newTerm, ref List<EquationItem> newEquation)
@@ -258,21 +324,27 @@ namespace Maths_solver.Maths
 			if (newTerm.coeficient < 0 && newEquation.Count >= 2 && 
 				newEquation[newEquation.Count - 2].GetType() == typeof(Operation))
 			{
+				bool negate = false;
 				//Negate operation
 				switch(((Operation)newEquation[newEquation.Count - 2]).operation)
 				{
 					case OperationEnum.Addition:
 						newEquation[newEquation.Count - 2] = new Operation(OperationEnum.Subtraction);
+						negate = true;
 						break;
 
 					case OperationEnum.Subtraction:
 						newEquation[newEquation.Count - 2] = new Operation(OperationEnum.Addition);
+						negate = true;
 						break;
 				}
 
-				//negate coefficient
-				newEquation[newEquation.Count - 1] =
-						new Term(-newTerm.coeficient, newTerm.function, newTerm.exponent);
+				if (negate)
+				{
+					//negate coefficient
+					newEquation[newEquation.Count - 1] =
+							new Term(-newTerm.coeficient, newTerm.function, newTerm.input, newTerm.exponent);
+				}
 			}
 		}
 	}

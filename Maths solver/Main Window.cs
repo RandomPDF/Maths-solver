@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Maths_solver.Maths;
+using static System.Net.Mime.MediaTypeNames;
 using static Maths_solver.Maths.Functions;
 
 namespace Maths_solver.UI
@@ -30,56 +31,48 @@ namespace Maths_solver.UI
 			InitializeComponent();
 		}
 
-		private static string EquationStr(List<EquationItem> equation)
+		private static string EquationStr(List<EquationItem> equation, bool superscript)
 		{
 			string equationStr = String.Empty;
 
 			foreach (EquationItem item in equation)
 			{
-				if (item.GetType() == typeof(Term)) equationStr += TermStr((Term)item);
+				if (item.GetType() == typeof(Term)) equationStr += TermStr((Term)item, superscript);
 				else if (item.GetType() == typeof(Operation)) equationStr += TermStr((Operation)item);
 			}
 
 			return equationStr;
 		}
 
-		private static string TermStr(Term term)
+		private static string TermStr(Term term, bool superscript)
 		{
 			string formatTerm = String.Empty;
 
 			//format coefficient
-			if (Math.Abs(term.coeficient) != 1) formatTerm += term.coeficient;
-			else if (term.coeficient == -1) formatTerm += "-";
-			else if(Math.Abs(term.coeficient) == 1 && term.function == Function.constant) 
-				formatTerm += term.coeficient;
-
-			//check if exponent 0. Then just return coefficient
-			if (term.exponent != null && term.exponent.Count == 1 && 
-				term.exponent[0].GetType() == typeof(Term))
+			if (((term.function == Function.constant || Math.Abs(term.coeficient) != 1) && !superscript)
+				|| term.coeficient != 1 && superscript)
 			{
-				Term termExponent = (Term)term.exponent[0];
-
-				if (termExponent.coeficient == 0) return term.coeficient.ToString();
+				formatTerm += PartStr(term.coeficient.ToString(), superscript);
 			}
 
-			if(term.function != Function.constant) formatTerm += term.function;
+			else if (term.coeficient == -1 && !superscript) formatTerm += PartStr("-", superscript);
+
+
+			if(term.function != Function.constant) 
+				formatTerm += PartStr(term.function.ToString(), superscript);
 
 			//format exponent
-			if (term.exponent != null && term.exponent.Count == 1 && term.exponent[0].GetType() == typeof(Term))
+			if (term.exponent != null)
 			{
-				Term termExponent = (Term)term.exponent[0];
+				string exponent = EquationStr(term.exponent, true);
 
-				if (termExponent.coeficient != 1)
-				{
-					string exponentStr = termExponent.coeficient.ToString();
-
-					//turn float into multiple superscript characters
-					for (int i = 0; i < exponentStr.Length; i++) formatTerm += Superscript[exponentStr[i]];
-				}
+				//if exponent 0 return coefficient only
+				if (exponent == Superscript['0'].ToString()) return term.coeficient.ToString();
+				else formatTerm += exponent;
 			}
 
 			//format input
-			if (requiresInput[term.function]) formatTerm += $"({EquationStr(term.input)})";
+			if (requiresInput[term.function]) formatTerm += $"({EquationStr(term.input, false)})";
 
 			return formatTerm;
 		}
@@ -116,6 +109,21 @@ namespace Maths_solver.UI
 			}
 
 			return formatTerm;
+		}
+
+		private static string PartStr(string part, bool superscript)
+		{
+			string displayed = string.Empty;
+			if (!superscript) displayed = part;
+			else
+			{
+				for (int i = 0; i < part.Length; i++)
+				{
+					displayed += Superscript[part[i]];
+				}
+			}
+
+			return displayed;
 		}
 
 		private static List<EquationItem> stringToEquation(string inputSpaces)
@@ -429,11 +437,10 @@ namespace Maths_solver.UI
 			box.SelectionLength = 0;
 		}
 
-		//fail case cos(x²)
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
 			OutputBox.Text =
-				EquationStr(Maths.Maths.DifferentiateEquation(stringToEquation(InputBox.Text)));
+				EquationStr(Maths.Maths.DifferentiateEquation(stringToEquation(InputBox.Text)), false);
 
 			//OutputBox.Text = EquationStr(stringToEquation(InputBox.Text));
 		}

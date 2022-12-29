@@ -37,7 +37,7 @@
 			// 
 			// InputBox
 			// 
-			this.InputBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.InputBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F);
 			this.InputBox.Location = new System.Drawing.Point(105, 44);
 			this.InputBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.InputBox.Name = "InputBox";
