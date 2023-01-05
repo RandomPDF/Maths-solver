@@ -184,15 +184,15 @@ namespace Maths_solver.UI
 
 		private static void FindCoefficient(ref string part, char next, ref float coefficient)
         {
-			int _coefficient = 1;
+			float _coefficient = 1;
 			//current part is int, but next part isn't, must be whole coefficient
-			if ((int.TryParse(part, out _coefficient) &&
-				!int.TryParse(next.ToString(), out int _)))
+			if (float.TryParse(part, out _coefficient) &&
+				!float.TryParse(next.ToString(), out float _) && next != '.')
 			{
 				coefficient = _coefficient;
 				part = String.Empty;
 			}
-			else if(int.TryParse(part + next.ToString(), out _coefficient)) coefficient = _coefficient;
+			else if(float.TryParse(part + next.ToString(), out _coefficient)) coefficient = _coefficient;
 		}
 
 		private static bool IsSuperscript(string text, out string superscript)
