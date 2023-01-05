@@ -135,7 +135,7 @@ namespace Maths_solver.UI
 			float coefficient = 1;
 			Function function = Function.NONE;
 			List<EquationItem> funcInput = new List<EquationItem>();
-			float exponent = 1;
+			List<EquationItem> exponent = new List<EquationItem>();
 
 			//remove spaces
 			string input = String.Empty;
@@ -168,7 +168,7 @@ namespace Maths_solver.UI
 
 				FindFunction(input, i, ref function, ref part);
 
-				FindExponent(i ,input, function, ref part, ref foundExponent, out exponent);
+				FindExponent(input, i, part, function, ref exponent, ref foundExponent);
 
 				SeparateString(input[i], brackets, ref part, out funcInput);
 
@@ -287,54 +287,33 @@ namespace Maths_solver.UI
 			}
 		}
 
-		private static void FindExponent(int i, string input, Function function, ref string part,
-			ref bool foundExponent, out float exponent)
+		private static void FindExponent(string input, int i, string part, Function function,
+			ref List<EquationItem> exponent, ref bool foundExponent)
 		{
-			exponent = 1;
-			string check = String.Empty;
-
-			//if within string and no more exponents and function is x
-			if (function == Function.x && i < input.Length - 1 && !IsSuperscript(input[i].ToString(), out string _))
-			{
-				check = part.ToString();
-				part = String.Empty;
+			if(!IsSuperscript(input[i].ToString(), out string _) && IsSuperscript(part, out string exponentLong))
+            {
+				exponent = stringToEquation(part);
 				foundExponent = true;
 			}
-
-			//if next is end of string
-			if (i == input.Length - 1)
-			{
-				//if next is superscript
-				if (IsSuperscript(input[i].ToString(), out string _))
-				{
-					//check previous exponents, and next exponents
-					check = part + input[i].ToString();
-					part = String.Empty;
-				}
-				else foundExponent = true;
-			}
-
-			//if at end of string, part must be exponent
-			if (i > input.Length - 1)
-			{
-				check = part;
+			else if(IsSuperscript(input[i].ToString(), out string _) && i == input.Length - 1 &&
+				IsSuperscript(part + input[i], out string exponentShort) && float.TryParse(exponentShort, out float exponentVal))
+            {
+				exponent.Add(new Term(exponentVal));
 				foundExponent = true;
-			}
-
-			//string isn't exponent, continue
-			if (!IsSuperscript(check.ToString(), out string exponentStr)) return;
-
-			//set exponent as string
-			if (int.TryParse(exponentStr, out int _exponent))
-			{
-				exponent = _exponent;
+            }
+			else if(function == Function.x)
+            {
 				foundExponent = true;
-			}
+            }
+            else
+            {
+				foundExponent = false;
+            }
 		}
 
 		private static void CheckOperation(string input, int i,
 			ref float coefficient, ref Function function, ref List<EquationItem> funcInput, 
-			ref float exponent, ref string part, ref List<EquationItem> equation, ref bool foundExponent)
+			ref List<EquationItem> exponent, ref string part, ref List<EquationItem> equation, ref bool foundExponent)
 		{
 			char operation = input[i];
 
@@ -374,8 +353,8 @@ namespace Maths_solver.UI
 
 				coefficient = 1;
 				function = Function.NONE;
-				funcInput = null;
-				exponent = 1;
+				funcInput = new List<EquationItem>();
+				exponent = new List<EquationItem>();
 				part = String.Empty;
 				foundExponent = false;
 
@@ -383,21 +362,21 @@ namespace Maths_solver.UI
 			}
 		}
 
-		private static void CreateEquation(Function function, float coefficient, List<EquationItem> funcInput, float exponent, bool foundExponent,
-			ref List<EquationItem> equation)
+		private static void CreateEquation(Function function, float coefficient, List<EquationItem> funcInput,
+			List<EquationItem> exponent, bool foundExponent, ref List<EquationItem> equation)
 		{
 			if (function != Function.NONE)
 			{
 				//if has input and requires input
 				if (funcInput != null && requiresInput[function])
 				{
-					equation.Add(new Term(coefficient, function, funcInput, new List<EquationItem> { new Term(exponent) }));
+					equation.Add(new Term(coefficient, function, funcInput, exponent));
 				}
 
 				//if has no input but doesnt require input
 				if (funcInput == null && !requiresInput[function] && foundExponent)
 				{
-					equation.Add(new Term(coefficient, function, new List<EquationItem> { new Term(exponent) }));
+					equation.Add(new Term(coefficient, function, exponent));
 				}
 			}
 		}
