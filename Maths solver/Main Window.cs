@@ -134,8 +134,8 @@ namespace Maths_solver.UI
 
 			float coefficient = 1;
 			Function function = Function.NONE;
-			List<EquationItem> funcInput = new List<EquationItem>();
-			List<EquationItem> exponent = new List<EquationItem>();
+			List<EquationItem> funcInput = null;
+			List<EquationItem> exponent = new List<EquationItem> { new Term() };
 
 			//remove spaces
 			string input = String.Empty;
@@ -158,8 +158,8 @@ namespace Maths_solver.UI
 				{
 					SeparateString(input[i], brackets, ref part, out funcInput);
 
-					if(funcInput != null) CreateEquation(function, coefficient, funcInput, 
-						exponent, foundExponent, ref equation);
+					if(funcInput != null) CreateEquation(function, coefficient, funcInput,
+						i, input, exponent, foundExponent, ref equation);
 
 					continue;
 				}
@@ -172,7 +172,7 @@ namespace Maths_solver.UI
 
 				SeparateString(input[i], brackets, ref part, out funcInput);
 
-				CreateEquation(function, coefficient, funcInput, exponent, foundExponent, ref equation);
+				CreateEquation(function, coefficient, funcInput, i, input, exponent, foundExponent, ref equation);
 
 				CheckOperation(input, i, ref coefficient, ref function, ref funcInput, ref exponent,
 					ref part, ref equation, ref foundExponent);
@@ -290,24 +290,24 @@ namespace Maths_solver.UI
 		private static void FindExponent(string input, int i, string part, Function function,
 			ref List<EquationItem> exponent, ref bool foundExponent)
 		{
-			if(!IsSuperscript(input[i].ToString(), out string _) && IsSuperscript(part, out string exponentLong))
+			if(!IsSuperscript(input[i].ToString(), out string _))
             {
-				exponent = stringToEquation(part);
-				foundExponent = true;
+				if (IsSuperscript(part, out string exponentLong))
+				{
+					exponent = stringToEquation(exponentLong);
+					foundExponent = true;
+				}
+
+				if (function == Function.x) foundExponent = true;
 			}
-			else if(IsSuperscript(input[i].ToString(), out string _) && i == input.Length - 1 &&
-				IsSuperscript(part + input[i], out string exponentShort) && float.TryParse(exponentShort, out float exponentVal))
+			else if(IsSuperscript(input[i].ToString(), out string _) && i == input.Length - 1)
             {
-				exponent.Add(new Term(exponentVal));
-				foundExponent = true;
-            }
-			else if(function == Function.x)
-            {
-				foundExponent = true;
-            }
-            else
-            {
-				foundExponent = false;
+				if (IsSuperscript(part + input[i], out string exponentShort) &&
+					float.TryParse(exponentShort, out float exponentVal))
+				{
+					exponent = new List<EquationItem> { new Term(exponentVal)};
+					foundExponent = true;
+				}
             }
 		}
 
@@ -347,14 +347,14 @@ namespace Maths_solver.UI
 				{
 					function = Function.constant;
 					foundExponent = true;
-					CreateEquation(function, coefficient, funcInput, exponent, foundExponent,
+					CreateEquation(function, coefficient, funcInput,i , input, exponent, foundExponent,
 						ref equation);
 				}
 
 				coefficient = 1;
 				function = Function.NONE;
-				funcInput = new List<EquationItem>();
-				exponent = new List<EquationItem>();
+				funcInput = null;
+				exponent = new List<EquationItem> { new Term() };
 				part = String.Empty;
 				foundExponent = false;
 
@@ -363,7 +363,7 @@ namespace Maths_solver.UI
 		}
 
 		private static void CreateEquation(Function function, float coefficient, List<EquationItem> funcInput,
-			List<EquationItem> exponent, bool foundExponent, ref List<EquationItem> equation)
+			int i, string input, List<EquationItem> exponent, bool foundExponent, ref List<EquationItem> equation)
 		{
 			if (function != Function.NONE)
 			{

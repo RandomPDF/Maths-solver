@@ -66,7 +66,7 @@ namespace Maths_solver.Maths
 			if (requiresInput[function]) this.input = new List<EquationItem>() { new Term(Function.x) };
 			else this.input = null;
 
-			this.exponent = null;
+			this.exponent = new List<EquationItem> { new Term() };
 		}
 
 		//constants
@@ -75,7 +75,7 @@ namespace Maths_solver.Maths
 			this.coeficient = coeficient;
 			this.function = Function.constant;
 			this.input = null;
-			this.exponent = null;
+			this.exponent = new List<EquationItem> { new Term() };
 		}
 
 		//1
