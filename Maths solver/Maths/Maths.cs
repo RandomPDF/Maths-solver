@@ -113,8 +113,10 @@ namespace Maths_solver.Maths
 				{
 					if (inputDifferential[i].GetType() == typeof(Operation) &&
 						((Operation)inputDifferential[i]).operation != OperationEnum.Multiplication)
-
+					{
 						oneTerm = false;
+						break;
+					}
 				}
 
 				int firstIndex = 0;
@@ -128,12 +130,10 @@ namespace Maths_solver.Maths
 				}
 
 				Term first = (Term)inputDifferential[firstIndex];
-				Term firstExponent = (Term)first.exponent[0];
 
-				//if a constant with a coefficient of 0 or 1, ignore adding
-				if ((first.function != Function.constant &&
-					!(first.function == Function.x && firstExponent.coeficient == 0)) ||
-					(first.coeficient != 0 && first.coeficient != 1))
+				//if is a constant with coefficient of 1 or 0 ignore adding
+				if (!(first.function == Function.constant &&
+					(first.coeficient == 0 || first.coeficient == 1)))
 				{
 					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 
@@ -240,6 +240,19 @@ namespace Maths_solver.Maths
 			float newCoefficient = 1;
 			int startTerm = -1;
 
+			//terms
+            for (int i = 0; i < equation.Count; i++)
+            {
+				//convert x^0 to a constant
+				if (equation[i].GetType() == typeof(Term) &&
+					((Term)((Term)equation[i]).exponent[0]).coeficient == 0 &&
+					((Term)equation[i]).function == Function.x)
+				{
+					equation[i] = new Term(((Term)equation[i]).coeficient);
+				}
+			}
+
+			//operations
             for (int i = 0; i < equation.Count - 1; i++)
             {
 				//format operations
