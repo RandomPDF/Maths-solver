@@ -10,7 +10,7 @@ namespace Maths_solver.Maths
 {
 	internal class Maths : Functions
 	{
-		public static Dictionary<Function, List<EquationItem>> Differentials = 
+		private static Dictionary<Function, List<EquationItem>> Differentials = 
 			new Dictionary<Function, List<EquationItem>>()
 		{
 			{Function.sin, new List<EquationItem>() {new Term(Function.cos) } },
@@ -68,7 +68,11 @@ namespace Maths_solver.Maths
 			{new Term(Function.x, new List<EquationItem> { new Term(-1) }) } },
 		};
 
-		public static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
+		private static object sender;
+		public static event EventHandler<Step> ShowSteps;
+
+        #region Differentiate
+        public static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
 		{
 			List<EquationItem> newEquation = new List<EquationItem>();
 
@@ -104,8 +108,14 @@ namespace Maths_solver.Maths
 
 			if (Differentials.ContainsKey(term.function)) 
 			{
+				ShowSteps?.Invoke(sender, new Step(Rule.Standard, new List<EquationItem>{ term }));
+
+				ShowSteps?.Invoke(sender, new Step(Rule.Chain, term.input));
+
 				//chain rule
 				List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
+
+				ShowSteps?.Invoke(sender, new Step(Phase.End));
 
 				//checks if equation is one term all multiplied
 				bool oneTerm = true;
@@ -174,6 +184,9 @@ namespace Maths_solver.Maths
 						newEquation.Add(differentialObject);
 					}
 				}
+
+				ShowSteps?.Invoke(sender, new Step(Rule.Standard,
+					new List<EquationItem> { new Term(term.function) }, differential));
 			}
 			else
 			{
@@ -181,6 +194,11 @@ namespace Maths_solver.Maths
 				{
 					case Function.x:
 						DifferentiateX(term, ref newTerm, ref newEquation);
+						break;
+
+					case Function.constant:
+						ShowSteps?.Invoke(sender, new Step(Rule.Constant,
+							new List<EquationItem> { new Term(term.coeficient) }));
 						break;
 				}
 			}
@@ -194,6 +212,8 @@ namespace Maths_solver.Maths
 			{
 				Term exponent = (Term)term.exponent[0];
 
+				ShowSteps?.Invoke(sender, new Step(Rule.x, new List<EquationItem> { term }));
+
 				if (exponent.coeficient != 0)
 				{
 					//ax^n => anx^(n-1)
@@ -201,6 +221,11 @@ namespace Maths_solver.Maths
 							new List<EquationItem> { new Term(exponent.coeficient - 1) });
 
 					AddTerm(newTerm, ref newEquation);
+
+					ShowSteps?.Invoke(sender, new Step(Rule.x, new List<EquationItem> { term },
+						new List<EquationItem>{ newTerm}));
+
+					ShowSteps?.Invoke(sender, new Step(Phase.End));
 				}
 				else
                 {
@@ -208,7 +233,11 @@ namespace Maths_solver.Maths
                     {
 						newEquation.RemoveAt(newEquation.Count - 1);
 					}
-                }
+
+					ShowSteps?.Invoke(sender, new Step(Rule.Constant, new List<EquationItem> { term }));
+				}
+
+				ShowSteps?.Invoke(sender, new Step(Phase.End));
 			}
 		}
 
@@ -222,7 +251,9 @@ namespace Maths_solver.Maths
 			}
 		}
 
-		private static void FormatEquation(ref List<EquationItem> equation)
+        #endregion
+        #region Format
+        private static void FormatEquation(ref List<EquationItem> equation)
         {
 			//if first term is addition
 			if (equation.Count > 0 && equation[0].GetType() == typeof(Operation) &&
@@ -360,5 +391,7 @@ namespace Maths_solver.Maths
 				}
 			}
 		}
-	}
+
+        #endregion
+    }
 }
