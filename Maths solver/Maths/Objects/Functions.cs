@@ -6,25 +6,8 @@ namespace Maths_solver.Maths
 	{
 		public enum Function
 		{
-			sin,
-			cos,
-			tan,
-			sinh,
-			cosh,
-			tanh,
-			sech,
-			cosech,
-			coth,
-			cosec,
-			sec,
-			cot,
-			ln,
-			constant,
-			x,
-			arcsin,
-			arccos,
-			arctan,
-			NONE
+			sin, cos, tan, sinh, cosh, tanh, sech, cosech, coth, cosec, sec, cot, ln, constant, x,
+			arcsin, arccos, arctan, NONE
 		}
 
 		//Dictionary of function names, and if they require an input

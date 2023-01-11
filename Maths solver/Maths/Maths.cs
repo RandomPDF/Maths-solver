@@ -1,74 +1,67 @@
-﻿using System;
+﻿using Maths_solver.UI;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static Maths_solver.Maths.Operation;
 
 namespace Maths_solver.Maths
 {
 	internal class Maths : Functions
 	{
-		public static Dictionary<Function, List<EquationItem>> Differentials = 
+		private static Dictionary<Function, List<EquationItem>> Differentials = 
 			new Dictionary<Function, List<EquationItem>>()
 		{
 			{Function.sin, new List<EquationItem>() {new Term(Function.cos) } },
-
 			{Function.cos, new List<EquationItem>() {new Term(-1, Function.sin)} },
-
 
 			{Function.tan, new List<EquationItem>()
 			{new Term(Function.sec, new List<EquationItem> { new Term(2) }) } },
-
 
 			{Function.cosec, new List<EquationItem>()
 			{new Term(-1, Function.cosec),
 			new Operation(OperationEnum.Multiplication),
 			new Term(Function.cot)}},
 
-
 			{Function.sec, new List<EquationItem>()
 			{new Term(Function.sec),
 			new Operation(OperationEnum.Multiplication),
 			new Term(Function.tan)}},
 
-
 			{Function.cot, new List<EquationItem>()
 			{new Term(-1, Function.cosec, new List<EquationItem> { new Term(2) }) } },
 
-
 			{Function.sinh, new List<EquationItem>() {new Term(Function.cosh) } },
-
-
 			{Function.cosh, new List<EquationItem>() {new Term(Function.sinh) } },
-
 
 			{Function.tanh, new List<EquationItem>()
 			{new Term(Function.sech, new List<EquationItem> { new Term(2) } ) } },
-
 
 			{Function.cosech, new List<EquationItem>()
 			{new Term(-1, Function.cosech),
 			new Operation(OperationEnum.Multiplication),
 			new Term(Function.coth)}},
 
-
 			{Function.sech, new List<EquationItem>()
 			{new Term(-1, Function.sech),
 			new Operation(OperationEnum.Multiplication),
 			new Term(Function.tanh)}},
 
-
 			{Function.coth, new List<EquationItem>()
 			{new Term(-1, Function.cosech) } },
-
 
 			{Function.ln, new List<EquationItem>()
 			{new Term(Function.x, new List<EquationItem> { new Term(-1) }) } },
 		};
 
-		public static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
+		private static object sender;
+		public static event EventHandler<Step> ShowSteps;
+
+		#region Differentiate
+		private static List<EquationItem> DifferentiateEquation(List<EquationItem> equation)
 		{
 			List<EquationItem> newEquation = new List<EquationItem>();
 
@@ -104,8 +97,15 @@ namespace Maths_solver.Maths
 
 			if (Differentials.ContainsKey(term.function)) 
 			{
+				ShowSteps?.Invoke(sender, new Step(Rule.Standard, Phase.Start,
+					new List<EquationItem> { term }));
+
+				ShowSteps?.Invoke(sender, new Step(Rule.Chain, Phase.Start, term.input));
+
 				//chain rule
 				List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
+
+				ShowSteps?.Invoke(sender, new Step(Phase.End));
 
 				//checks if equation is one term all multiplied
 				bool oneTerm = true;
@@ -113,10 +113,13 @@ namespace Maths_solver.Maths
 				{
 					if (inputDifferential[i].GetType() == typeof(Operation) &&
 						((Operation)inputDifferential[i]).operation != OperationEnum.Multiplication)
-
+					{
 						oneTerm = false;
+						break;
+					}
 				}
 
+				//get the first term in input differential
 				int firstIndex = 0;
 				for (int i = 0; i < inputDifferential.Count; i++)
 				{
@@ -128,12 +131,10 @@ namespace Maths_solver.Maths
 				}
 
 				Term first = (Term)inputDifferential[firstIndex];
-				Term firstExponent = (Term)first.exponent[0];
 
-				//if a constant with a coefficient of 0 or 1, ignore adding
-				if ((first.function != Function.constant &&
-					!(first.function == Function.x && firstExponent.coeficient == 0)) ||
-					(first.coeficient != 0 && first.coeficient != 1))
+				//if is constant with coefficient of 1 or 0 ignore adding
+				if (!(first.function == Function.constant &&
+					(first.coeficient == 0 || first.coeficient == 1)))
 				{
 					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 
@@ -174,6 +175,9 @@ namespace Maths_solver.Maths
 						newEquation.Add(differentialObject);
 					}
 				}
+
+				ShowSteps?.Invoke(sender, new Step(Rule.Standard, Phase.End,
+					new List<EquationItem> { new Term(term.function)}, differential));
 			}
 			else
 			{
@@ -181,6 +185,12 @@ namespace Maths_solver.Maths
 				{
 					case Function.x:
 						DifferentiateX(term, ref newTerm, ref newEquation);
+						break;
+
+					case Function.constant:
+						ShowSteps?.Invoke(sender, new Step(Rule.Constant, Phase.Start, new List<EquationItem> { term }));
+
+						ShowSteps?.Invoke(sender, new Step(Phase.End));
 						break;
 				}
 			}
@@ -194,6 +204,8 @@ namespace Maths_solver.Maths
 			{
 				Term exponent = (Term)term.exponent[0];
 
+				ShowSteps?.Invoke(sender, new Step(Rule.x, Phase.Start, new List<EquationItem> { term }));
+
 				if (exponent.coeficient != 0)
 				{
 					//ax^n => anx^(n-1)
@@ -201,6 +213,11 @@ namespace Maths_solver.Maths
 							new List<EquationItem> { new Term(exponent.coeficient - 1) });
 
 					AddTerm(newTerm, ref newEquation);
+
+					ShowSteps?.Invoke(sender, new Step(Rule.x, Phase.End,
+						new List<EquationItem> { term }, new List<EquationItem> { newTerm }));
+
+					ShowSteps?.Invoke(sender, new Step(Phase.End));
 				}
 				else
                 {
@@ -208,7 +225,12 @@ namespace Maths_solver.Maths
                     {
 						newEquation.RemoveAt(newEquation.Count - 1);
 					}
-                }
+
+					ShowSteps?.Invoke(sender, new Step(Rule.Constant, Phase.Start,
+						new List <EquationItem>{ term }));
+				}
+
+				ShowSteps?.Invoke(sender, new Step(Phase.End));
 			}
 		}
 
@@ -222,8 +244,19 @@ namespace Maths_solver.Maths
 			}
 		}
 
+		public static List<EquationItem> Start(List<EquationItem> newEquation)
+		{
+			ShowSteps?.Invoke(sender, new Step(Phase.Reset));
+			return DifferentiateEquation(newEquation);
+		}
+
+		#endregion
+
+		#region Format
 		private static void FormatEquation(ref List<EquationItem> equation)
         {
+			if(equation.Count == 0) return;
+
 			//if first term is addition
 			if (equation.Count > 0 && equation[0].GetType() == typeof(Operation) &&
 				((Operation)equation[0]).operation == OperationEnum.Addition)
@@ -240,7 +273,20 @@ namespace Maths_solver.Maths
 			float newCoefficient = 1;
 			int startTerm = -1;
 
-            for (int i = 0; i < equation.Count - 1; i++)
+			//terms
+			for (int i = 0; i < equation.Count; i++)
+			{
+				//convert x^0 to a constant
+				if (equation[i].GetType() == typeof(Term) &&
+					((Term)((Term)equation[i]).exponent[0]).coeficient == 0 &&
+					((Term)equation[i]).function == Function.x)
+				{
+					equation[i] = new Term(((Term)equation[i]).coeficient);
+				}
+			}
+
+			//operations
+			for (int i = 0; i < equation.Count - 1; i++)
             {
 				//format operations
 				if (equation[i].GetType() == typeof(Operation))
@@ -277,6 +323,7 @@ namespace Maths_solver.Maths
 						if(formatted) FormatEquation(ref equation);
 					}
 
+					//sort out coefficients for multiple multiplied terms
 					if (first.operation == OperationEnum.Multiplication &&
 						((Term)equation[i + 1]).coeficient != 1 && 
 						equation[i-1].GetType() == typeof(Term) &&
@@ -347,5 +394,7 @@ namespace Maths_solver.Maths
 				}
 			}
 		}
+
+		#endregion
 	}
 }

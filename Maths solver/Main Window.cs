@@ -10,8 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Maths_solver.Maths;
-using static System.Net.Mime.MediaTypeNames;
 using static Maths_solver.Maths.Functions;
+using static Maths_solver.Maths.Operation;
 
 namespace Maths_solver.UI
 {
@@ -26,13 +26,18 @@ namespace Maths_solver.UI
 
 		private bool isSuperscript = false;
 
+		private Steps StepsForm;
+
 		public Main()
 		{
 			InitializeComponent();
 		}
 
-		private static string EquationStr(List<EquationItem> equation, bool superscript)
+		#region Equation to string
+		public static string EquationStr(List<EquationItem> equation, bool superscript)
 		{
+			if (equation == null) return String.Empty;
+
 			string equationStr = String.Empty;
 
 			foreach (EquationItem item in equation)
@@ -79,36 +84,7 @@ namespace Maths_solver.UI
 
 		private static string TermStr(Operation operation)
 		{
-			string formatTerm = String.Empty;
-
-			switch (operation.operation)
-			{
-				case OperationEnum.Addition:
-					formatTerm = " + ";
-					break;
-
-				case OperationEnum.Subtraction:
-					formatTerm = " - ";
-					break;
-
-				case OperationEnum.Multiplication:
-					formatTerm = String.Empty;
-					break;
-
-				case OperationEnum.Division:
-					formatTerm = " / ";
-					break;
-
-				case OperationEnum.OpenBracket:
-					formatTerm = "(";
-					break;
-
-				case OperationEnum.ClosedBracket:
-					formatTerm = ")";
-					break;
-			}
-
-			return formatTerm;
+			return operationToString[operation.operation];
 		}
 
 		private static string PartStr(string part, bool superscript)
@@ -125,7 +101,9 @@ namespace Maths_solver.UI
 
 			return displayed;
 		}
+		#endregion
 
+		#region String to equation
 		private static List<EquationItem> stringToEquation(string inputSpaces)
 		{
 			List<EquationItem> equation = new List<EquationItem>();
@@ -159,7 +137,7 @@ namespace Maths_solver.UI
 					SeparateString(input[i], brackets, ref part, out funcInput);
 
 					if(funcInput != null) CreateEquation(function, coefficient, funcInput,
-						i, input, exponent, foundExponent, ref equation);
+						exponent, foundExponent, ref equation);
 
 					continue;
 				}
@@ -172,7 +150,7 @@ namespace Maths_solver.UI
 
 				SeparateString(input[i], brackets, ref part, out funcInput);
 
-				CreateEquation(function, coefficient, funcInput, i, input, exponent, foundExponent, ref equation);
+				CreateEquation(function, coefficient, funcInput, exponent, foundExponent, ref equation);
 
 				CheckOperation(input, i, ref coefficient, ref function, ref funcInput, ref exponent,
 					ref part, ref equation, ref foundExponent);
@@ -184,7 +162,7 @@ namespace Maths_solver.UI
 
 		private static void FindCoefficient(ref string part, char next, ref float coefficient)
         {
-			float _coefficient = 1;
+			float _coefficient;
 			//current part is int, but next part isn't, must be whole coefficient
 			if (float.TryParse(part, out _coefficient) &&
 				!float.TryParse(next.ToString(), out float _) && next != '.')
@@ -256,22 +234,8 @@ namespace Maths_solver.UI
 			if (function != Function.NONE) return;
 
 			OperationEnum nextOperation = OperationEnum.NONE;
+			if (stringToOperation.ContainsKey(input[i])) nextOperation = stringToOperation[input[i]];
 			Function f = Function.NONE;
-
-			switch(input[i])
-            {
-				case '+':
-					nextOperation = OperationEnum.Addition;
-					break;
-
-				case '-':
-					nextOperation = OperationEnum.Subtraction;
-					break;
-
-				case '/':
-					nextOperation = OperationEnum.Division;
-					break;
-            }
 
 			//if next character is superscript or next char is input
 			//or next is at end of string
@@ -285,13 +249,19 @@ namespace Maths_solver.UI
 				function = f;
 				part = String.Empty;
 			}
+			else if(nextOperation != OperationEnum.NONE || i == input.Length - 1)
+			{
+				function = Function.constant;
+				part = String.Empty;
+			}
 		}
 
 		private static void FindExponent(string input, int i, string part, Function function,
 			ref List<EquationItem> exponent, ref bool foundExponent)
 		{
-			if(!IsSuperscript(input[i].ToString(), out string _))
-            {
+			if (function == Function.constant) foundExponent = true;
+			else if (!IsSuperscript(input[i].ToString(), out string _))
+			{
 				if (IsSuperscript(part, out string exponentLong))
 				{
 					exponent = stringToEquation(exponentLong);
@@ -300,15 +270,15 @@ namespace Maths_solver.UI
 
 				if (function == Function.x) foundExponent = true;
 			}
-			else if(IsSuperscript(input[i].ToString(), out string _) && i == input.Length - 1)
-            {
+			else if (IsSuperscript(input[i].ToString(), out string _) && i == input.Length - 1)
+			{
 				if (IsSuperscript(part + input[i], out string exponentShort) &&
 					float.TryParse(exponentShort, out float exponentVal))
 				{
-					exponent = new List<EquationItem> { new Term(exponentVal)};
+					exponent = new List<EquationItem> { new Term(exponentVal) };
 					foundExponent = true;
 				}
-            }
+			}
 		}
 
 		private static void CheckOperation(string input, int i,
@@ -319,35 +289,18 @@ namespace Maths_solver.UI
 
 			//if operation, new term
 			OperationEnum operationEnum = OperationEnum.NONE;
-
-			switch (operation)
-			{
-				case '+':
-					operationEnum = OperationEnum.Addition;
-					break;
-
-				case '-':
-					operationEnum = OperationEnum.Subtraction;
-					break;
-
-				case '/':
-					operationEnum = OperationEnum.Division;
-					break;
-
-					/*default:
-						operationEnum = OperationEnum.Multiplication;
-						break;*/
-			}
+			if (stringToOperation.ContainsKey(operation)) operationEnum = stringToOperation[operation];
 
 			//if end of current term
-			if (operationEnum != OperationEnum.NONE || operation == ')' || i >= input.Length - 1)
+			if ((operationEnum != OperationEnum.NONE && operationEnum != OperationEnum.OpenBracket)
+				|| i >= input.Length - 1)
 			{
 				//if nothing can be found, assume constant
 				if(function == Function.NONE)
 				{
 					function = Function.constant;
 					foundExponent = true;
-					CreateEquation(function, coefficient, funcInput,i , input, exponent, foundExponent,
+					CreateEquation(function, coefficient, funcInput, exponent, foundExponent,
 						ref equation);
 				}
 
@@ -362,8 +315,7 @@ namespace Maths_solver.UI
 			}
 		}
 
-		private static void CreateEquation(Function function, float coefficient, List<EquationItem> funcInput,
-			int i, string input, List<EquationItem> exponent, bool foundExponent, ref List<EquationItem> equation)
+		private static void CreateEquation(Function function, float coefficient, List<EquationItem> funcInput, List<EquationItem> exponent, bool foundExponent, ref List<EquationItem> equation)
 		{
 			if (function != Function.NONE)
 			{
@@ -380,7 +332,9 @@ namespace Maths_solver.UI
 				}
 			}
 		}
+		#endregion
 
+		#region UI
 		private void InputBox_TextChanged(object sender, EventArgs e)
 		{
 			RichTextBox senderBox = sender as RichTextBox;
@@ -416,12 +370,17 @@ namespace Maths_solver.UI
 			box.SelectionLength = 0;
 		}
 
+		private void StepsButton_Click(object sender, EventArgs e)
+		{
+			if(StepsForm == null) StepsForm = new Steps();
+			StepsForm.Show();
+		}
+
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
 			OutputBox.Text =
-				EquationStr(Maths.Maths.DifferentiateEquation(stringToEquation(InputBox.Text)), false);
-
-			//OutputBox.Text = EquationStr(stringToEquation(InputBox.Text));
+				EquationStr(Maths.Maths.Start(stringToEquation(InputBox.Text)), false);
 		}
+		#endregion
 	}
 }
