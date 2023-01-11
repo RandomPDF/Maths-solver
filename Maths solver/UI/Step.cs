@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Maths_solver.Maths;
 
 namespace Maths_solver.UI
 {
@@ -40,7 +39,6 @@ namespace Maths_solver.UI
 			this.phase = phase;
 
             output = null;
-            phase = Phase.Start;
         }
 
         public Step(Phase phase)
