@@ -31,7 +31,28 @@ namespace Maths_solver.UI
 		public Main()
 		{
 			InitializeComponent();
+            Maths.Maths.ShowSteps += ShowSteps;
 		}
+
+		#region Steps
+		private void ShowSteps(object sender, Step step)
+		{
+			//add tabs
+			for (int i = 0; i < tabCount; i++) StepsBox.Text += "\t";
+
+			switch (step.phase)
+			{
+				case Phase.End:
+					
+					switch(step.rule)
+					{
+						case Rule.None: break;
+
+						default:
+							StepsBox.Text += $"Using the {step.rule.ToString()} rule: " +
+								$"{EquationStr(step.input, false)} -> {EquationStr(step.output, false)}\n\n";
+							break;
+					}
 
 		#region Equation to string
 		public static string EquationStr(List<EquationItem> equation, bool superscript)
@@ -86,7 +107,6 @@ namespace Maths_solver.UI
 		{
 			return operationToString[operation.operation];
 		}
-
 		private static string PartStr(string part, bool superscript)
 		{
 			string displayed = string.Empty;
@@ -378,6 +398,9 @@ namespace Maths_solver.UI
 
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
+			StepsBox.Text = String.Empty;
+			tabCount = 0;
+
 			OutputBox.Text =
 				EquationStr(Maths.Maths.Start(stringToEquation(InputBox.Text)), false);
 		}
