@@ -87,7 +87,6 @@
     <Compile Include="Steps.Designer.cs">
       <DependentUpon>Steps.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Step.cs" />
     <Compile Include="Maths\Data\EquationItem.cs" />
     <Compile Include="Maths\Maths.cs" />
     <Compile Include="Maths\Data\Operation.cs" />

@@ -87,6 +87,8 @@ namespace Maths_solver.Maths
 
 			FormatEquation(ref newEquation);
 
+			ShowSteps?.Invoke(sender, new Step(Rule.None, Phase.End, equation, newEquation));
+
 			return newEquation;
 		}
 
@@ -100,50 +102,53 @@ namespace Maths_solver.Maths
 				ShowSteps?.Invoke(sender, new Step(Rule.Standard, Phase.Start,
 					new List<EquationItem> { term }));
 
-				ShowSteps?.Invoke(sender, new Step(Rule.Chain, Phase.Start, term.input));
-
-				//chain rule
-				List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
-
-				ShowSteps?.Invoke(sender, new Step(Phase.End));
-
-				//checks if equation is one term all multiplied
-				bool oneTerm = true;
-				for (int i = 0; i < inputDifferential.Count; i++)
+				if(!EquationsEqual(term.input, new List<EquationItem>{ new Term(Function.x)}))
 				{
-					if (inputDifferential[i].GetType() == typeof(Operation) &&
-						((Operation)inputDifferential[i]).operation != OperationEnum.Multiplication)
-					{
-						oneTerm = false;
-						break;
-					}
-				}
+					ShowSteps?.Invoke(sender, new Step(Rule.Chain, Phase.Start, term.input));
 
-				//get the first term in input differential
-				int firstIndex = 0;
-				for (int i = 0; i < inputDifferential.Count; i++)
-				{
-					if (inputDifferential[i].GetType() == typeof(Term))
-					{
-						firstIndex = i;
-						break;
-					}
-				}
+					//chain rule
+					List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
 
-				Term first = (Term)inputDifferential[firstIndex];
+					ShowSteps?.Invoke(sender, new Step(Phase.End));
 
-				//if is constant with coefficient of 1 or 0 ignore adding
-				if (!(first.function == Function.constant &&
-					(first.coeficient == 0 || first.coeficient == 1)))
-				{
-					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
-
+					//checks if equation is one term all multiplied
+					bool oneTerm = true;
 					for (int i = 0; i < inputDifferential.Count; i++)
-						newEquation.Add(inputDifferential[i]);
+					{
+						if (inputDifferential[i].GetType() == typeof(Operation) &&
+							((Operation)inputDifferential[i]).operation != OperationEnum.Multiplication)
+						{
+							oneTerm = false;
+							break;
+						}
+					}
 
-					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+					//get the first term in input differential
+					int firstIndex = 0;
+					for (int i = 0; i < inputDifferential.Count; i++)
+					{
+						if (inputDifferential[i].GetType() == typeof(Term))
+						{
+							firstIndex = i;
+							break;
+						}
+					}
 
-					newEquation.Add(new Operation(OperationEnum.Multiplication));
+					Term first = (Term)inputDifferential[firstIndex];
+
+					//if is constant with coefficient of 1 or 0 ignore adding
+					if (!(first.function == Function.constant &&
+						(first.coeficient == 0 || first.coeficient == 1)))
+					{
+						if (!oneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+
+						for (int i = 0; i < inputDifferential.Count; i++)
+							newEquation.Add(inputDifferential[i]);
+
+						if (!oneTerm) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
+						newEquation.Add(new Operation(OperationEnum.Multiplication));
+					}
 				}
 
 				//for each term in the correct differential
@@ -216,8 +221,6 @@ namespace Maths_solver.Maths
 
 					ShowSteps?.Invoke(sender, new Step(Rule.x, Phase.End,
 						new List<EquationItem> { term }, new List<EquationItem> { newTerm }));
-
-					ShowSteps?.Invoke(sender, new Step(Phase.End));
 				}
 				else
                 {
@@ -232,6 +235,45 @@ namespace Maths_solver.Maths
 
 				ShowSteps?.Invoke(sender, new Step(Phase.End));
 			}
+		}
+
+		private static bool EquationsEqual(List<EquationItem> equation1, List<EquationItem> equation2)
+		{
+			for (int i = 0; i < equation1.Count; i++)
+			{
+				//check if terms equal
+				if (equation1[i].GetType() == typeof(Term) && equation2[i].GetType() == typeof(Term))
+				{
+					Term term1 = (Term)equation1[i];
+					Term term2 = (Term)equation2[i];
+					if (!TermsEqual(term1, term2, false)) return false;
+				}
+				//check if operations equal
+				if (equation1[i].GetType() == typeof(Operation) &&
+				equation2[i].GetType() == typeof(Operation) &&
+				(Operation)equation1[i] != (Operation)equation2[i])
+				{
+					Operation term1 = (Operation)equation1[i];
+					Operation term2 = (Operation)equation2[i];
+					if (term1.operation != term2.operation) return false;
+				}
+				//check if same type
+				if (equation1[i].GetType() != equation2[i].GetType()) return false;
+			}
+			return true;
+		}
+		private static bool TermsEqual(Term term1, Term term2, bool areExponents)
+		{
+			//check if functions match
+			if (!areExponents && term1.function == term2.function)
+			{
+				if (term1.exponent != null && term2.exponent != null &&
+					EquationsEqual(term1.exponent, term2.exponent)) return true;
+				if (term1.exponent == null && term2.exponent == null) return true;
+			}
+			if (areExponents && term1.exponent == term2.exponent &&
+				term1.exponent == term2.exponent) return true;
+			return false;
 		}
 
 		private static void AddTerm(Term newTerm, ref List<EquationItem> newEquation)

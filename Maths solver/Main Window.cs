@@ -26,11 +26,18 @@ namespace Maths_solver.UI
 
 		private bool isSuperscript = false;
 
-		private Steps StepsForm;
+		private Steps StepsForm = new Steps();
 
 		public Main()
 		{
 			InitializeComponent();
+
+			FormBorderStyle = FormBorderStyle.None;
+			WindowState = FormWindowState.Maximized;
+
+			StepsForm.FormBorderStyle = FormBorderStyle.None;
+			StepsForm.WindowState = FormWindowState.Maximized;
+			StepsForm.Hide();
 		}
 
 		#region Equation to string
@@ -369,11 +376,7 @@ namespace Maths_solver.UI
 			box.SelectionLength = 0;
 		}
 
-		private void StepsButton_Click(object sender, EventArgs e)
-		{
-			if(StepsForm == null) StepsForm = new Steps();
-			StepsForm.Show();
-		}
+		private void StepsButton_Click(object sender, EventArgs e) { StepsForm.Show(); }
 
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
@@ -381,5 +384,7 @@ namespace Maths_solver.UI
 				EquationStr(Maths.Maths.Start(stringToEquation(InputBox.Text)), false);
 		}
 		#endregion
-	}
+
+		private void ExitButton_Click(object sender, EventArgs e) { Application.Exit(); }
+    }
 }

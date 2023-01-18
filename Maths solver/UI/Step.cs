@@ -14,7 +14,7 @@ namespace Maths_solver.UI
 
     public enum Phase
     {
-		Start, End, Reset
+        Start, End, Reset, None
     }
 
     public struct Step
@@ -24,19 +24,19 @@ namespace Maths_solver.UI
         public List<EquationItem> input;
         public List<EquationItem> output;
 
-		public Step(Rule rule, Phase phase, List<EquationItem> input, List<EquationItem> output)
+        public Step(Rule rule, Phase phase, List<EquationItem> input, List<EquationItem> output)
         {
             this.rule = rule;
-			this.output = output;
+            this.output = output;
             this.input = input;
-			this.phase = phase;
+            this.phase = phase;
         }
 
-		public Step(Rule rule, Phase phase, List<EquationItem> input)
+        public Step(Rule rule, Phase phase, List<EquationItem> input)
         {
             this.rule = rule;
             this.input = input;
-			this.phase = phase;
+            this.phase = phase;
 
             output = null;
         }
