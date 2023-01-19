@@ -68,7 +68,7 @@ namespace Maths_solver
 							break;
 
 						case Rule.Chain:
-							StepsBox.Text += $"Differentiate input " +
+							StepsBox.Text += $"Differentiate input" +
 								$"{EquationStr(step.input, false)}:\n";
 							break;
 
