@@ -43,7 +43,7 @@ namespace Maths_solver.UI
 		#region Equation to string
 		public static string EquationStr(List<EquationItem> equation, bool superscript)
 		{
-			if (equation == null) return String.Empty;
+			if (equation.Count == 0) return "0";
 
 			string equationStr = String.Empty;
 

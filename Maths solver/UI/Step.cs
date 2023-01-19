@@ -41,6 +41,15 @@ namespace Maths_solver.UI
             output = null;
         }
 
+        public Step(Rule rule, Phase phase)
+        {
+            this.rule = rule;
+            this.phase = phase;
+
+            input = null;
+            output = null;
+        }
+
         public Step(Phase phase)
         {
             this.phase = phase;
