@@ -26,8 +26,9 @@ namespace Maths_solver
 		{
 			if(tabCount < 0) tabCount = 0;
 
-			//problem
-			if (step.rule != Rule.None)
+			//problem. (so X^2 -> 2x has no rule but should have tabs
+			if (!(step.rule == Rule.None &&
+				step.input == null & step.output == null))
 			{
 				//add tabs
 				for (int i = 0; i < tabCount; i++) StepsBox.Text += "\t";
@@ -50,7 +51,7 @@ namespace Maths_solver
 							StepsBox.Text += $"Using the {step.rule.ToString()} rule:" +
 								$"{EquationStr(step.input, false)} ->" +
 								$"{EquationStr(step.output, false)}\n";
-							break;
+							return;
 					}
 
 					tabCount--;

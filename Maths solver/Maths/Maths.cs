@@ -109,8 +109,6 @@ namespace Maths_solver.Maths
 					//chain rule
 					List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
 
-					ShowSteps?.Invoke(sender, new Step(Phase.End));
-
 					//checks if equation is one term all multiplied
 					bool oneTerm = true;
 					for (int i = 0; i < inputDifferential.Count; i++)
