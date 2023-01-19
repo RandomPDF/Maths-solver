@@ -26,9 +26,8 @@ namespace Maths_solver
 		{
 			if(tabCount < 0) tabCount = 0;
 
-			//problem. (so X^2 -> 2x has no rule but should have tabs
 			if (!(step.rule == Rule.None &&
-				step.input == null & step.output == null))
+				step.input == null && step.output == null))
 			{
 				//add tabs
 				for (int i = 0; i < tabCount; i++) StepsBox.Text += "\t";
@@ -42,16 +41,20 @@ namespace Maths_solver
 						case Rule.None:
 							if (step.input != null && step.output != null)
 							{
-								StepsBox.Text += $"So {EquationStr(step.input, false)} -> " +
-									$"{EquationStr(step.output, false)}\n";
+								StepsBox.Text += $"So {EquationStr(step.input, false)} → " +
+									$"{EquationStr(step.output, false)}\n\n";
 							}
 							break;
 
+						case Rule.Chain:
+							StepsBox.Text += $"Multiply the input differential by the main differential using the chain rule keeping the input the same.\n";
+							break;
+
 						default:
-							StepsBox.Text += $"Using the {step.rule.ToString()} rule:" +
-								$"{EquationStr(step.input, false)} ->" +
-								$"{EquationStr(step.output, false)}\n";
-							return;
+							StepsBox.Text += $"Using the {step.rule.ToString()} rule: " +
+								$"{EquationStr(step.input, false)} → " +
+								$"{EquationStr(step.output, false)}\n\n";
+							break;
 					}
 
 					tabCount--;
@@ -61,7 +64,7 @@ namespace Maths_solver
 					switch(step.rule)
 					{
 						case Rule.Constant:
-							StepsBox.Text += $"Term {EquationStr(step.input, false)} -> 0\n";
+							StepsBox.Text += $"Differentiating term {EquationStr(step.input, false)} → 0\n";
 							break;
 
 						case Rule.Chain:
@@ -78,8 +81,8 @@ namespace Maths_solver
 					break;
 
 				case Phase.Reset:
-					tabCount = 0;
-					StepsBox.Text = String.Empty;
+					tabCount = 1;
+					StepsBox.Text = $"Differentiate equation {EquationStr(step.input, false)}:\n";
 					break;
 			}
 		}

@@ -96,14 +96,18 @@ namespace Maths_solver.Maths
 			ref List<EquationItem> newEquation)
 		{
 			Term newTerm = default;
+			bool useChain = false;
 
 			if (Differentials.ContainsKey(term.function)) 
 			{
 				ShowSteps?.Invoke(sender, new Step(Rule.Standard, Phase.Start,
 					new List<EquationItem> { term }));
 
+				
 				if(!EquationsEqual(term.input, new List<EquationItem>{ new Term(Function.x)}))
 				{
+					useChain = true;
+
 					ShowSteps?.Invoke(sender, new Step(Rule.Chain, Phase.Start, term.input));
 
 					//chain rule
@@ -179,8 +183,21 @@ namespace Maths_solver.Maths
 					}
 				}
 
+				//keep coefficients when showing steps
+				List<EquationItem> shownDifferential = new List<EquationItem>();
+				Term firstTerm = (Term)differential[0];
+				for (int i = 0; i < differential.Count; i++)
+				{
+					if (i == 0) shownDifferential.Add(new Term(term.coeficient * firstTerm.coeficient, firstTerm.function, firstTerm.input, firstTerm.exponent));
+
+					else shownDifferential.Add(differential[i]);
+				}
+
 				ShowSteps?.Invoke(sender, new Step(Rule.Standard, Phase.End,
-					new List<EquationItem> { new Term(term.function)}, differential));
+					new List<EquationItem> { new Term(term.coeficient, term.function)},
+					shownDifferential));
+
+				if(useChain) ShowSteps?.Invoke(sender, new Step(Rule.Chain, Phase.End));
 			}
 			else
 			{
@@ -230,13 +247,13 @@ namespace Maths_solver.Maths
 					ShowSteps?.Invoke(sender, new Step(Rule.Constant, Phase.Start,
 						new List <EquationItem>{ term }));
 				}
-
-				ShowSteps?.Invoke(sender, new Step(Phase.End));
 			}
 		}
 
 		private static bool EquationsEqual(List<EquationItem> equation1, List<EquationItem> equation2)
 		{
+			if (equation1.Count != equation2.Count) return false;
+
 			for (int i = 0; i < equation1.Count; i++)
 			{
 				//check if terms equal
@@ -262,12 +279,19 @@ namespace Maths_solver.Maths
 		}
 		private static bool TermsEqual(Term term1, Term term2, bool areExponents)
 		{
-			//check if functions match
-			if (!areExponents && term1.function == term2.function)
+			if (!areExponents)
 			{
-				if (term1.exponent != null && term2.exponent != null &&
-					EquationsEqual(term1.exponent, term2.exponent)) return true;
-				if (term1.exponent == null && term2.exponent == null) return true;
+				//check if coefficients match
+				if (term1.coeficient != term2.coeficient) return false;
+
+				//check if functions match
+				if (term1.function == term2.function)
+				{
+					if (term1.exponent != null && term2.exponent != null &&
+						EquationsEqual(term1.exponent, term2.exponent)) return true;
+
+					if (term1.exponent == null && term2.exponent == null) return true;
+				}
 			}
 			if (areExponents && term1.exponent == term2.exponent &&
 				term1.exponent == term2.exponent) return true;
@@ -286,7 +310,7 @@ namespace Maths_solver.Maths
 
 		public static List<EquationItem> Start(List<EquationItem> newEquation)
 		{
-			ShowSteps?.Invoke(sender, new Step(Phase.Reset));
+			ShowSteps?.Invoke(sender, new Step(Rule.None, Phase.Reset, newEquation, null));
 			return DifferentiateEquation(newEquation);
 		}
 
