@@ -19,11 +19,21 @@ namespace Maths_solver.UI
 	{
 		private static Dictionary<char, char> Superscript = new Dictionary<char, char>()
 		{
-			{'.', (char)0X00B7}, {'0', (char)0X2070}, {'1', (char)0X00B9},
-			{'2', (char)0X00B2}, {'3', (char)0X00B3}, {'4', (char)0X2074}, {'5', (char)0X2075}, 
-			{'6', (char)0X2076}, {'7', (char)0X2077}, {'8', (char)0X2078}, {'9', (char)0X2079},
-			{'+', (char)0X207A}, {'-', (char)0X207B}, {' ', ' '},
-			{'x', (char)0X02E3}, {'X', (char)0X1D42}, {'π', (char)0X2DEB}
+			{'0', (char)0X2070}, {'1', (char)0X00B9}, {'2', (char)0X00B2}, {'3', (char)0X00B3},
+			{'4', (char)0X2074}, {'5', (char)0X2075}, {'6', (char)0X2076}, {'7', (char)0X2077},
+			{'8', (char)0X2078}, {'9', (char)0X2079},
+
+			{'+', (char)0X207A}, {'-', (char)0X207B}, {' ', ' '}, {'.', (char)0X00B7},
+			{'(', (char)0X207D}, {')', (char)0X207E},
+
+			{'π', (char)0X2DEB},
+			{'a', (char)0X1D43}, {'b', (char)0X1D47}, {'c', (char)0X1D9C}, {'d', (char)0X1D48},
+			{'e', (char)0X1D49}, {'f', (char)0X1DA0}, {'g', (char)0X1D4D}, {'h', (char)0X02B0},
+			{'i', (char)0X2071}, {'j', (char)0X02B2}, {'k', (char)0X1D4F}, {'l', (char)0X02E1},
+			{'m', (char)0X1D50}, {'n', (char)0X207F}, {'o', (char)0X1D52}, {'p', (char)0X1D56},
+			{'r', (char)0X02B3}, {'s', (char)0X02E2}, {'t', (char)0X1D57}, {'u', (char)0X1D58},
+			{'v', (char)0X1D5B}, {'w', (char)0X02B7}, {'x', (char)0X02E3}, {'y', (char)0X02B8},
+			{'z', (char)0X1DBB}
 		};
 
 		private bool isSuperscript = false;
@@ -51,30 +61,33 @@ namespace Maths_solver.UI
 
 			foreach (EquationItem item in equation)
 			{
-				if (item.GetType() == typeof(Term)) equationStr += TermStr((Term)item, superscript);
-				else if (item.GetType() == typeof(Operation)) equationStr += TermStr((Operation)item);
+				if (item.GetType() == typeof(Term)) equationStr += TermStr((Term)item, superscript, equation.Count);
+
+				else if (item.GetType() == typeof(Operation)) equationStr += TermStr((Operation)item, superscript);
 			}
 
 			return equationStr;
 		}
 
-		private static string TermStr(Term term, bool superscript)
+		private static string TermStr(Term term, bool superscript, int equationLength)
 		{
 			string formatTerm = String.Empty;
 
+			#region coefficient
 			//format coefficient
 			if (((term.function == Function.constant || Math.Abs(term.coeficient) != 1) && !superscript)
-				|| term.coeficient != 1 && superscript)
+				|| (term.coeficient != 1 || (equationLength != 1 && term.function == Function.constant)) && superscript)
 			{
 				formatTerm += PartStr(term.coeficient.ToString(), superscript);
 			}
 
 			else if (term.coeficient == -1 && !superscript) formatTerm += PartStr("-", superscript);
+			#endregion
 
-
-			if(term.function != Function.constant) 
+			if (term.function != Function.constant) 
 				formatTerm += PartStr(term.function.ToString(), superscript);
 
+			#region exponent
 			//format exponent
 			if (term.exponent != null)
 			{
@@ -84,16 +97,26 @@ namespace Maths_solver.UI
 				if (exponent == Superscript['0'].ToString()) return term.coeficient.ToString();
 				else formatTerm += exponent;
 			}
+			#endregion
 
 			//format input
-			if (requiresInput[term.function]) formatTerm += $"({EquationStr(term.input, false)})";
+			if (requiresInput[term.function])
+			{
+				if(!superscript) formatTerm += $"({EquationStr(term.input, false)})";
+				else formatTerm += (char)0X207D + EquationStr(term.input, true) + (char)0X207E;
+			}
 
 			return formatTerm;
 		}
 
-		private static string TermStr(Operation operation)
+		private static string TermStr(Operation operation, bool superscript)
 		{
-			return operationToString[operation.operation];
+			if (superscript)
+				return $" {Superscript[(operationToString[operation.operation].Trim())[0]]} ";
+
+			else return operationToString[operation.operation];
+
+
 		}
 		private static string PartStr(string part, bool superscript)
 		{
@@ -123,6 +146,7 @@ namespace Maths_solver.UI
 			List<EquationItem> funcInput = null;
 			List<EquationItem> exponent = new List<EquationItem> { new Term() };
 
+			#region format input
 			inputSpaces = inputSpaces.ToLower();
 
 			//remove spaces
@@ -132,6 +156,7 @@ namespace Maths_solver.UI
 				if (inputSpaces[i] == ' ') continue;
 				input += inputSpaces[i];
 			}
+			#endregion
 
 			Stack<char> brackets = new Stack<char>();
 			string part = String.Empty;
@@ -357,18 +382,22 @@ namespace Maths_solver.UI
 				isSuperscript = !isSuperscript;
 
 				//ignore ^ character
-				UpdateBox(senderBox, input.Remove(input.Length - 1));
+				UpdateBox(senderBox, input.Remove(input.Length - 1).ToLower());
 			}
 			else if (isSuperscript)
 			{
 				//if the character can be superscript
 				if(Superscript.ContainsKey(input[input.Length - 1]))
 				{
-					UpdateBox(senderBox, input.Substring(0,
-					input.Length - 1) + Superscript[input[input.Length - 1]]);
+					UpdateBox(senderBox, (input.Substring(0,
+					input.Length - 1) + Superscript[input[input.Length - 1]]).ToLower());
 				}
 				//Otherwise, no longer superscript
 				else isSuperscript = false;
+			}
+			else
+			{
+				UpdateBox(senderBox, input.ToLower());
 			}
 		}
 
@@ -386,7 +415,6 @@ namespace Maths_solver.UI
 			OutputBox.Text =
 				EquationStr(Maths.Maths.Start(stringToEquation(InputBox.Text)), false);
 		}
-		#endregion
 
 		private void ExitButton_Click(object sender, EventArgs e) { Application.Exit(); }
 
@@ -397,5 +425,6 @@ namespace Maths_solver.UI
 			isSuperscript = false;
 
 		}
+		#endregion
     }
 }

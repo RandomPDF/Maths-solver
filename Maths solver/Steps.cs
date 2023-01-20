@@ -46,7 +46,7 @@ namespace Maths_solver
 							}
 							break;
 
-						case Rule.Chain:
+						case Rule.Input:
 							StepsBox.Text += $"Multiply the input differential by the main differential using the chain rule keeping the input the same.\n";
 							break;
 
@@ -67,7 +67,7 @@ namespace Maths_solver
 							StepsBox.Text += $"Differentiating term {EquationStr(step.input, false)} → 0\n";
 							break;
 
-						case Rule.Chain:
+						case Rule.Input:
 							StepsBox.Text += $"Differentiate input" +
 								$"{EquationStr(step.input, false)}:\n";
 							break;

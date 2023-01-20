@@ -96,19 +96,20 @@ namespace Maths_solver.Maths
 			ref List<EquationItem> newEquation)
 		{
 			Term newTerm = default;
-			bool useChain = false;
+			bool chainInput = false;
 
 			if (Differentials.ContainsKey(term.function)) 
 			{
 				ShowSteps?.Invoke(sender, new Step(Rule.Standard, Phase.Start,
 					new List<EquationItem> { term }));
-
 				
+				#region chain input
+
 				if(!EquationsEqual(term.input, new List<EquationItem>{ new Term(Function.x)}))
 				{
-					useChain = true;
+					chainInput = true;
 
-					ShowSteps?.Invoke(sender, new Step(Rule.Chain, Phase.Start, term.input));
+					ShowSteps?.Invoke(sender, new Step(Rule.Input, Phase.Start, term.input));
 
 					//chain rule
 					List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
@@ -153,6 +154,9 @@ namespace Maths_solver.Maths
 					}
 				}
 
+				#endregion
+
+				#region differentiate function
 				//for each term in the correct differential
 				foreach (EquationItem differentialObject in differential)
 				{
@@ -183,6 +187,9 @@ namespace Maths_solver.Maths
 					}
 				}
 
+				#endregion
+
+				#region show steps
 				//keep coefficients when showing steps
 				List<EquationItem> shownDifferential = new List<EquationItem>();
 				Term firstTerm = (Term)differential[0];
@@ -197,22 +204,23 @@ namespace Maths_solver.Maths
 					new List<EquationItem> { new Term(term.coeficient, term.function)},
 					shownDifferential));
 
-				if(useChain) ShowSteps?.Invoke(sender, new Step(Rule.Chain, Phase.End));
+				if(chainInput) ShowSteps?.Invoke(sender, new Step(Rule.Input, Phase.End));
+				#endregion
 			}
 			else
 			{
-				switch(term.function)
+				#region differentiate others
+				switch (term.function)
 				{
 					case Function.x:
 						DifferentiateX(term, ref newTerm, ref newEquation);
 						break;
 
-					case Function.constant:
-						ShowSteps?.Invoke(sender, new Step(Rule.Constant, Phase.Start, new List<EquationItem> { term }));
-
-						ShowSteps?.Invoke(sender, new Step(Phase.End));
+					default:
+						DifferentiateConstant(term, ref newEquation);
 						break;
 				}
+				#endregion
 			}
 		}
 
@@ -248,6 +256,76 @@ namespace Maths_solver.Maths
 						new List <EquationItem>{ term }));
 				}
 			}
+		}
+
+		private static void DifferentiateConstant(Term term, ref List<EquationItem> newEquation)
+		{
+			ShowSteps?.Invoke(sender, new Step(Rule.Constant, Phase.Start, new List<EquationItem> { term }));
+
+			#region chain exponent
+			bool chainExponent = false;
+
+			if (((Term)(((List<EquationItem>)term.exponent)[0])).function != Function.constant)
+			{
+				chainExponent = true;
+
+				ShowSteps?.Invoke(sender, new Step(Rule.Exponent, Phase.Start, term.exponent));
+
+				//chain rule
+				List<EquationItem> exponentDifferential = DifferentiateEquation(term.exponent);
+
+				//checks if equation is one term all multiplied
+				bool oneTerm = true;
+				for (int i = 0; i < exponentDifferential.Count; i++)
+				{
+					if (exponentDifferential[i].GetType() == typeof(Operation) &&
+						((Operation)exponentDifferential[i]).operation != OperationEnum.Multiplication)
+					{
+						oneTerm = false;
+						break;
+					}
+				}
+
+				//get the first term in exponent differential
+				int firstIndex = 0;
+				for (int i = 0; i < exponentDifferential.Count; i++)
+				{
+					if (exponentDifferential[i].GetType() == typeof(Term))
+					{
+						firstIndex = i;
+						break;
+					}
+				}
+
+				Term first = (Term)exponentDifferential[firstIndex];
+
+				//if is constant with coefficient of 1 or 0 ignore adding
+				if (!(first.function == Function.constant &&
+					(first.coeficient == 0 || first.coeficient == 1)))
+				{
+					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+
+					for (int i = 0; i < exponentDifferential.Count; i++)
+						newEquation.Add(exponentDifferential[i]);
+
+					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
+					newEquation.Add(new Operation(OperationEnum.Multiplication));
+				}
+			}
+			#endregion
+
+			if (term.function == Function.constant && chainExponent)
+			{
+				AddTerm(new Term(1, Function.ln,
+					new List<EquationItem> { new Term(2) }, new List<EquationItem> { new Term() }), ref newEquation);
+
+				newEquation.Add(new Operation(OperationEnum.Multiplication));
+			}
+
+			if(chainExponent) AddTerm(term, ref newEquation);
+
+			ShowSteps?.Invoke(sender, new Step(Phase.End));
 		}
 
 		private static bool EquationsEqual(List<EquationItem> equation1, List<EquationItem> equation2)
@@ -321,6 +399,8 @@ namespace Maths_solver.Maths
         {
 			if(equation.Count == 0) return;
 
+			#region format operations
+
 			//if first term is addition
 			if (equation.Count > 0 && equation[0].GetType() == typeof(Operation) &&
 				((Operation)equation[0]).operation == OperationEnum.Addition)
@@ -333,7 +413,9 @@ namespace Maths_solver.Maths
 			{
 				equation.RemoveAt(equation.Count - 1);
 			}
+			#endregion
 
+			#region format terms
 			float newCoefficient = 1;
 			int startTerm = -1;
 
@@ -349,12 +431,14 @@ namespace Maths_solver.Maths
 				}
 			}
 
-			//operations
+			#endregion
+
 			for (int i = 0; i < equation.Count - 1; i++)
             {
 				//format operations
 				if (equation[i].GetType() == typeof(Operation))
                 {
+					#region format all operations
 					Operation first = (Operation)(equation[i]);
 
 					if (equation[i + 1].GetType() == typeof(Operation))
@@ -387,6 +471,9 @@ namespace Maths_solver.Maths
 						if(formatted) FormatEquation(ref equation);
 					}
 
+					#endregion
+
+					#region format coefficients
 					//sort out coefficients for multiple multiplied terms
 					if (first.operation == OperationEnum.Multiplication &&
 						((Term)equation[i + 1]).coeficient != 1 && 
@@ -403,8 +490,11 @@ namespace Maths_solver.Maths
 
 						FormatEquation(ref equation);
 					}
+
+					#endregion
 				}
 
+				#region format coefficients
 				//struggles with brackets
 				//format coefficients with multiple multiplied terms
 				if (equation[i+1].GetType() == typeof(Operation) && equation[i].GetType() == typeof(Term))
@@ -426,6 +516,8 @@ namespace Maths_solver.Maths
 						newCoefficient = 1;
 					}
 				}
+
+				#endregion
 			}
 		}
 

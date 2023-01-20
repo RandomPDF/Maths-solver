@@ -9,7 +9,7 @@ namespace Maths_solver.UI
 {
     public enum Rule
     {
-        Standard, x, Constant, Chain, None
+        Standard, x, Constant, Input, Exponent, None
     }
 
     public enum Phase
