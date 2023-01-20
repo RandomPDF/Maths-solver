@@ -19,9 +19,11 @@ namespace Maths_solver.UI
 	{
 		private static Dictionary<char, char> Superscript = new Dictionary<char, char>()
 		{
-			{'.', (char)0X00B7}, {'-', (char)0X207B}, {'0', (char)0X2070}, {'1', (char)0X00B9},
+			{'.', (char)0X00B7}, {'0', (char)0X2070}, {'1', (char)0X00B9},
 			{'2', (char)0X00B2}, {'3', (char)0X00B3}, {'4', (char)0X2074}, {'5', (char)0X2075}, 
-			{'6', (char)0X2076}, {'7', (char)0X2077}, {'8', (char)0X2078}, {'9', (char)0X2079}
+			{'6', (char)0X2076}, {'7', (char)0X2077}, {'8', (char)0X2078}, {'9', (char)0X2079},
+			{'+', (char)0X207A}, {'-', (char)0X207B}, {' ', ' '},
+			{'x', (char)0X02E3}, {'X', (char)0X1D42}, {'π', (char)0X2DEB}
 		};
 
 		private bool isSuperscript = false;
@@ -120,6 +122,8 @@ namespace Maths_solver.UI
 			Function function = Function.NONE;
 			List<EquationItem> funcInput = null;
 			List<EquationItem> exponent = new List<EquationItem> { new Term() };
+
+			inputSpaces = inputSpaces.ToLower();
 
 			//remove spaces
 			string input = String.Empty;
@@ -278,10 +282,9 @@ namespace Maths_solver.UI
 			}
 			else if (IsSuperscript(input[i].ToString(), out string _) && i == input.Length - 1)
 			{
-				if (IsSuperscript(part + input[i], out string exponentShort) &&
-					float.TryParse(exponentShort, out float exponentVal))
+				if (IsSuperscript(part + input[i], out string exponentLong))
 				{
-					exponent = new List<EquationItem> { new Term(exponentVal) };
+					exponent = stringToEquation(exponentLong);
 					foundExponent = true;
 				}
 			}
@@ -386,5 +389,13 @@ namespace Maths_solver.UI
 		#endregion
 
 		private void ExitButton_Click(object sender, EventArgs e) { Application.Exit(); }
+
+        private void piButton_Click(object sender, EventArgs e)
+        {
+			Button button = sender as Button;
+			InputBox.Text += button.Text[0];
+			isSuperscript = false;
+
+		}
     }
 }
