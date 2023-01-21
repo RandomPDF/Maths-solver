@@ -36,7 +36,6 @@
 			this.StepsButton = new System.Windows.Forms.Button();
 			this.ExitButton = new System.Windows.Forms.Button();
 			this.piButton = new System.Windows.Forms.Button();
-			this.SuperscriptChecked = new System.Windows.Forms.CheckBox();
 			this.button1 = new System.Windows.Forms.Button();
 			this.button2 = new System.Windows.Forms.Button();
 			this.button3 = new System.Windows.Forms.Button();
@@ -52,9 +51,9 @@
 			this.button13 = new System.Windows.Forms.Button();
 			this.button14 = new System.Windows.Forms.Button();
 			this.button15 = new System.Windows.Forms.Button();
-			this.button16 = new System.Windows.Forms.Button();
 			this.button17 = new System.Windows.Forms.Button();
 			this.button18 = new System.Windows.Forms.Button();
+			this.SuperscriptCheckbox = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// InputBox
@@ -149,19 +148,6 @@
 			this.piButton.Text = "π";
 			this.piButton.UseVisualStyleBackColor = true;
 			this.piButton.Click += new System.EventHandler(this.ConstantClick);
-			// 
-			// SuperscriptChecked
-			// 
-			this.SuperscriptChecked.AutoCheck = false;
-			this.SuperscriptChecked.AutoSize = true;
-			this.SuperscriptChecked.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.SuperscriptChecked.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SuperscriptChecked.Location = new System.Drawing.Point(230, 453);
-			this.SuperscriptChecked.Name = "SuperscriptChecked";
-			this.SuperscriptChecked.Size = new System.Drawing.Size(244, 50);
-			this.SuperscriptChecked.TabIndex = 11;
-			this.SuperscriptChecked.Text = "Superscript";
-			this.SuperscriptChecked.UseVisualStyleBackColor = true;
 			// 
 			// button1
 			// 
@@ -343,18 +329,6 @@
 			this.button15.UseVisualStyleBackColor = true;
 			this.button15.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button16
-			// 
-			this.button16.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button16.Location = new System.Drawing.Point(1617, 55);
-			this.button16.Margin = new System.Windows.Forms.Padding(4);
-			this.button16.Name = "button16";
-			this.button16.Size = new System.Drawing.Size(52, 37);
-			this.button16.TabIndex = 27;
-			this.button16.Text = "^";
-			this.button16.UseVisualStyleBackColor = true;
-			this.button16.Click += new System.EventHandler(this.SuperscriptButton);
-			// 
 			// button17
 			// 
 			this.button17.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -379,14 +353,27 @@
 			this.button18.UseVisualStyleBackColor = true;
 			this.button18.Click += new System.EventHandler(this.ConstantClick);
 			// 
+			// SuperscriptCheckbox
+			// 
+			this.SuperscriptCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
+			this.SuperscriptCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.SuperscriptCheckbox.Location = new System.Drawing.Point(1617, 55);
+			this.SuperscriptCheckbox.Name = "SuperscriptCheckbox";
+			this.SuperscriptCheckbox.Size = new System.Drawing.Size(52, 37);
+			this.SuperscriptCheckbox.TabIndex = 30;
+			this.SuperscriptCheckbox.Text = "^";
+			this.SuperscriptCheckbox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.SuperscriptCheckbox.UseVisualStyleBackColor = true;
+			this.SuperscriptCheckbox.Click += new System.EventHandler(this.SuperscriptButton);
+			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1925, 1084);
+			this.Controls.Add(this.SuperscriptCheckbox);
 			this.Controls.Add(this.button18);
 			this.Controls.Add(this.button17);
-			this.Controls.Add(this.button16);
 			this.Controls.Add(this.button10);
 			this.Controls.Add(this.button11);
 			this.Controls.Add(this.button12);
@@ -402,7 +389,6 @@
 			this.Controls.Add(this.button3);
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.button1);
-			this.Controls.Add(this.SuperscriptChecked);
 			this.Controls.Add(this.piButton);
 			this.Controls.Add(this.ExitButton);
 			this.Controls.Add(this.StepsButton);
@@ -428,7 +414,6 @@
 		private System.Windows.Forms.Button StepsButton;
         private System.Windows.Forms.Button ExitButton;
         private System.Windows.Forms.Button piButton;
-		private System.Windows.Forms.CheckBox SuperscriptChecked;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button button3;
@@ -444,9 +429,9 @@
 		private System.Windows.Forms.Button button13;
 		private System.Windows.Forms.Button button14;
 		private System.Windows.Forms.Button button15;
-		private System.Windows.Forms.Button button16;
 		private System.Windows.Forms.Button button17;
 		private System.Windows.Forms.Button button18;
+		private System.Windows.Forms.CheckBox SuperscriptCheckbox;
 	}
 }
 

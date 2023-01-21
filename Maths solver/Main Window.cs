@@ -511,7 +511,7 @@ namespace Maths_solver.UI
 		private void ChangeSuperscript(bool state)
 		{
 			isSuperscript = state;
-			SuperscriptChecked.Checked = isSuperscript;
+			SuperscriptCheckbox.Checked = isSuperscript;
 		}
 
 		private void ConstantClick(object sender, EventArgs e)
