@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -37,6 +38,11 @@ namespace Maths_solver.UI
 		};
 
 		private bool isSuperscript = false;
+
+		private string currentInput = String.Empty;
+		private string previousInput = String.Empty;
+
+		private int cursorPos = -1;
 
 		private Steps StepsForm = new Steps();
 
@@ -238,6 +244,17 @@ namespace Maths_solver.UI
 			return true;
 		}
 
+		private static string ToSuperscript(string text)
+		{
+			string output = String.Empty;
+			for (int i = 0; i < text.Length; i++)
+			{
+				if(Superscript.ContainsKey(text[i])) output += Superscript[text[i]];
+			}
+
+			return output;
+		}
+
 		private static void SeparateString(char next, Stack<char> brackets, ref string part, out List<EquationItem> funcInput)
         {
 			switch (next)
@@ -373,39 +390,78 @@ namespace Maths_solver.UI
 		{
 			RichTextBox senderBox = sender as RichTextBox;
 
-			string input = senderBox.Text;
+			currentInput = senderBox.Text.ToLower();
+
+			int charIndex = int.MinValue;
+			char newChar = '\0';
+			for (int i = 0; i < currentInput.Length; i++)
+			{
+				//added char must be at end
+				if(previousInput.Length <= i && previousInput.Length != currentInput.Length)
+				{
+					newChar = currentInput[currentInput.Length - 1];
+					charIndex = currentInput.Length - 1;
+					break;
+				}
+				else if (currentInput[i] != previousInput[i])
+				{
+					newChar = currentInput[i];
+					charIndex = i;
+					break;
+				}
+			}
 
 			//if input isn't nothing, and the last character was ^
-			if (input.Length > 0 && input[input.Length - 1] == '^')
+			if (currentInput.Length > 0 && newChar == '^')
 			{
-				//change superscripts
-				isSuperscript = !isSuperscript;
+				ChangeSuperscript(!isSuperscript);
 
 				//ignore ^ character
-				UpdateBox(senderBox, input.Remove(input.Length - 1).ToLower());
+				UpdateBox(senderBox, currentInput.Remove(charIndex, 1), charIndex);
 			}
 			else if (isSuperscript)
 			{
 				//if the character can be superscript
-				if(Superscript.ContainsKey(input[input.Length - 1]))
+				if (currentInput.Length > charIndex && charIndex >= 0 && Superscript.ContainsKey(currentInput[charIndex]))
 				{
-					UpdateBox(senderBox, (input.Substring(0,
-					input.Length - 1) + Superscript[input[input.Length - 1]]).ToLower());
+					//replace newly added character with superscript variant
+					string newString = currentInput.Remove(charIndex, 1);
+
+					newString = newString.Insert(charIndex,
+						Superscript[currentInput[charIndex]].ToString());
+
+					UpdateBox(senderBox, newString, charIndex + 1);
 				}
 				//Otherwise, no longer superscript
-				else isSuperscript = false;
+				else ChangeSuperscript(false);
 			}
 			else
 			{
-				UpdateBox(senderBox, input.ToLower());
+				UpdateBox(senderBox, currentInput, charIndex + 1);
 			}
+
+			previousInput = senderBox.Text;
 		}
 
-		private void UpdateBox(RichTextBox box, string text)
+		private void UpdateBox(RichTextBox box, string text, int _cursorPos)
         {
 			box.Text = text;
-			box.SelectionStart = text.Length;
+
+			if (_cursorPos >= 0) box.SelectionStart = _cursorPos;
+			else box.SelectionStart = text.Length;
+
 			box.SelectionLength = 0;
+		}
+
+		private void InputBox_KeyUp(object sender, KeyEventArgs e)
+		{
+			UpdateCursor(sender);
+		}
+
+		private void UpdateCursor(object sender)
+		{
+			RichTextBox senderBox = sender as RichTextBox;
+			cursorPos = senderBox.SelectionStart;
 		}
 
 		private void StepsButton_Click(object sender, EventArgs e) { StepsForm.Show(); }
@@ -418,13 +474,63 @@ namespace Maths_solver.UI
 
 		private void ExitButton_Click(object sender, EventArgs e) { Application.Exit(); }
 
-        private void piButton_Click(object sender, EventArgs e)
-        {
+		private void ButtonClick(object sender, bool isFunction)
+		{
 			Button button = sender as Button;
-			InputBox.Text += button.Text[0];
-			isSuperscript = false;
 
+			int pos = InputBox.Text.Length - 1;
+
+			if (cursorPos >= 0) pos = cursorPos;
+
+			string superscriptText = String.Empty;
+
+			if (isFunction) superscriptText = button.Text + "()";
+			else superscriptText = button.Text;
+
+			if (isSuperscript) superscriptText = ToSuperscript(superscriptText);
+
+			if (cursorPos >= 0 && cursorPos < InputBox.Text.Length)
+			{
+				InputBox.Text = InputBox.Text.Insert(pos, superscriptText);
+				InputBox.SelectionStart = pos + superscriptText.Length;
+			}
+
+			else
+			{
+				InputBox.Text += superscriptText;
+				InputBox.SelectionStart = InputBox.Text.Length;
+			}
+
+			//idk why superscript changes
+			ChangeSuperscript(IsSuperscript(InputBox.Text[InputBox.Text.Length - 1].ToString(), out _));
+
+			UpdateCursor(InputBox);
+			InputBox.Focus();
 		}
+
+		private void ChangeSuperscript(bool state)
+		{
+			isSuperscript = state;
+			SuperscriptChecked.Checked = isSuperscript;
+		}
+
+		private void ConstantClick(object sender, EventArgs e)
+		{
+			ButtonClick(sender, false);
+		}
+
+		private void FunctionClick(object sender, EventArgs e)
+		{
+			ButtonClick(sender, true);
+			InputBox.SelectionStart--;
+		}
+
+		private void SuperscriptButton(object sender, EventArgs e)
+		{
+			isSuperscript = !isSuperscript;
+			InputBox.Focus();
+		}
+
 		#endregion
-    }
+	}
 }
