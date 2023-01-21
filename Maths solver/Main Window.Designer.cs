@@ -356,14 +356,18 @@
 			// SuperscriptCheckbox
 			// 
 			this.SuperscriptCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
-			this.SuperscriptCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SuperscriptCheckbox.Location = new System.Drawing.Point(1617, 55);
+			this.SuperscriptCheckbox.BackColor = System.Drawing.SystemColors.ControlLight;
+			this.SuperscriptCheckbox.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveBorder;
+			this.SuperscriptCheckbox.FlatAppearance.CheckedBackColor = System.Drawing.Color.DimGray;
+			this.SuperscriptCheckbox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.SuperscriptCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F);
+			this.SuperscriptCheckbox.Location = new System.Drawing.Point(1618, 56);
 			this.SuperscriptCheckbox.Name = "SuperscriptCheckbox";
-			this.SuperscriptCheckbox.Size = new System.Drawing.Size(52, 37);
+			this.SuperscriptCheckbox.Size = new System.Drawing.Size(52, 35);
 			this.SuperscriptCheckbox.TabIndex = 30;
 			this.SuperscriptCheckbox.Text = "^";
 			this.SuperscriptCheckbox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.SuperscriptCheckbox.UseVisualStyleBackColor = true;
+			this.SuperscriptCheckbox.UseVisualStyleBackColor = false;
 			this.SuperscriptCheckbox.Click += new System.EventHandler(this.SuperscriptButton);
 			// 
 			// Main
