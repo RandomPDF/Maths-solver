@@ -304,15 +304,13 @@ namespace Maths_solver.UI
 			else if(nextOperation != OperationEnum.NONE || i == input.Length - 1)
 			{
 				function = Function.constant;
-				part = String.Empty;
 			}
 		}
 
 		private static void FindExponent(string input, int i, string part, Function function,
 			ref List<EquationItem> exponent, ref bool foundExponent)
 		{
-			if (function == Function.constant) foundExponent = true;
-			else if (!IsSuperscript(input[i].ToString(), out string _))
+			if (!IsSuperscript(input[i].ToString(), out string _))
 			{
 				if (IsSuperscript(part, out string exponentLong))
 				{
@@ -320,7 +318,8 @@ namespace Maths_solver.UI
 					foundExponent = true;
 				}
 
-				if (function == Function.x) foundExponent = true;
+				if (function == Function.x || function == Function.constant ||
+					function == Function.e) foundExponent = true;
 			}
 			else if (IsSuperscript(input[i].ToString(), out string _) && i == input.Length - 1)
 			{
@@ -391,6 +390,12 @@ namespace Maths_solver.UI
 			RichTextBox senderBox = sender as RichTextBox;
 
 			currentInput = senderBox.Text.ToLower();
+
+			//backspace must have been hit (somehow breaks shit)
+			/*if (previousInput.Length > currentInput.Length)
+			{
+				return;
+			}*/
 
 			int charIndex = int.MinValue;
 			char newChar = '\0';

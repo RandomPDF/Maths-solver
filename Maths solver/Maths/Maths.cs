@@ -51,7 +51,7 @@ namespace Maths_solver.Maths
 			new Term(Function.tanh)}},
 
 			{Function.coth, new List<EquationItem>()
-			{new Term(-1, Function.cosech) } },
+			{new Term(-1, Function.cosech, new List<EquationItem> { new Term(2) }) } },
 
 			{Function.ln, new List<EquationItem>()
 			{new Term(Function.x, new List<EquationItem> { new Term(-1) }) } },
@@ -260,11 +260,12 @@ namespace Maths_solver.Maths
 
 		private static void DifferentiateConstant(Term term, ref List<EquationItem> newEquation)
 		{
-			ShowSteps?.Invoke(sender, new Step(Rule.Constant, Phase.Start, new List<EquationItem> { term }));
+			ShowSteps?.Invoke(sender, new Step(Rule.Standard, Phase.Start, new List<EquationItem> { term }));
 
 			#region chain exponent
 			bool chainExponent = false;
 
+			//if exponent is not constant, chain exponent
 			if (((Term)(((List<EquationItem>)term.exponent)[0])).function != Function.constant)
 			{
 				chainExponent = true;
@@ -312,15 +313,21 @@ namespace Maths_solver.Maths
 
 					newEquation.Add(new Operation(OperationEnum.Multiplication));
 				}
+
+				ShowSteps?.Invoke(sender, new Step(Rule.Exponent, Phase.End, term.exponent));
 			}
 			#endregion
 
 			if (term.function == Function.constant && chainExponent)
 			{
+				ShowSteps?.Invoke(sender, new Step(Rule.ln, Phase.Start, new List<EquationItem> { new Term(term.coeficient) }));
+
 				AddTerm(new Term(1, Function.ln,
-					new List<EquationItem> { new Term(2) }, new List<EquationItem> { new Term() }), ref newEquation);
+					new List<EquationItem> { new Term(term.coeficient) }, new List<EquationItem> { new Term() }), ref newEquation);
 
 				newEquation.Add(new Operation(OperationEnum.Multiplication));
+
+				ShowSteps?.Invoke(sender, new Step(Phase.End));
 			}
 
 			if(chainExponent) AddTerm(term, ref newEquation);
@@ -483,12 +490,17 @@ namespace Maths_solver.Maths
 						Term firstTerm = (Term)equation[i - 1];
 						Term secondTerm = (Term)equation[i + 1];
 
-						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
-							firstTerm.function, firstTerm.input, firstTerm.exponent);
+						//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken rn)
+						if (!EquationsEqual(firstTerm.exponent, new List<EquationItem> { new Term(Function.x) }) &&
+							!EquationsEqual(secondTerm.exponent, new List<EquationItem> { new Term(Function.x)}))
+						{
+							equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
+								firstTerm.function, firstTerm.input, firstTerm.exponent);
 
-						equation[i + 1] = new Term(1, secondTerm.function, secondTerm.input, secondTerm.exponent);
+							equation[i + 1] = new Term(1, secondTerm.function, secondTerm.input, secondTerm.exponent);
 
-						FormatEquation(ref equation);
+							FormatEquation(ref equation);
+						}
 					}
 
 					#endregion

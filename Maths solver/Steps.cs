@@ -50,6 +50,10 @@ namespace Maths_solver
 							StepsBox.Text += $"Multiply the input differential by the main differential using the chain rule keeping the input the same.\n";
 							break;
 
+						case Rule.Exponent:
+							StepsBox.Text += $"Multiply the exponent differential by the main differential using the chain rule keeping the exponent the same.\n";
+							break;
+
 						default:
 							StepsBox.Text += $"Using the {step.rule.ToString()} rule: " +
 								$"{EquationStr(step.input, false)} → " +
@@ -68,8 +72,17 @@ namespace Maths_solver
 							break;
 
 						case Rule.Input:
-							StepsBox.Text += $"Differentiate input" +
+							StepsBox.Text += $"Differentiate input " +
 								$"{EquationStr(step.input, false)}:\n";
+							break;
+
+						case Rule.Exponent:
+							StepsBox.Text += $"Differentiate exponent " +
+								$"{EquationStr(step.input, false)}:\n";
+							break;
+
+						case Rule.ln:
+							StepsBox.Text += $"Multiply by ln({EquationStr(step.input, false)})\n";
 							break;
 
 						default:
