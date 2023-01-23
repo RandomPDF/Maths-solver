@@ -58,6 +58,8 @@
             // 
             // InputBox
             // 
+            this.InputBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.InputBox.DetectUrls = false;
             this.InputBox.Font = new System.Drawing.Font("Cambria", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.InputBox.Location = new System.Drawing.Point(20, 45);
             this.InputBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -72,6 +74,8 @@
             // 
             // OutputBox
             // 
+            this.OutputBox.Cursor = System.Windows.Forms.Cursors.No;
+            this.OutputBox.DetectUrls = false;
             this.OutputBox.Font = new System.Drawing.Font("Cambria", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OutputBox.Location = new System.Drawing.Point(21, 223);
             this.OutputBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
