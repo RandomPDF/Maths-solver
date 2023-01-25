@@ -24,7 +24,7 @@ namespace Maths_solver.UI
 			{'4', (char)0X2074}, {'5', (char)0X2075}, {'6', (char)0X2076}, {'7', (char)0X2077},
 			{'8', (char)0X2078}, {'9', (char)0X2079},
 
-			{'+', (char)0X207A}, {'-', (char)0X207B}, {' ', ' '}, {'.', (char)0X00B7},
+			{'+', (char)0X207A}, {'-', (char)0X207B}, {' ', ' '}, {'.', (char)0X0387},
 			{'(', (char)0X207D}, {')', (char)0X207E},
 
 			{'π', (char)0X2DEB},
