@@ -48,12 +48,13 @@
             // 
             this.StepsBox.Font = new System.Drawing.Font("Cambria", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StepsBox.Location = new System.Drawing.Point(9, 33);
-            this.StepsBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.StepsBox.Margin = new System.Windows.Forms.Padding(2);
             this.StepsBox.Name = "StepsBox";
             this.StepsBox.ReadOnly = true;
             this.StepsBox.Size = new System.Drawing.Size(1410, 756);
             this.StepsBox.TabIndex = 1;
             this.StepsBox.Text = "";
+            this.StepsBox.WordWrap = false;
             // 
             // ExitButton
             // 
@@ -74,7 +75,7 @@
             this.Controls.Add(this.ExitButton);
             this.Controls.Add(this.StepsBox);
             this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Steps";
             this.Text = "Steps";
             this.ResumeLayout(false);

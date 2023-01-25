@@ -75,7 +75,7 @@
             this.InputBox.Margin = new System.Windows.Forms.Padding(2);
             this.InputBox.Name = "InputBox";
             this.InputBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Horizontal;
-            this.InputBox.Size = new System.Drawing.Size(1253, 45);
+            this.InputBox.Size = new System.Drawing.Size(1253, 60);
             this.InputBox.TabIndex = 2;
             this.InputBox.Text = "";
             this.InputBox.WordWrap = false;
@@ -92,7 +92,7 @@
             this.OutputBox.Name = "OutputBox";
             this.OutputBox.ReadOnly = true;
             this.OutputBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Horizontal;
-            this.OutputBox.Size = new System.Drawing.Size(1252, 45);
+            this.OutputBox.Size = new System.Drawing.Size(1252, 60);
             this.OutputBox.TabIndex = 3;
             this.OutputBox.Text = "";
             this.OutputBox.WordWrap = false;
@@ -120,7 +120,7 @@
             // DifferentiateButton
             // 
             this.DifferentiateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DifferentiateButton.Location = new System.Drawing.Point(369, 136);
+            this.DifferentiateButton.Location = new System.Drawing.Point(369, 152);
             this.DifferentiateButton.Margin = new System.Windows.Forms.Padding(2);
             this.DifferentiateButton.Name = "DifferentiateButton";
             this.DifferentiateButton.Size = new System.Drawing.Size(190, 30);
@@ -132,7 +132,7 @@
             // StepsButton
             // 
             this.StepsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StepsButton.Location = new System.Drawing.Point(687, 136);
+            this.StepsButton.Location = new System.Drawing.Point(687, 152);
             this.StepsButton.Margin = new System.Windows.Forms.Padding(2);
             this.StepsButton.Name = "StepsButton";
             this.StepsButton.Size = new System.Drawing.Size(190, 30);

@@ -61,12 +61,14 @@ namespace Maths_solver.UI
 		#region Equation to string
 		public static string EquationStr(List<EquationItem> equation, bool useSuperscript)
 		{
-			if (equation.Count == 0) return "0";
+			if (equation == null || equation.Count == 0) return "0";
 
 			string equationString = String.Empty;
 
 			foreach (EquationItem equationItem in equation)
 			{
+				if (equationItem == null) continue;
+
 				if (equationItem.GetType() == typeof(Term)) equationString += TermStr((Term)equationItem, useSuperscript, equation.Count);
 
 				else if (equationItem.GetType() == typeof(Operation)) equationString += TermStr((Operation)equationItem, useSuperscript);

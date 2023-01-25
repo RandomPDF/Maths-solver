@@ -259,6 +259,8 @@ namespace Maths_solver.Maths
 		{
 			ShowSteps?.Invoke(thisSender, new Step(Rule.Standard, Phase.Start, new List<EquationItem> { term }));
 
+			List<EquationItem> newTerm = new List<EquationItem>();
+
 			#region chain exponent
 			bool chainExponent = false;
 
@@ -306,17 +308,18 @@ namespace Maths_solver.Maths
 				if (!(first.function == Function.constant &&
 					(first.coeficient == 0 || first.coeficient == 1)))
 				{
-					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+					if (!oneTerm) newTerm.Add(new Operation(OperationEnum.OpenBracket));
 
 					for (int i = 0; i < exponentDifferential.Count; i++)
-						newEquation.Add(exponentDifferential[i]);
+						newTerm.Add(exponentDifferential[i]);
 
-					if (!oneTerm) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+					if (!oneTerm) newTerm.Add(new Operation(OperationEnum.ClosedBracket));
 
-					newEquation.Add(new Operation(OperationEnum.Multiplication));
+					newTerm.Add(new Operation(OperationEnum.Multiplication));
 				}
 
 				ShowSteps?.Invoke(thisSender, new Step(Rule.Exponent, Phase.End, term.exponent));
+				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 			}
 			#endregion
 
@@ -324,17 +327,31 @@ namespace Maths_solver.Maths
 			{
 				ShowSteps?.Invoke(thisSender, new Step(Rule.ln, Phase.Start, new List<EquationItem> { new Term(term.coeficient) }));
 
-				AddTerm(new Term(1, Function.ln,
-					new List<EquationItem> { new Term(term.coeficient) }, new List<EquationItem> { new Term() }), ref newEquation);
+				newTerm.Add(new Term(1, Function.ln,
+					new List<EquationItem> { new Term(term.coeficient) }, new List<EquationItem> { new Term() }));
 
-				newEquation.Add(new Operation(OperationEnum.Multiplication));
+				newTerm.Add(new Operation(OperationEnum.Multiplication));
 
 				ShowSteps?.Invoke(thisSender, new Step(Phase.End));
 			}
+			else if(term.function == Function.constant && !chainExponent)
+            {
+				ShowSteps?.Invoke(thisSender, new Step(Rule.Constant, Phase.Start,
+					new List<EquationItem> { term }));
 
-			if(chainExponent) AddTerm(term, ref newEquation);
+				ShowSteps?.Invoke(thisSender, new Step(Phase.End));
+            }
 
-			ShowSteps?.Invoke(thisSender, new Step(Phase.End));
+			if (chainExponent) newTerm.Add(term);
+
+            for (int i = 0; i < newTerm.Count; i++)
+            {
+				if (newTerm.GetType() == typeof(Term)) AddTerm((Term)newTerm[i], ref newEquation);
+				else newEquation.Add(newTerm[i]);
+            }
+
+			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End,
+				new List<EquationItem>{ term }, newTerm));
 		}
 
 		private static bool EquationsEqual(List<EquationItem> equation1, List<EquationItem> equation2)

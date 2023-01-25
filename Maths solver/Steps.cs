@@ -68,7 +68,7 @@ namespace Maths_solver
 					switch(step.rule)
 					{
 						case Rule.Constant:
-							StepsBox.Text += $"Differentiating term {EquationStr(step.input, false)} → 0\n";
+							StepsBox.Text += $"Using the constant rule: {EquationStr(step.input, false)} → 0\n";
 							break;
 
 						case Rule.Input:
@@ -83,6 +83,9 @@ namespace Maths_solver
 
 						case Rule.ln:
 							StepsBox.Text += $"Multiply by ln({EquationStr(step.input, false)})\n";
+							break;
+
+						case Rule.None:
 							break;
 
 						default:
