@@ -54,6 +54,16 @@
             this.button17 = new System.Windows.Forms.Button();
             this.button18 = new System.Windows.Forms.Button();
             this.SuperscriptCheckbox = new System.Windows.Forms.CheckBox();
+            this.button16 = new System.Windows.Forms.Button();
+            this.button19 = new System.Windows.Forms.Button();
+            this.button20 = new System.Windows.Forms.Button();
+            this.button21 = new System.Windows.Forms.Button();
+            this.button22 = new System.Windows.Forms.Button();
+            this.button23 = new System.Windows.Forms.Button();
+            this.button24 = new System.Windows.Forms.Button();
+            this.button25 = new System.Windows.Forms.Button();
+            this.button26 = new System.Windows.Forms.Button();
+            this.button27 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // InputBox
@@ -358,11 +368,131 @@
             this.SuperscriptCheckbox.UseVisualStyleBackColor = false;
             this.SuperscriptCheckbox.Click += new System.EventHandler(this.SuperscriptButton);
             // 
+            // button16
+            // 
+            this.button16.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button16.Location = new System.Drawing.Point(687, 332);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(39, 30);
+            this.button16.TabIndex = 31;
+            this.button16.Text = "1";
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button19
+            // 
+            this.button19.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button19.Location = new System.Drawing.Point(732, 332);
+            this.button19.Name = "button19";
+            this.button19.Size = new System.Drawing.Size(39, 30);
+            this.button19.TabIndex = 32;
+            this.button19.Text = "2";
+            this.button19.UseVisualStyleBackColor = true;
+            this.button19.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button20
+            // 
+            this.button20.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button20.Location = new System.Drawing.Point(777, 332);
+            this.button20.Name = "button20";
+            this.button20.Size = new System.Drawing.Size(39, 30);
+            this.button20.TabIndex = 33;
+            this.button20.Text = "3";
+            this.button20.UseVisualStyleBackColor = true;
+            this.button20.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button21
+            // 
+            this.button21.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button21.Location = new System.Drawing.Point(777, 368);
+            this.button21.Name = "button21";
+            this.button21.Size = new System.Drawing.Size(39, 30);
+            this.button21.TabIndex = 36;
+            this.button21.Text = "6";
+            this.button21.UseVisualStyleBackColor = true;
+            this.button21.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button22
+            // 
+            this.button22.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button22.Location = new System.Drawing.Point(732, 368);
+            this.button22.Name = "button22";
+            this.button22.Size = new System.Drawing.Size(39, 30);
+            this.button22.TabIndex = 35;
+            this.button22.Text = "5";
+            this.button22.UseVisualStyleBackColor = true;
+            this.button22.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button23
+            // 
+            this.button23.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button23.Location = new System.Drawing.Point(687, 368);
+            this.button23.Name = "button23";
+            this.button23.Size = new System.Drawing.Size(39, 30);
+            this.button23.TabIndex = 34;
+            this.button23.Text = "4";
+            this.button23.UseVisualStyleBackColor = true;
+            this.button23.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button24
+            // 
+            this.button24.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button24.Location = new System.Drawing.Point(777, 404);
+            this.button24.Name = "button24";
+            this.button24.Size = new System.Drawing.Size(39, 30);
+            this.button24.TabIndex = 39;
+            this.button24.Text = "9";
+            this.button24.UseVisualStyleBackColor = true;
+            this.button24.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button25
+            // 
+            this.button25.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button25.Location = new System.Drawing.Point(732, 404);
+            this.button25.Name = "button25";
+            this.button25.Size = new System.Drawing.Size(39, 30);
+            this.button25.TabIndex = 38;
+            this.button25.Text = "8";
+            this.button25.UseVisualStyleBackColor = true;
+            this.button25.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button26
+            // 
+            this.button26.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button26.Location = new System.Drawing.Point(687, 404);
+            this.button26.Name = "button26";
+            this.button26.Size = new System.Drawing.Size(39, 30);
+            this.button26.TabIndex = 37;
+            this.button26.Text = "7";
+            this.button26.UseVisualStyleBackColor = true;
+            this.button26.Click += new System.EventHandler(this.ConstantClick);
+            // 
+            // button27
+            // 
+            this.button27.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button27.Location = new System.Drawing.Point(732, 440);
+            this.button27.Name = "button27";
+            this.button27.Size = new System.Drawing.Size(39, 30);
+            this.button27.TabIndex = 40;
+            this.button27.Text = "0";
+            this.button27.UseVisualStyleBackColor = true;
+            this.button27.Click += new System.EventHandler(this.ConstantClick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1284, 881);
+            this.Controls.Add(this.button27);
+            this.Controls.Add(this.button24);
+            this.Controls.Add(this.button25);
+            this.Controls.Add(this.button26);
+            this.Controls.Add(this.button21);
+            this.Controls.Add(this.button22);
+            this.Controls.Add(this.button23);
+            this.Controls.Add(this.button20);
+            this.Controls.Add(this.button19);
+            this.Controls.Add(this.button16);
             this.Controls.Add(this.SuperscriptCheckbox);
             this.Controls.Add(this.button18);
             this.Controls.Add(this.button17);
@@ -423,6 +553,16 @@
 		private System.Windows.Forms.Button button17;
 		private System.Windows.Forms.Button button18;
 		private System.Windows.Forms.CheckBox SuperscriptCheckbox;
+        private System.Windows.Forms.Button button16;
+        private System.Windows.Forms.Button button19;
+        private System.Windows.Forms.Button button20;
+        private System.Windows.Forms.Button button21;
+        private System.Windows.Forms.Button button22;
+        private System.Windows.Forms.Button button23;
+        private System.Windows.Forms.Button button24;
+        private System.Windows.Forms.Button button25;
+        private System.Windows.Forms.Button button26;
+        private System.Windows.Forms.Button button27;
     }
 }
 
