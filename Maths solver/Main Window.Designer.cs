@@ -60,9 +60,9 @@
             // 
             this.InputBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.InputBox.DetectUrls = false;
-            this.InputBox.Font = new System.Drawing.Font("Cambria", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.InputBox.Font = new System.Drawing.Font("Cambria", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.InputBox.Location = new System.Drawing.Point(20, 45);
-            this.InputBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.InputBox.Margin = new System.Windows.Forms.Padding(2);
             this.InputBox.Name = "InputBox";
             this.InputBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Horizontal;
             this.InputBox.Size = new System.Drawing.Size(1253, 45);
@@ -78,7 +78,7 @@
             this.OutputBox.DetectUrls = false;
             this.OutputBox.Font = new System.Drawing.Font("Cambria", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OutputBox.Location = new System.Drawing.Point(21, 223);
-            this.OutputBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.OutputBox.Margin = new System.Windows.Forms.Padding(2);
             this.OutputBox.Name = "OutputBox";
             this.OutputBox.ReadOnly = true;
             this.OutputBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Horizontal;
@@ -111,7 +111,7 @@
             // 
             this.DifferentiateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DifferentiateButton.Location = new System.Drawing.Point(369, 136);
-            this.DifferentiateButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.DifferentiateButton.Margin = new System.Windows.Forms.Padding(2);
             this.DifferentiateButton.Name = "DifferentiateButton";
             this.DifferentiateButton.Size = new System.Drawing.Size(190, 30);
             this.DifferentiateButton.TabIndex = 6;
@@ -123,7 +123,7 @@
             // 
             this.StepsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StepsButton.Location = new System.Drawing.Point(687, 136);
-            this.StepsButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.StepsButton.Margin = new System.Windows.Forms.Padding(2);
             this.StepsButton.Name = "StepsButton";
             this.StepsButton.Size = new System.Drawing.Size(190, 30);
             this.StepsButton.TabIndex = 7;
@@ -349,7 +349,7 @@
             this.SuperscriptCheckbox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SuperscriptCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F);
             this.SuperscriptCheckbox.Location = new System.Drawing.Point(201, 332);
-            this.SuperscriptCheckbox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SuperscriptCheckbox.Margin = new System.Windows.Forms.Padding(2);
             this.SuperscriptCheckbox.Name = "SuperscriptCheckbox";
             this.SuperscriptCheckbox.Size = new System.Drawing.Size(39, 28);
             this.SuperscriptCheckbox.TabIndex = 30;
@@ -362,7 +362,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1284, 1005);
+            this.ClientSize = new System.Drawing.Size(1284, 881);
             this.Controls.Add(this.SuperscriptCheckbox);
             this.Controls.Add(this.button18);
             this.Controls.Add(this.button17);
