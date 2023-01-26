@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Maths_solver.Maths
 {
@@ -36,7 +32,7 @@ namespace Maths_solver.Maths
 
 		//e.g. 5x
 		public Term(float coeficient, Function function)
-        {
+		{
 			this.coeficient = coeficient;
 			this.function = function;
 
@@ -47,7 +43,7 @@ namespace Maths_solver.Maths
 		}
 
 		public Term(Function function, List<EquationItem> exponent)
-        {
+		{
 			this.coeficient = 1;
 			this.function = function;
 
@@ -59,7 +55,7 @@ namespace Maths_solver.Maths
 
 		//e.g. x
 		public Term(Function function)
-        {
+		{
 			this.coeficient = 1;
 			this.function = function;
 
@@ -71,7 +67,7 @@ namespace Maths_solver.Maths
 
 		//constants
 		public Term(float coeficient)
-        {
+		{
 			this.coeficient = coeficient;
 			this.function = Function.constant;
 			this.input = null;

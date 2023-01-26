@@ -1,16 +1,8 @@
-﻿using System;
+﻿using Maths_solver.Maths;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Maths_solver.Maths;
 using static Maths_solver.Maths.Functions;
 using static Maths_solver.Maths.Operation;
 
@@ -40,17 +32,17 @@ namespace Maths_solver.UI
 		private bool baseIsSuperscript = false;
 
 		private bool isSuperscript
-        {
-            get { return baseIsSuperscript; }
-            set 
+		{
+			get { return baseIsSuperscript; }
+			set
 			{
 				if (baseIsSuperscript != value)
-                {
+				{
 					baseIsSuperscript = value;
 					SuperscriptCheckbox.Checked = isSuperscript;
 				}
 			}
-        }
+		}
 
 		private string currentInput = String.Empty;
 		private string previousInput = String.Empty;
@@ -108,7 +100,7 @@ namespace Maths_solver.UI
 			else if (term.coeficient == -1 && !useSuperscript) formatTerm += PartStr("-", useSuperscript);
 			#endregion
 
-			if (term.function != Function.constant) 
+			if (term.function != Function.constant)
 				formatTerm += PartStr(term.function.ToString(), useSuperscript);
 
 			#region exponent
@@ -126,7 +118,7 @@ namespace Maths_solver.UI
 			//format input
 			if (requiresInput[term.function])
 			{
-				if(!useSuperscript) formatTerm += $"({EquationStr(term.input, false)})";
+				if (!useSuperscript) formatTerm += $"({EquationStr(term.input, false)})";
 				else formatTerm += CharacterToSuperscript['('] + EquationStr(term.input, true) + CharacterToSuperscript[')'];
 			}
 
@@ -202,7 +194,7 @@ namespace Maths_solver.UI
 				{
 					SeparateString(finalInput[inputIndex], brackets, ref currentPart, out functionInput);
 
-					if(functionInput != null) CreateEquation(function, coefficient, functionInput,
+					if (functionInput != null) CreateEquation(function, coefficient, functionInput,
 						exponent, foundExponent, ref equation);
 
 					continue;
@@ -227,7 +219,7 @@ namespace Maths_solver.UI
 		}
 
 		private static void FindCoefficient(ref string currentPart, char nextCharacter, ref float coefficient)
-        {
+		{
 			float newCoefficient;
 			//current part is int, but next part isn't, must be whole coefficient
 			if (float.TryParse(currentPart, out newCoefficient) &&
@@ -236,11 +228,11 @@ namespace Maths_solver.UI
 				coefficient = newCoefficient;
 				currentPart = String.Empty;
 			}
-			else if(float.TryParse(currentPart + nextCharacter.ToString(), out newCoefficient)) coefficient = newCoefficient;
+			else if (float.TryParse(currentPart + nextCharacter.ToString(), out newCoefficient)) coefficient = newCoefficient;
 		}
 
 		private static bool IsSuperscript(string input, out string inputToSuperscript)
-        {
+		{
 			inputToSuperscript = String.Empty;
 
 			//if no text, not superscript
@@ -273,7 +265,7 @@ namespace Maths_solver.UI
 			string inputToSuperscript = String.Empty;
 			for (int i = 0; i < input.Length; i++)
 			{
-				if(CharacterToSuperscript.ContainsKey(input[i]))
+				if (CharacterToSuperscript.ContainsKey(input[i]))
 					inputToSuperscript += CharacterToSuperscript[input[i]];
 			}
 
@@ -281,10 +273,10 @@ namespace Maths_solver.UI
 		}
 
 		private static void SeparateString(char nextCharacter, Stack<char> brackets, ref string currentPart, out List<EquationItem> functionInput)
-        {
+		{
 			//find input
-			if(nextCharacter == ')')
-            {
+			if (nextCharacter == ')')
+			{
 				if (brackets.Count == 0)
 				{
 					functionInput = stringToEquation(currentPart.Substring(1));
@@ -305,7 +297,7 @@ namespace Maths_solver.UI
 		}
 
 		private static void FindFunction(string input, int inputIndex, ref Function function, ref string currentPart)
-        {
+		{
 			if (function != Function.NONE) return;
 
 			OperationEnum nextOperation = OperationEnum.NONE;
@@ -318,13 +310,13 @@ namespace Maths_solver.UI
 				Enum.TryParse(currentPart, out newFunction)) ||
 
 				(inputIndex >= input.Length - 1 && Enum.TryParse(input[inputIndex].ToString(), out newFunction) &&
-				newFunction.ToString() == input[inputIndex].ToString()) 
+				newFunction.ToString() == input[inputIndex].ToString())
 				|| nextOperation != OperationEnum.NONE && Enum.TryParse(currentPart.ToString(), out newFunction))
 			{
 				function = newFunction;
 				currentPart = String.Empty;
 			}
-			else if(nextOperation != OperationEnum.NONE || inputIndex == input.Length - 1)
+			else if (nextOperation != OperationEnum.NONE || inputIndex == input.Length - 1)
 			{
 				function = Function.constant;
 			}
@@ -353,7 +345,7 @@ namespace Maths_solver.UI
 		}
 
 		private static void CheckOperation(string input, int inputIndex,
-			ref float coefficient, ref Function function, ref List<EquationItem> functionInput, 
+			ref float coefficient, ref Function function, ref List<EquationItem> functionInput,
 			ref List<EquationItem> exponent, ref string currentPart, ref List<EquationItem> equation, ref bool foundExponent)
 		{
 			char operation = input[inputIndex];
@@ -367,7 +359,7 @@ namespace Maths_solver.UI
 				|| inputIndex >= input.Length - 1)
 			{
 				//if nothing can be found, assume constant
-				if(function == Function.NONE)
+				if (function == Function.NONE)
 				{
 					function = Function.constant;
 					foundExponent = true;
@@ -382,7 +374,7 @@ namespace Maths_solver.UI
 				currentPart = String.Empty;
 				foundExponent = false;
 
-				if(operationEnum != OperationEnum.NONE) equation.Add(new Operation(operationEnum));
+				if (operationEnum != OperationEnum.NONE) equation.Add(new Operation(operationEnum));
 			}
 		}
 
@@ -412,7 +404,7 @@ namespace Maths_solver.UI
 
 			//backspace must be pressed
 			if (currentInput.Length < previousInput.Length)
-            {
+			{
 				previousInput = senderBox.Text.ToLower();
 				return;
 			}
@@ -422,7 +414,7 @@ namespace Maths_solver.UI
 			for (int i = 0; i < currentInput.Length; i++)
 			{
 				//added char must be at end
-				if(previousInput.Length <= i && previousInput.Length != currentInput.Length)
+				if (previousInput.Length <= i && previousInput.Length != currentInput.Length)
 				{
 					newChar = currentInput[currentInput.Length - 1];
 					newCharIndex = currentInput.Length - 1;
@@ -448,7 +440,7 @@ namespace Maths_solver.UI
 			{
 				//No longer superscript
 				if (currentInput.Length <= newCharIndex || newCharIndex < 0 || !CharacterToSuperscript.ContainsKey(currentInput[newCharIndex]))
-                {
+				{
 					isSuperscript = false;
 					return;
 				}
@@ -470,7 +462,7 @@ namespace Maths_solver.UI
 		}
 
 		private void UpdateBox(RichTextBox box, string text, int newCursorPosition)
-        {
+		{
 			box.Text = text;
 
 			if (newCursorPosition >= 0) box.SelectionStart = newCursorPosition;

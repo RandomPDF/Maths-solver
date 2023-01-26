@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Maths_solver.UI;
+using System;
 using System.Windows.Forms;
-using Maths_solver.UI;
 using static Maths_solver.UI.Main;
 
 namespace Maths_solver
@@ -24,7 +18,7 @@ namespace Maths_solver
 		#region Steps
 		private void ShowSteps(object sender, Step step)
 		{
-			if(tabCount < 0) tabCount = 0;
+			if (tabCount < 0) tabCount = 0;
 
 			if (!(step.rule == Rule.None &&
 				step.input == null && step.output == null))
@@ -33,10 +27,10 @@ namespace Maths_solver
 				for (int i = 0; i < tabCount; i++) StepsBox.Text += "\t";
 			}
 
-			switch(step.phase)
+			switch (step.phase)
 			{
 				case Phase.End:
-					switch(step.rule)
+					switch (step.rule)
 					{
 						case Rule.None:
 							if (step.input != null && step.output != null)
@@ -65,7 +59,7 @@ namespace Maths_solver
 					break;
 
 				case Phase.Start:
-					switch(step.rule)
+					switch (step.rule)
 					{
 						case Rule.Constant:
 							StepsBox.Text += $"Using the constant rule: {EquationStr(step.input, false)} → 0\n";
@@ -106,5 +100,5 @@ namespace Maths_solver
 		#endregion
 
 		private void ExitButton_Click(object sender, EventArgs e) { Hide(); }
-    }
+	}
 }
