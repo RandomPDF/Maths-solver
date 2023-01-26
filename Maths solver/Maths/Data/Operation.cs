@@ -10,6 +10,7 @@ namespace Maths_solver.Maths
 			Subtraction,
 			Multiplication,
 			Division,
+			Power,
 			OpenBracket,
 			ClosedBracket,
 			NONE

@@ -61,6 +61,8 @@ namespace Maths_solver.UI
 		#region Equation to string
 		public static string EquationStr(List<EquationItem> equation, bool useSuperscript)
 		{
+			bool returnSuperscript = false;
+
 			if (equation == null || equation.Count == 0) return "0";
 
 			string equationString = String.Empty;
@@ -69,16 +71,19 @@ namespace Maths_solver.UI
 			{
 				if (equationItem == null) continue;
 
-				if (equationItem.GetType() == typeof(Term)) equationString += TermStr((Term)equationItem, useSuperscript, equation.Count);
+				if (equationItem.GetType() == typeof(Term)) equationString += TermStr((Term)equationItem, useSuperscript, equation.Count, ref returnSuperscript);
 
-				else if (equationItem.GetType() == typeof(Operation)) equationString += TermStr((Operation)equationItem, useSuperscript);
+				else if (equationItem.GetType() == typeof(Operation)) equationString += TermStr((Operation)equationItem, ref useSuperscript, ref returnSuperscript);
 			}
 
 			return equationString;
 		}
 
-		private static string TermStr(Term term, bool useSuperscript, int equationLength)
+		private static string TermStr(Term term, bool useSuperscript, int equationLength,
+			ref bool returnSuperscript)
 		{
+			useSuperscript = useSuperscript || returnSuperscript;
+
 			string formatTerm = String.Empty;
 
 			#region coefficient
@@ -114,17 +119,28 @@ namespace Maths_solver.UI
 				else formatTerm += CharacterToSuperscript['('] + EquationStr(term.input, true) + CharacterToSuperscript[')'];
 			}
 
+			if (returnSuperscript) returnSuperscript = false;
+
 			return formatTerm;
 		}
 
-		private static string TermStr(Operation operation, bool useSuperscript)
+		private static string TermStr(Operation operation, ref bool returnSuperscript,
+			ref bool useSuperscript)
 		{
 			if (useSuperscript)
+			{
 				return $" {CharacterToSuperscript[(operationToString[operation.operation].Trim())[0]]} ";
-
-			else return operationToString[operation.operation];
-
-
+			}
+			else if (operationToString.ContainsKey(operation.operation))
+			{
+				return operationToString[operation.operation];
+			}
+			else
+			{
+				returnSuperscript = true;
+				useSuperscript = true;
+				return String.Empty;
+			}
 		}
 		private static string PartStr(string part, bool superscript)
 		{

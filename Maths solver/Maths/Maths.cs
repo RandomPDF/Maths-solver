@@ -52,9 +52,6 @@ namespace Maths_solver.Maths
 
 			{Function.coth, new List<EquationItem>()
 			{new Term(-1, Function.cosech, new List<EquationItem> { new Term(2) }) } },
-
-			{Function.ln, new List<EquationItem>()
-			{new Term(Function.x, new List<EquationItem> { new Term(-1) }) } },
 		};
 
 		private static object thisSender;
@@ -90,69 +87,72 @@ namespace Maths_solver.Maths
 			return newEquation;
 		}
 
+		private static void ChainInput(Term term, out bool shouldChainInput,
+			ref List<EquationItem> newEquation)
+        {
+			shouldChainInput = false;
+
+			if (!EquationsEqual(term.input, new List<EquationItem> { new Term(Function.x) }))
+			{
+				shouldChainInput = true;
+
+				ShowSteps?.Invoke(thisSender, new Step(Rule.Input, Phase.Start, term.input));
+
+				//chain rule
+				List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
+
+				//checks if equation is one term all multiplied
+				bool isOneTerm = true;
+				for (int i = 0; i < inputDifferential.Count; i++)
+				{
+					if (inputDifferential[i].GetType() == typeof(Operation) &&
+						((Operation)inputDifferential[i]).operation != OperationEnum.Multiplication)
+					{
+						isOneTerm = false;
+						break;
+					}
+				}
+
+				//get the first term in input differential
+				int firstIndex = 0;
+				for (int i = 0; i < inputDifferential.Count; i++)
+				{
+					if (inputDifferential[i].GetType() == typeof(Term))
+					{
+						firstIndex = i;
+						break;
+					}
+				}
+
+				Term first = (Term)inputDifferential[firstIndex];
+
+				//if is constant with coefficient of 1 or 0 ignore adding
+				if (!(first.function == Function.constant &&
+					(first.coeficient == 0 || first.coeficient == 1)))
+				{
+					if (!isOneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+
+					for (int i = 0; i < inputDifferential.Count; i++)
+						newEquation.Add(inputDifferential[i]);
+
+					if (!isOneTerm) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
+					newEquation.Add(new Operation(OperationEnum.Multiplication));
+				}
+			}
+		}
+
 		private static void DifferentiateTerm(List<EquationItem> differential, Term term, 
 			ref List<EquationItem> newEquation)
 		{
 			Term newTerm = default;
-			bool shouldChainInput = false;
 
 			if (Differentials.ContainsKey(term.function)) 
 			{
 				ShowSteps?.Invoke(thisSender, new Step(Rule.Standard, Phase.Start,
 					new List<EquationItem> { term }));
-				
-				#region chain input
 
-				if(!EquationsEqual(term.input, new List<EquationItem>{ new Term(Function.x)}))
-				{
-					shouldChainInput = true;
-
-					ShowSteps?.Invoke(thisSender, new Step(Rule.Input, Phase.Start, term.input));
-
-					//chain rule
-					List<EquationItem> inputDifferential = DifferentiateEquation(term.input);
-
-					//checks if equation is one term all multiplied
-					bool isOneTerm = true;
-					for (int i = 0; i < inputDifferential.Count; i++)
-					{
-						if (inputDifferential[i].GetType() == typeof(Operation) &&
-							((Operation)inputDifferential[i]).operation != OperationEnum.Multiplication)
-						{
-							isOneTerm = false;
-							break;
-						}
-					}
-
-					//get the first term in input differential
-					int firstIndex = 0;
-					for (int i = 0; i < inputDifferential.Count; i++)
-					{
-						if (inputDifferential[i].GetType() == typeof(Term))
-						{
-							firstIndex = i;
-							break;
-						}
-					}
-
-					Term first = (Term)inputDifferential[firstIndex];
-
-					//if is constant with coefficient of 1 or 0 ignore adding
-					if (!(first.function == Function.constant &&
-						(first.coeficient == 0 || first.coeficient == 1)))
-					{
-						if (!isOneTerm) newEquation.Add(new Operation(OperationEnum.OpenBracket));
-
-						for (int i = 0; i < inputDifferential.Count; i++)
-							newEquation.Add(inputDifferential[i]);
-
-						if (!isOneTerm) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
-
-						newEquation.Add(new Operation(OperationEnum.Multiplication));
-					}
-				}
-
-				#endregion
+				ChainInput(term, out bool shouldChainInput, ref newEquation);
 
 				#region differentiate function
 				//for each term in the correct differential
@@ -214,6 +214,10 @@ namespace Maths_solver.Maths
 						DifferentiateX(term, ref newTerm, ref newEquation);
 						break;
 
+					case Function.ln:
+						DifferntiateLn(term, ref newEquation);
+						break;
+
 					default:
 						DifferentiateConstant(term, ref newEquation);
 						break;
@@ -221,6 +225,20 @@ namespace Maths_solver.Maths
 				#endregion
 			}
 		}
+
+		private static void DifferntiateLn(Term term, ref List<EquationItem> newEquation)
+        {
+			ChainInput(term, out bool shouldChainInput, ref newEquation);
+
+			newEquation.Add(new Operation(OperationEnum.OpenBracket));
+
+            for (int i = 0; i < term.input.Count; i++) newEquation.Add(term.input[i]);
+
+			newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
+			newEquation.Add(new Operation(OperationEnum.Power));
+			newEquation.Add(new Term(-1));
+        }
 
 		private static void DifferentiateX(Term term, ref Term newTerm, ref List<EquationItem> newEquation)
 		{
