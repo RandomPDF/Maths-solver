@@ -37,7 +37,20 @@ namespace Maths_solver.UI
 			{'z', (char)0X1DBB}
 		};
 
-		private bool isSuperscript = false;
+		private bool baseIsSuperscript = false;
+
+		private bool isSuperscript
+        {
+            get { return baseIsSuperscript; }
+            set 
+			{
+				if (baseIsSuperscript != value)
+                {
+					baseIsSuperscript = value;
+					SuperscriptCheckbox.Checked = isSuperscript;
+				}
+			}
+        }
 
 		private string currentInput = String.Empty;
 		private string previousInput = String.Empty;
@@ -71,7 +84,7 @@ namespace Maths_solver.UI
 			{
 				if (equationItem == null) continue;
 
-				if (equationItem.GetType() == typeof(Term)) equationString += TermStr((Term)equationItem, useSuperscript, equation.Count, ref returnSuperscript);
+				if (equationItem.GetType() == typeof(Term)) equationString += TermStr((Term)equationItem, equation.Count, ref useSuperscript, ref returnSuperscript);
 
 				else if (equationItem.GetType() == typeof(Operation)) equationString += TermStr((Operation)equationItem, ref useSuperscript, ref returnSuperscript);
 			}
@@ -79,11 +92,9 @@ namespace Maths_solver.UI
 			return equationString;
 		}
 
-		private static string TermStr(Term term, bool useSuperscript, int equationLength,
+		private static string TermStr(Term term, int equationLength, ref bool useSuperscript,
 			ref bool returnSuperscript)
 		{
-			useSuperscript = useSuperscript || returnSuperscript;
-
 			string formatTerm = String.Empty;
 
 			#region coefficient
@@ -119,13 +130,17 @@ namespace Maths_solver.UI
 				else formatTerm += CharacterToSuperscript['('] + EquationStr(term.input, true) + CharacterToSuperscript[')'];
 			}
 
-			if (returnSuperscript) returnSuperscript = false;
+			if (returnSuperscript)
+			{
+				returnSuperscript = false;
+				useSuperscript = false;
+			}
 
 			return formatTerm;
 		}
 
-		private static string TermStr(Operation operation, ref bool returnSuperscript,
-			ref bool useSuperscript)
+		private static string TermStr(Operation operation, ref bool useSuperscript,
+			ref bool returnSuperscript)
 		{
 			if (useSuperscript)
 			{
@@ -395,6 +410,13 @@ namespace Maths_solver.UI
 			RichTextBox senderBox = sender as RichTextBox;
 			currentInput = senderBox.Text.ToLower();
 
+			//backspace must be pressed
+			if (currentInput.Length < previousInput.Length)
+            {
+				previousInput = senderBox.Text.ToLower();
+				return;
+			}
+
 			int newCharIndex = int.MinValue;
 			char newChar = '\0';
 			for (int i = 0; i < currentInput.Length; i++)
@@ -417,7 +439,7 @@ namespace Maths_solver.UI
 			//if input isn't nothing, and the last character was ^
 			if (currentInput.Length > 0 && newChar == '^')
 			{
-				ChangeSuperscript(!isSuperscript);
+				isSuperscript = !isSuperscript;
 
 				//ignore ^ character
 				UpdateBox(senderBox, currentInput.Remove(newCharIndex, 1), newCharIndex);
@@ -427,7 +449,7 @@ namespace Maths_solver.UI
 				//No longer superscript
 				if (currentInput.Length <= newCharIndex || newCharIndex < 0 || !CharacterToSuperscript.ContainsKey(currentInput[newCharIndex]))
                 {
-					ChangeSuperscript(false);
+					isSuperscript = false;
 					return;
 				}
 
@@ -444,7 +466,7 @@ namespace Maths_solver.UI
 				UpdateBox(senderBox, currentInput, newCharIndex + 1);
 			}
 
-			previousInput = senderBox.Text;
+			previousInput = senderBox.Text.ToLower();
 		}
 
 		private void UpdateBox(RichTextBox box, string text, int newCursorPosition)
@@ -501,21 +523,16 @@ namespace Maths_solver.UI
 
 			else
 			{
+				//superscript changes here?
 				InputBox.Text += superscriptText;
 				InputBox.SelectionStart = InputBox.Text.Length;
 			}
 
-			//idk why superscript changes
-			ChangeSuperscript(IsSuperscript(InputBox.Text[InputBox.Text.Length - 1].ToString(), out _));
+			//correct superscript change
+			isSuperscript = IsSuperscript(InputBox.Text[InputBox.Text.Length - 1].ToString(), out _);
 
 			UpdateCursor(InputBox);
 			InputBox.Focus();
-		}
-
-		private void ChangeSuperscript(bool state)
-		{
-			isSuperscript = state;
-			SuperscriptCheckbox.Checked = isSuperscript;
 		}
 
 		private void ConstantClick(object sender, EventArgs e)
