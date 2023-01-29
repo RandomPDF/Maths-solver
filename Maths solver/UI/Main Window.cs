@@ -203,6 +203,10 @@ namespace Maths_solver.UI
 
 					CreateEquation(function, coefficient, functionInput, exponent, foundExponent, ref equation);
 
+					if (finalInput[nextIndex] != ')' && functionInput != null)
+						CheckOperation(finalInput, nextIndex, ref coefficient, ref function, ref functionInput,
+							ref exponent, ref currentPart, ref equation, ref foundExponent);
+
 					continue;
 				}
 
