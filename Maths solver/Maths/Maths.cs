@@ -226,8 +226,12 @@ namespace Maths_solver.Maths
 		{
 			ChainInput(term, out bool shouldChainInput, ref newEquation);
 
-			newEquation.Add(new Term(term.coeficient));
-			newEquation.Add(new Operation(OperationEnum.Multiplication));
+			if (term.coeficient != 1)
+			{
+				newEquation.Add(new Term(term.coeficient));
+				newEquation.Add(new Operation(OperationEnum.Multiplication));
+			}
+
 			newEquation.Add(new Operation(OperationEnum.OpenBracket));
 
 			for (int i = 0; i < term.input.Count; i++) newEquation.Add(term.input[i]);
