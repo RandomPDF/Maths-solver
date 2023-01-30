@@ -168,7 +168,6 @@ namespace Maths_solver.UI
 			List<EquationItem> equation = new List<EquationItem>();
 
 			bool foundExponent = false;
-			int extraBrackets = 0;
 
 			float coefficient = 1;
 			Function function = Function.NONE;
@@ -191,52 +190,28 @@ namespace Maths_solver.UI
 			string currentPart = String.Empty;
 			for (int nextIndex = 0; nextIndex < finalInput.Length; nextIndex++)
 			{
-				//if current is an open bracket, check if first character or if previous is an operation
-				if(finalInput[nextIndex] == '(' && (nextIndex == 0 || 
-					stringToOperation.ContainsKey(finalInput[nextIndex - 1])))
-                {
-					equation.Add(new Operation(OperationEnum.OpenBracket));
-					extraBrackets++;
-					continue;
-				}
+				if (FoundBracket(finalInput, nextIndex, brackets, ref equation,
+					ref currentPart, ref functionInput)) continue;
 
-				//ensure brackets are balanced, and can find input
-				if (finalInput[nextIndex] == '(') brackets.Push(finalInput[nextIndex]);
-				if (finalInput[nextIndex] == ')' && brackets.Count > 0) brackets.Pop();
-
-				//finding input and exponent
-				if ((currentPart.Length > 0 && currentPart[0] == '(') || functionInput != null)
-				{
-					SeparateString(finalInput[nextIndex], brackets, ref currentPart, ref functionInput);
-
-					FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent, ref foundExponent);
-
-					CreateEquation(function, coefficient, functionInput, exponent, foundExponent, ref equation);
-
-					if (finalInput[nextIndex] != ')' && functionInput != null)
-					{
-						CheckOperation(finalInput, nextIndex, ref coefficient, ref function, ref functionInput,
-							ref exponent, ref currentPart, ref equation, ref foundExponent);
-					}
-
-					//if current is an closed bracket, check if last character or if next is an operation
-					if (extraBrackets > 0 && finalInput[nextIndex] == ')' && functionInput != null && (nextIndex == finalInput.Length - 1 ||
-						stringToOperation.ContainsKey(finalInput[nextIndex + 1])))
-					{
-						equation.Add(new Operation(OperationEnum.ClosedBracket));
-						extraBrackets--;
-					}
-
-					continue;
-				}
+				FormatBracketsStack(finalInput, nextIndex, ref brackets);
 
 				FindCoefficient(ref currentPart, finalInput[nextIndex], ref coefficient);
-
 				FindFunction(finalInput, nextIndex, ref function, ref currentPart);
 
 				FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent, ref foundExponent);
 
 				SeparateString(finalInput[nextIndex], brackets, ref currentPart, ref functionInput);
+
+				//finding input and exponent
+				if (brackets.Count > 0 || (currentPart.Length > 0 && finalInput[nextIndex] == ')'))
+				{
+					FindBracketsInput(function, ref currentPart, ref functionInput, ref brackets, ref equation);
+
+					if (FindFunctionInput(function, finalInput, nextIndex, functionInput, ref coefficient,
+						ref exponent, ref currentPart, ref equation, ref foundExponent)) continue;
+
+					continue;
+				}
 
 				CreateEquation(function, coefficient, functionInput, exponent, foundExponent, ref equation);
 
@@ -245,6 +220,78 @@ namespace Maths_solver.UI
 			}
 
 			return equation;
+		}
+
+		private static bool FindFunctionInput(Function function, string finalInput, int nextIndex,
+			List<EquationItem> functionInput, ref float coefficient, ref List<EquationItem> exponent,
+			ref string currentPart, ref List<EquationItem> equation, ref bool foundExponent)
+		{
+			if (requiresInput.ContainsKey(function) && requiresInput[function])
+			{
+				if (finalInput[nextIndex] != ')' && functionInput != null)
+				{
+					CheckOperation(finalInput, nextIndex, ref coefficient, ref function, ref functionInput,
+						ref exponent, ref currentPart, ref equation, ref foundExponent);
+
+					return true;
+				}
+
+				FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent, ref foundExponent);
+
+				CreateEquation(function, coefficient, functionInput, exponent, foundExponent, ref equation);
+			}
+
+			return false;
+		}
+
+		private static void FindBracketsInput(Function function, ref string currentPart,
+			ref List<EquationItem> functionInput, ref Stack<char> brackets, ref List<EquationItem> equation)
+		{
+			if (brackets.Count == 0)
+			{
+				List<EquationItem> inputEquation =
+					stringToEquation(currentPart.Substring(1, currentPart.Length - 2));
+
+				if (function == Function.NONE || function == Function.constant || function == Function.e)
+				{
+					for (int i = 0; i < inputEquation.Count; i++)
+					{
+						equation.Add(inputEquation[i]);
+					}
+
+					equation.Add(new Operation(OperationEnum.ClosedBracket));
+				}
+				else
+				{
+					functionInput = inputEquation;
+					currentPart = String.Empty;
+				}
+			}
+		}
+
+		private static bool FoundBracket(string finalInput, int nextIndex, Stack<char> brackets,
+			ref List<EquationItem> equation, ref string currentPart, ref List<EquationItem> functionInput)
+		{
+			//if current is an open bracket, check if first character or if previous is an operation
+			if ((finalInput[nextIndex] == '(' && (nextIndex == 0 ||
+				stringToOperation.ContainsKey(finalInput[nextIndex - 1]))) && brackets.Count == 0)
+			{
+				equation.Add(new Operation(OperationEnum.OpenBracket));
+
+				SeparateString(finalInput[nextIndex], brackets, ref currentPart, ref functionInput);
+				FormatBracketsStack(finalInput, nextIndex, ref brackets);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private static void FormatBracketsStack(string finalInput, int nextIndex, ref Stack<char> brackets)
+		{
+			//ensure brackets are balanced, and can find input
+			if (finalInput[nextIndex] == '(') brackets.Push(finalInput[nextIndex]);
+			if (finalInput[nextIndex] == ')' && brackets.Count > 0) brackets.Pop();
 		}
 
 		private static void FindCoefficient(ref string currentPart, char nextCharacter, ref float coefficient)
@@ -303,25 +350,7 @@ namespace Maths_solver.UI
 
 		private static void SeparateString(char nextCharacter, Stack<char> brackets, ref string currentPart, ref List<EquationItem> functionInput)
 		{
-			//find input
-			if (nextCharacter == ')')
-			{
-				if (brackets.Count == 0 && currentPart.Length > 1)
-				{
-					functionInput = stringToEquation(currentPart.Substring(1));
-					currentPart = String.Empty;
-				}
-				else
-				{
-					functionInput = null;
-					currentPart += nextCharacter;
-				}
-			}
-			//move onto next char
-			else
-			{
-				currentPart += nextCharacter;
-			}
+			currentPart += nextCharacter;
 		}
 
 		private static void FindFunction(string input, int nextIndex, ref Function function, ref string currentPart)
@@ -355,9 +384,10 @@ namespace Maths_solver.UI
 			if (foundExponent) return;
 
 			//function with exponent of 1
-			if (functionInput != null && 
-				((nextIndex >= input.Length - 1 || stringToOperation.ContainsKey(input[nextIndex])) && input[nextIndex] == ')') ||
-				(input[nextIndex] != ')' && !IsSuperscript(input[nextIndex].ToString(), out string _)))
+			if (functionInput != null &&
+				(((nextIndex >= input.Length - 1 || stringToOperation.ContainsKey(input[nextIndex])) &&
+				input[nextIndex] == ')') ||
+				(input[nextIndex] != ')' && !IsSuperscript(input[nextIndex].ToString(), out string _))))
 			{
 				foundExponent = true;
 				return;
@@ -596,6 +626,6 @@ namespace Maths_solver.UI
 			InputBox.Focus();
 		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
