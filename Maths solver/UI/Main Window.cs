@@ -168,6 +168,7 @@ namespace Maths_solver.UI
 			List<EquationItem> equation = new List<EquationItem>();
 
 			bool foundExponent = false;
+			int extraBrackets = 0;
 
 			float coefficient = 1;
 			Function function = Function.NONE;
@@ -190,9 +191,18 @@ namespace Maths_solver.UI
 			string currentPart = String.Empty;
 			for (int nextIndex = 0; nextIndex < finalInput.Length; nextIndex++)
 			{
+				//if current is an open bracket, check if first character or if previous is an operation
+				if(finalInput[nextIndex] == '(' && (nextIndex == 0 || 
+					stringToOperation.ContainsKey(finalInput[nextIndex - 1])))
+                {
+					equation.Add(new Operation(OperationEnum.OpenBracket));
+					extraBrackets++;
+					continue;
+				}
+
 				//ensure brackets are balanced, and can find input
 				if (finalInput[nextIndex] == '(') brackets.Push(finalInput[nextIndex]);
-				if (finalInput[nextIndex] == ')') brackets.Pop();
+				if (finalInput[nextIndex] == ')' && brackets.Count > 0) brackets.Pop();
 
 				//finding input and exponent
 				if ((currentPart.Length > 0 && currentPart[0] == '(') || functionInput != null)
@@ -204,8 +214,18 @@ namespace Maths_solver.UI
 					CreateEquation(function, coefficient, functionInput, exponent, foundExponent, ref equation);
 
 					if (finalInput[nextIndex] != ')' && functionInput != null)
+					{
 						CheckOperation(finalInput, nextIndex, ref coefficient, ref function, ref functionInput,
 							ref exponent, ref currentPart, ref equation, ref foundExponent);
+					}
+
+					//if current is an closed bracket, check if last character or if next is an operation
+					if (extraBrackets > 0 && finalInput[nextIndex] == ')' && functionInput != null && (nextIndex == finalInput.Length - 1 ||
+						stringToOperation.ContainsKey(finalInput[nextIndex + 1])))
+					{
+						equation.Add(new Operation(OperationEnum.ClosedBracket));
+						extraBrackets--;
+					}
 
 					continue;
 				}
@@ -222,7 +242,6 @@ namespace Maths_solver.UI
 
 				CheckOperation(finalInput, nextIndex, ref coefficient, ref function, ref functionInput, ref exponent,
 					ref currentPart, ref equation, ref foundExponent);
-
 			}
 
 			return equation;
@@ -287,7 +306,7 @@ namespace Maths_solver.UI
 			//find input
 			if (nextCharacter == ')')
 			{
-				if (brackets.Count == 0)
+				if (brackets.Count == 0 && currentPart.Length > 1)
 				{
 					functionInput = stringToEquation(currentPart.Substring(1));
 					currentPart = String.Empty;
@@ -336,8 +355,9 @@ namespace Maths_solver.UI
 			if (foundExponent) return;
 
 			//function with exponent of 1
-			if (functionInput != null && ((nextIndex >= input.Length - 1 && input[nextIndex] == ')') ||
-				(input[nextIndex] != ')' && !IsSuperscript(input[nextIndex].ToString(), out string _))))
+			if (functionInput != null && 
+				((nextIndex >= input.Length - 1 || stringToOperation.ContainsKey(input[nextIndex])) && input[nextIndex] == ')') ||
+				(input[nextIndex] != ')' && !IsSuperscript(input[nextIndex].ToString(), out string _)))
 			{
 				foundExponent = true;
 				return;
@@ -368,7 +388,8 @@ namespace Maths_solver.UI
 
 		private static void CheckOperation(string input, int nextIndex,
 			ref float coefficient, ref Function function, ref List<EquationItem> functionInput,
-			ref List<EquationItem> exponent, ref string currentPart, ref List<EquationItem> equation, ref bool foundExponent)
+			ref List<EquationItem> exponent, ref string currentPart, ref List<EquationItem> equation,
+			ref bool foundExponent)
 		{
 			char operation = input[nextIndex];
 
@@ -405,13 +426,13 @@ namespace Maths_solver.UI
 			if (function == Function.NONE || !foundExponent) return;
 
 			//if has input and requires input
-			if (funcInput != null && requiresInput[function])
+			if (funcInput != null && funcInput.Count != 0 && requiresInput[function])
 			{
 				equation.Add(new Term(coefficient, function, funcInput, exponent));
 			}
 
 			//if has no input but doesnt require input
-			if (funcInput == null && !requiresInput[function])
+			if ((funcInput == null || funcInput.Count == 0) && !requiresInput[function])
 			{
 				equation.Add(new Term(coefficient, function, exponent));
 			}
@@ -493,6 +514,11 @@ namespace Maths_solver.UI
 			box.SelectionLength = 0;
 		}
 
+		private void InputBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter) e.SuppressKeyPress = true;
+		}
+
 		private void InputBox_KeyUp(object sender, KeyEventArgs e)
 		{
 			UpdateCursor(sender);
@@ -570,6 +596,6 @@ namespace Maths_solver.UI
 			InputBox.Focus();
 		}
 
-		#endregion
-	}
+        #endregion
+    }
 }
