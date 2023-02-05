@@ -487,98 +487,106 @@ namespace Maths_solver.Maths
 
 			for (int i = 0; i < equation.Count - 1; i++)
 			{
-				//format operations
-				if (equation[i].GetType() == typeof(Operation))
+				if (FormatOperations(i, ref equation)) continue;
+				FormatCoefficients(i, startTerm, ref newCoefficient, ref equation);
+			}
+		}
+
+		private static bool FormatOperations(int i, ref List<EquationItem> equation)
+		{
+			//format operations
+			if (equation[i].GetType() == typeof(Operation))
+			{
+				#region format all operations
+				Operation first = (Operation)(equation[i]);
+
+				if (equation[i + 1].GetType() == typeof(Operation))
 				{
-					#region format all operations
-					Operation first = (Operation)(equation[i]);
+					bool formatted = false;
+					Operation second = (Operation)(equation[i + 1]);
 
-					if (equation[i + 1].GetType() == typeof(Operation))
+					//if equal and both subtaction
+					if (first.operation == second.operation &&
+						first.operation == OperationEnum.Subtraction)
 					{
-						bool formatted = false;
-						Operation second = (Operation)(equation[i + 1]);
+						//change to one addition
+						equation[i] = new Operation(OperationEnum.Addition);
+						equation.RemoveAt(i + 1);
+						formatted = true;
+					}
+					//one operation addition and the other subtraction
+					else if ((first.operation == OperationEnum.Addition &&
+						second.operation == OperationEnum.Subtraction) ||
+						(first.operation == OperationEnum.Subtraction &&
+						second.operation == OperationEnum.Addition))
 
-						//if equal and both subtaction
-						if (first.operation == second.operation &&
-							first.operation == OperationEnum.Subtraction)
-						{
-							//change to one addition
-							equation[i] = new Operation(OperationEnum.Addition);
-							equation.RemoveAt(i + 1);
-							formatted = true;
-						}
-						//one operation addition and the other subtraction
-						else if ((first.operation == OperationEnum.Addition &&
-							second.operation == OperationEnum.Subtraction) ||
-							(first.operation == OperationEnum.Subtraction &&
-							second.operation == OperationEnum.Addition))
-
-						{
-							//change to one subraction
-							equation[i] = new Operation(OperationEnum.Subtraction);
-							equation.RemoveAt(i + 1);
-							formatted = true;
-						}
-
-						if (formatted) FormatEquation(ref equation);
+					{
+						//change to one subraction
+						equation[i] = new Operation(OperationEnum.Subtraction);
+						equation.RemoveAt(i + 1);
+						formatted = true;
 					}
 
-					#endregion
-
-					#region format coefficients
-
-
-					//sort out coefficients for multiple multiplied terms
-					if (first.operation == OperationEnum.Multiplication &&
-						equation[i - 1].GetType() == typeof(Term) &&
-						equation[i + 1].GetType() == typeof(Term))
-					{
-						Term firstTerm = (Term)equation[i - 1];
-						Term secondTerm = (Term)equation[i + 1];
-
-						if (secondTerm.coeficient == 1) continue;
-
-						//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken rn)
-						if (!EquationsEqual(firstTerm.exponent, new List<EquationItem> { new Term(Function.x) }) &&
-							!EquationsEqual(secondTerm.exponent, new List<EquationItem> { new Term(Function.x) }))
-						{
-							equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
-								firstTerm.function, firstTerm.input, firstTerm.exponent);
-
-							equation[i + 1] = new Term(1, secondTerm.function, secondTerm.input, secondTerm.exponent);
-
-							FormatEquation(ref equation);
-						}
-					}
-
-					#endregion
+					if (formatted) FormatEquation(ref equation);
 				}
 
+				#endregion
+
 				#region format coefficients
-				//struggles with brackets
-				//format coefficients with multiple multiplied terms
-				if (equation[i + 1].GetType() == typeof(Operation) && equation[i].GetType() == typeof(Term))
+
+
+				//sort out coefficients for multiple multiplied terms
+				if (first.operation == OperationEnum.Multiplication &&
+					equation[i - 1].GetType() == typeof(Term) &&
+					equation[i + 1].GetType() == typeof(Term))
 				{
-					Term currentTerm = (Term)equation[i];
-					Term startingTerm = new Term();
+					Term firstTerm = (Term)equation[i - 1];
+					Term secondTerm = (Term)equation[i + 1];
 
-					if (startTerm != -1) startingTerm = (Term)equation[startTerm];
+					if (secondTerm.coeficient == 1) return true;
 
-					Operation nextOperation = (Operation)equation[i + 1];
-					if (nextOperation.operation == OperationEnum.Multiplication)
+					//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken rn)
+					if (!EquationsEqual(firstTerm.exponent, new List<EquationItem> { new Term(Function.x) }) &&
+						!EquationsEqual(secondTerm.exponent, new List<EquationItem> { new Term(Function.x) }))
 					{
-						if (startTerm == -1) startTerm = i;
-						newCoefficient *= currentTerm.coeficient;
-					}
-					else if (startTerm != -1)
-					{
-						equation[startTerm] = new Term(newCoefficient, startingTerm.function, startingTerm.input, startingTerm.exponent);
+						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
+							firstTerm.function, firstTerm.input, firstTerm.exponent);
 
-						newCoefficient = 1;
+						equation[i + 1] = new Term(1, secondTerm.function, secondTerm.input, secondTerm.exponent);
+
+						FormatEquation(ref equation);
 					}
 				}
 
 				#endregion
+			}
+
+			return false;
+		}
+
+		private static void FormatCoefficients(int i, int startTerm, ref float newCoefficient,
+			ref List<EquationItem> equation)
+		{
+			//format coefficients with multiple multiplied terms
+			if (equation[i + 1].GetType() == typeof(Operation) && equation[i].GetType() == typeof(Term))
+			{
+				Term currentTerm = (Term)equation[i];
+				Term startingTerm = new Term();
+
+				if (startTerm != -1) startingTerm = (Term)equation[startTerm];
+
+				Operation nextOperation = (Operation)equation[i + 1];
+				if (nextOperation.operation == OperationEnum.Multiplication)
+				{
+					if (startTerm == -1) startTerm = i;
+					newCoefficient *= currentTerm.coeficient;
+				}
+				else if (startTerm != -1)
+				{
+					equation[startTerm] = new Term(newCoefficient, startingTerm.function, startingTerm.input, startingTerm.exponent);
+
+					newCoefficient = 1;
+				}
 			}
 		}
 

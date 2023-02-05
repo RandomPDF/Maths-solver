@@ -395,15 +395,6 @@ namespace Maths_solver.UI
 		{
 			if (foundExponent) return;
 
-			//find where exponent 1
-			if (functionInput != null &&
-				((nextIndex >= input.Length - 1 && input[nextIndex] == ')') ||
-				(input[nextIndex] != ')' && !IsSuperscript(input[nextIndex].ToString(), out string _))))
-			{
-				foundExponent = true;
-				return;
-			}
-
 			string exponentLong = String.Empty;
 
 			if (!IsSuperscript(input[nextIndex].ToString(), out string _))
@@ -417,13 +408,22 @@ namespace Maths_solver.UI
 				if (function == Function.x || function == Function.constant ||
 					function == Function.e) foundExponent = true;
 			}
-
 			//end of string, but try to find exponent
 			else if (IsSuperscript(input[nextIndex].ToString(), out string _) && nextIndex >= input.Length - 1 &&
 				IsSuperscript(currentPart + input[nextIndex], out exponentLong))
 			{
 				exponent = stringToEquation(exponentLong);
 				foundExponent = true;
+			}
+
+
+			//find where exponent 1
+			if (functionInput != null &&
+				((nextIndex >= input.Length - 1 && input[nextIndex] == ')') ||
+				(input[nextIndex] != ')' && !IsSuperscript(input[nextIndex].ToString(), out string _))))
+			{
+				foundExponent = true;
+				return;
 			}
 		}
 
@@ -564,16 +564,12 @@ namespace Maths_solver.UI
 
 		private void InputBox_KeyUp(object sender, KeyEventArgs e)
 		{
+			RichTextBox senderBox = sender as RichTextBox;
+
 			//update cursor position after each character inputted
-			UpdateCursor(sender);
+			currentCursorPosition = senderBox.SelectionStart;
 
 			if (isRealtime) DifferentaiteButton_Click(this, EventArgs.Empty);
-		}
-
-		private void UpdateCursor(object sender)
-		{
-			RichTextBox senderBox = sender as RichTextBox;
-			currentCursorPosition = senderBox.SelectionStart;
 		}
 
 		private void StepsButton_Click(object sender, EventArgs e) { StepsForm.Show(); }
@@ -582,10 +578,10 @@ namespace Maths_solver.UI
 
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
-			//OutputBox.Text = EquationStr(Maths.Maths.Start(stringToEquation(InputBox.Text)), false);
+			OutputBox.Text = EquationStr(Maths.Maths.Start(stringToEquation(InputBox.Text)), false);
 
 			//debugging
-			OutputBox.Text = EquationStr(stringToEquation(InputBox.Text), false);
+			//OutputBox.Text = EquationStr(stringToEquation(InputBox.Text), false);
 		}
 
 		private void ExitButton_Click(object sender, EventArgs e) { Application.Exit(); }
@@ -621,7 +617,7 @@ namespace Maths_solver.UI
 			//correct superscript change
 			isSuperscript = IsSuperscript(InputBox.Text[InputBox.Text.Length - 1].ToString(), out _);
 
-			UpdateCursor(InputBox);
+			currentCursorPosition = InputBox.SelectionStart;
 			InputBox.Focus();
 		}
 
