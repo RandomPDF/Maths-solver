@@ -66,6 +66,9 @@
 			this.button27 = new System.Windows.Forms.Button();
 			this.InstructionsButton = new System.Windows.Forms.Button();
 			this.Realtime = new System.Windows.Forms.CheckBox();
+			this.ErrorLabel = new System.Windows.Forms.Label();
+			this.ErrorBox = new System.Windows.Forms.RichTextBox();
+			this.button28 = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// InputBox
@@ -90,7 +93,7 @@
 			this.OutputBox.Cursor = System.Windows.Forms.Cursors.Arrow;
 			this.OutputBox.DetectUrls = false;
 			this.OutputBox.Font = new System.Drawing.Font("Cambria", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.OutputBox.Location = new System.Drawing.Point(28, 274);
+			this.OutputBox.Location = new System.Drawing.Point(25, 569);
 			this.OutputBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.OutputBox.Name = "OutputBox";
 			this.OutputBox.ReadOnly = true;
@@ -115,7 +118,7 @@
 			// 
 			this.OutputLabel.AutoSize = true;
 			this.OutputLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.OutputLabel.Location = new System.Drawing.Point(21, 241);
+			this.OutputLabel.Location = new System.Drawing.Point(18, 536);
 			this.OutputLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.OutputLabel.Name = "OutputLabel";
 			this.OutputLabel.Size = new System.Drawing.Size(88, 29);
@@ -125,7 +128,7 @@
 			// DifferentiateButton
 			// 
 			this.DifferentiateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.DifferentiateButton.Location = new System.Drawing.Point(835, 187);
+			this.DifferentiateButton.Location = new System.Drawing.Point(682, 151);
 			this.DifferentiateButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.DifferentiateButton.Name = "DifferentiateButton";
 			this.DifferentiateButton.Size = new System.Drawing.Size(253, 37);
@@ -137,7 +140,7 @@
 			// StepsButton
 			// 
 			this.StepsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.StepsButton.Location = new System.Drawing.Point(1112, 187);
+			this.StepsButton.Location = new System.Drawing.Point(1284, 151);
 			this.StepsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.StepsButton.Name = "StepsButton";
 			this.StepsButton.Size = new System.Drawing.Size(253, 37);
@@ -149,8 +152,8 @@
 			// ExitButton
 			// 
 			this.ExitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.ExitButton.Location = new System.Drawing.Point(27, 1002);
-			this.ExitButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.ExitButton.Location = new System.Drawing.Point(27, 965);
+			this.ExitButton.Margin = new System.Windows.Forms.Padding(4);
 			this.ExitButton.Name = "ExitButton";
 			this.ExitButton.Size = new System.Drawing.Size(141, 55);
 			this.ExitButton.TabIndex = 8;
@@ -161,8 +164,8 @@
 			// piButton
 			// 
 			this.piButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.piButton.Location = new System.Drawing.Point(27, 406);
-			this.piButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.piButton.Location = new System.Drawing.Point(992, 237);
+			this.piButton.Margin = new System.Windows.Forms.Padding(4);
 			this.piButton.Name = "piButton";
 			this.piButton.Size = new System.Drawing.Size(52, 37);
 			this.piButton.TabIndex = 10;
@@ -173,8 +176,8 @@
 			// button1
 			// 
 			this.button1.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button1.Location = new System.Drawing.Point(88, 406);
-			this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button1.Location = new System.Drawing.Point(1052, 237);
+			this.button1.Margin = new System.Windows.Forms.Padding(4);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(52, 37);
 			this.button1.TabIndex = 12;
@@ -185,8 +188,8 @@
 			// button2
 			// 
 			this.button2.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button2.Location = new System.Drawing.Point(28, 447);
-			this.button2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button2.Location = new System.Drawing.Point(158, 240);
+			this.button2.Margin = new System.Windows.Forms.Padding(4);
 			this.button2.Name = "button2";
 			this.button2.Size = new System.Drawing.Size(112, 37);
 			this.button2.TabIndex = 13;
@@ -197,8 +200,8 @@
 			// button3
 			// 
 			this.button3.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button3.Location = new System.Drawing.Point(148, 447);
-			this.button3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button3.Location = new System.Drawing.Point(278, 240);
+			this.button3.Margin = new System.Windows.Forms.Padding(4);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(112, 37);
 			this.button3.TabIndex = 14;
@@ -209,8 +212,8 @@
 			// button4
 			// 
 			this.button4.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button4.Location = new System.Drawing.Point(268, 447);
-			this.button4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button4.Location = new System.Drawing.Point(398, 240);
+			this.button4.Margin = new System.Windows.Forms.Padding(4);
 			this.button4.Name = "button4";
 			this.button4.Size = new System.Drawing.Size(112, 37);
 			this.button4.TabIndex = 15;
@@ -221,8 +224,8 @@
 			// button5
 			// 
 			this.button5.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button5.Location = new System.Drawing.Point(28, 492);
-			this.button5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button5.Location = new System.Drawing.Point(158, 285);
+			this.button5.Margin = new System.Windows.Forms.Padding(4);
 			this.button5.Name = "button5";
 			this.button5.Size = new System.Drawing.Size(112, 37);
 			this.button5.TabIndex = 16;
@@ -233,8 +236,8 @@
 			// button6
 			// 
 			this.button6.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button6.Location = new System.Drawing.Point(148, 492);
-			this.button6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button6.Location = new System.Drawing.Point(278, 285);
+			this.button6.Margin = new System.Windows.Forms.Padding(4);
 			this.button6.Name = "button6";
 			this.button6.Size = new System.Drawing.Size(112, 37);
 			this.button6.TabIndex = 17;
@@ -245,8 +248,8 @@
 			// button7
 			// 
 			this.button7.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button7.Location = new System.Drawing.Point(268, 492);
-			this.button7.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button7.Location = new System.Drawing.Point(398, 285);
+			this.button7.Margin = new System.Windows.Forms.Padding(4);
 			this.button7.Name = "button7";
 			this.button7.Size = new System.Drawing.Size(112, 37);
 			this.button7.TabIndex = 18;
@@ -257,8 +260,8 @@
 			// button8
 			// 
 			this.button8.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button8.Location = new System.Drawing.Point(148, 406);
-			this.button8.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button8.Location = new System.Drawing.Point(1112, 237);
+			this.button8.Margin = new System.Windows.Forms.Padding(4);
 			this.button8.Name = "button8";
 			this.button8.Size = new System.Drawing.Size(52, 37);
 			this.button8.TabIndex = 19;
@@ -269,8 +272,8 @@
 			// button9
 			// 
 			this.button9.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button9.Location = new System.Drawing.Point(393, 407);
-			this.button9.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button9.Location = new System.Drawing.Point(306, 447);
+			this.button9.Margin = new System.Windows.Forms.Padding(4);
 			this.button9.Name = "button9";
 			this.button9.Size = new System.Drawing.Size(52, 37);
 			this.button9.TabIndex = 20;
@@ -281,8 +284,8 @@
 			// button10
 			// 
 			this.button10.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button10.Location = new System.Drawing.Point(633, 492);
-			this.button10.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button10.Location = new System.Drawing.Point(398, 392);
+			this.button10.Margin = new System.Windows.Forms.Padding(4);
 			this.button10.Name = "button10";
 			this.button10.Size = new System.Drawing.Size(112, 37);
 			this.button10.TabIndex = 26;
@@ -293,8 +296,8 @@
 			// button11
 			// 
 			this.button11.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button11.Location = new System.Drawing.Point(513, 492);
-			this.button11.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button11.Location = new System.Drawing.Point(278, 392);
+			this.button11.Margin = new System.Windows.Forms.Padding(4);
 			this.button11.Name = "button11";
 			this.button11.Size = new System.Drawing.Size(112, 37);
 			this.button11.TabIndex = 25;
@@ -305,8 +308,8 @@
 			// button12
 			// 
 			this.button12.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button12.Location = new System.Drawing.Point(393, 492);
-			this.button12.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button12.Location = new System.Drawing.Point(158, 392);
+			this.button12.Margin = new System.Windows.Forms.Padding(4);
 			this.button12.Name = "button12";
 			this.button12.Size = new System.Drawing.Size(112, 37);
 			this.button12.TabIndex = 24;
@@ -317,8 +320,8 @@
 			// button13
 			// 
 			this.button13.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button13.Location = new System.Drawing.Point(633, 447);
-			this.button13.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button13.Location = new System.Drawing.Point(398, 347);
+			this.button13.Margin = new System.Windows.Forms.Padding(4);
 			this.button13.Name = "button13";
 			this.button13.Size = new System.Drawing.Size(112, 37);
 			this.button13.TabIndex = 23;
@@ -329,8 +332,8 @@
 			// button14
 			// 
 			this.button14.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button14.Location = new System.Drawing.Point(513, 447);
-			this.button14.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button14.Location = new System.Drawing.Point(278, 347);
+			this.button14.Margin = new System.Windows.Forms.Padding(4);
 			this.button14.Name = "button14";
 			this.button14.Size = new System.Drawing.Size(112, 37);
 			this.button14.TabIndex = 22;
@@ -341,8 +344,8 @@
 			// button15
 			// 
 			this.button15.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button15.Location = new System.Drawing.Point(393, 447);
-			this.button15.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button15.Location = new System.Drawing.Point(158, 347);
+			this.button15.Margin = new System.Windows.Forms.Padding(4);
 			this.button15.Name = "button15";
 			this.button15.Size = new System.Drawing.Size(112, 37);
 			this.button15.TabIndex = 21;
@@ -353,8 +356,8 @@
 			// button17
 			// 
 			this.button17.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button17.Location = new System.Drawing.Point(513, 406);
-			this.button17.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button17.Location = new System.Drawing.Point(583, 280);
+			this.button17.Margin = new System.Windows.Forms.Padding(4);
 			this.button17.Name = "button17";
 			this.button17.Size = new System.Drawing.Size(52, 37);
 			this.button17.TabIndex = 28;
@@ -365,8 +368,8 @@
 			// button18
 			// 
 			this.button18.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button18.Location = new System.Drawing.Point(576, 406);
-			this.button18.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button18.Location = new System.Drawing.Point(583, 325);
+			this.button18.Margin = new System.Windows.Forms.Padding(4);
 			this.button18.Name = "button18";
 			this.button18.Size = new System.Drawing.Size(52, 37);
 			this.button18.TabIndex = 29;
@@ -382,7 +385,7 @@
 			this.SuperscriptCheckbox.FlatAppearance.CheckedBackColor = System.Drawing.Color.Firebrick;
 			this.SuperscriptCheckbox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.SuperscriptCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F);
-			this.SuperscriptCheckbox.Location = new System.Drawing.Point(268, 409);
+			this.SuperscriptCheckbox.Location = new System.Drawing.Point(583, 240);
 			this.SuperscriptCheckbox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.SuperscriptCheckbox.Name = "SuperscriptCheckbox";
 			this.SuperscriptCheckbox.Size = new System.Drawing.Size(52, 34);
@@ -395,8 +398,8 @@
 			// button16
 			// 
 			this.button16.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button16.Location = new System.Drawing.Point(916, 409);
-			this.button16.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button16.Location = new System.Drawing.Point(992, 282);
+			this.button16.Margin = new System.Windows.Forms.Padding(4);
 			this.button16.Name = "button16";
 			this.button16.Size = new System.Drawing.Size(52, 37);
 			this.button16.TabIndex = 31;
@@ -407,8 +410,8 @@
 			// button19
 			// 
 			this.button19.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button19.Location = new System.Drawing.Point(976, 409);
-			this.button19.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button19.Location = new System.Drawing.Point(1052, 282);
+			this.button19.Margin = new System.Windows.Forms.Padding(4);
 			this.button19.Name = "button19";
 			this.button19.Size = new System.Drawing.Size(52, 37);
 			this.button19.TabIndex = 32;
@@ -419,8 +422,8 @@
 			// button20
 			// 
 			this.button20.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button20.Location = new System.Drawing.Point(1036, 409);
-			this.button20.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button20.Location = new System.Drawing.Point(1112, 282);
+			this.button20.Margin = new System.Windows.Forms.Padding(4);
 			this.button20.Name = "button20";
 			this.button20.Size = new System.Drawing.Size(52, 37);
 			this.button20.TabIndex = 33;
@@ -431,8 +434,8 @@
 			// button21
 			// 
 			this.button21.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button21.Location = new System.Drawing.Point(1036, 453);
-			this.button21.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button21.Location = new System.Drawing.Point(1112, 326);
+			this.button21.Margin = new System.Windows.Forms.Padding(4);
 			this.button21.Name = "button21";
 			this.button21.Size = new System.Drawing.Size(52, 37);
 			this.button21.TabIndex = 36;
@@ -443,8 +446,8 @@
 			// button22
 			// 
 			this.button22.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button22.Location = new System.Drawing.Point(976, 453);
-			this.button22.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button22.Location = new System.Drawing.Point(1052, 326);
+			this.button22.Margin = new System.Windows.Forms.Padding(4);
 			this.button22.Name = "button22";
 			this.button22.Size = new System.Drawing.Size(52, 37);
 			this.button22.TabIndex = 35;
@@ -455,8 +458,8 @@
 			// button23
 			// 
 			this.button23.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button23.Location = new System.Drawing.Point(916, 453);
-			this.button23.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button23.Location = new System.Drawing.Point(992, 326);
+			this.button23.Margin = new System.Windows.Forms.Padding(4);
 			this.button23.Name = "button23";
 			this.button23.Size = new System.Drawing.Size(52, 37);
 			this.button23.TabIndex = 34;
@@ -467,8 +470,8 @@
 			// button24
 			// 
 			this.button24.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button24.Location = new System.Drawing.Point(1036, 497);
-			this.button24.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button24.Location = new System.Drawing.Point(1112, 370);
+			this.button24.Margin = new System.Windows.Forms.Padding(4);
 			this.button24.Name = "button24";
 			this.button24.Size = new System.Drawing.Size(52, 37);
 			this.button24.TabIndex = 39;
@@ -479,8 +482,8 @@
 			// button25
 			// 
 			this.button25.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button25.Location = new System.Drawing.Point(976, 497);
-			this.button25.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button25.Location = new System.Drawing.Point(1052, 370);
+			this.button25.Margin = new System.Windows.Forms.Padding(4);
 			this.button25.Name = "button25";
 			this.button25.Size = new System.Drawing.Size(52, 37);
 			this.button25.TabIndex = 38;
@@ -491,8 +494,8 @@
 			// button26
 			// 
 			this.button26.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button26.Location = new System.Drawing.Point(916, 497);
-			this.button26.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button26.Location = new System.Drawing.Point(992, 370);
+			this.button26.Margin = new System.Windows.Forms.Padding(4);
 			this.button26.Name = "button26";
 			this.button26.Size = new System.Drawing.Size(52, 37);
 			this.button26.TabIndex = 37;
@@ -503,8 +506,8 @@
 			// button27
 			// 
 			this.button27.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button27.Location = new System.Drawing.Point(976, 542);
-			this.button27.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.button27.Location = new System.Drawing.Point(1022, 415);
+			this.button27.Margin = new System.Windows.Forms.Padding(4);
 			this.button27.Name = "button27";
 			this.button27.Size = new System.Drawing.Size(52, 37);
 			this.button27.TabIndex = 40;
@@ -515,7 +518,7 @@
 			// InstructionsButton
 			// 
 			this.InstructionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.InstructionsButton.Location = new System.Drawing.Point(148, 187);
+			this.InstructionsButton.Location = new System.Drawing.Point(29, 151);
 			this.InstructionsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.InstructionsButton.Name = "InstructionsButton";
 			this.InstructionsButton.Size = new System.Drawing.Size(253, 37);
@@ -528,19 +531,56 @@
 			// 
 			this.Realtime.AutoSize = true;
 			this.Realtime.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Realtime.Location = new System.Drawing.Point(608, 191);
+			this.Realtime.Location = new System.Drawing.Point(1004, 151);
 			this.Realtime.Name = "Realtime";
-			this.Realtime.Size = new System.Drawing.Size(174, 33);
+			this.Realtime.Size = new System.Drawing.Size(160, 33);
 			this.Realtime.TabIndex = 42;
-			this.Realtime.Text = "REALTIME?";
+			this.Realtime.Text = "REALTIME";
 			this.Realtime.UseVisualStyleBackColor = true;
 			this.Realtime.CheckedChanged += new System.EventHandler(this.Realtime_CheckedChanged);
+			// 
+			// ErrorLabel
+			// 
+			this.ErrorLabel.AutoSize = true;
+			this.ErrorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ErrorLabel.Location = new System.Drawing.Point(22, 792);
+			this.ErrorLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.ErrorLabel.Name = "ErrorLabel";
+			this.ErrorLabel.Size = new System.Drawing.Size(81, 29);
+			this.ErrorLabel.TabIndex = 44;
+			this.ErrorLabel.Text = "Errors";
+			// 
+			// ErrorBox
+			// 
+			this.ErrorBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ErrorBox.Location = new System.Drawing.Point(29, 824);
+			this.ErrorBox.Name = "ErrorBox";
+			this.ErrorBox.ReadOnly = true;
+			this.ErrorBox.Size = new System.Drawing.Size(1684, 114);
+			this.ErrorBox.TabIndex = 43;
+			this.ErrorBox.Text = "";
+			this.ErrorBox.WordWrap = false;
+			// 
+			// button28
+			// 
+			this.button28.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.button28.Location = new System.Drawing.Point(1082, 415);
+			this.button28.Margin = new System.Windows.Forms.Padding(4);
+			this.button28.Name = "button28";
+			this.button28.Size = new System.Drawing.Size(52, 37);
+			this.button28.TabIndex = 45;
+			this.button28.Text = ".";
+			this.button28.UseVisualStyleBackColor = true;
+			this.button28.Click += new System.EventHandler(this.ConstantClick);
 			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1284, 1006);
+			this.ClientSize = new System.Drawing.Size(1902, 1033);
+			this.Controls.Add(this.button28);
+			this.Controls.Add(this.ErrorLabel);
+			this.Controls.Add(this.ErrorBox);
 			this.Controls.Add(this.Realtime);
 			this.Controls.Add(this.InstructionsButton);
 			this.Controls.Add(this.button27);
@@ -579,7 +619,7 @@
 			this.Controls.Add(this.InputLabel);
 			this.Controls.Add(this.OutputBox);
 			this.Controls.Add(this.InputBox);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "Main";
 			this.Text = "Calculator";
 			this.ResumeLayout(false);
@@ -626,6 +666,9 @@
         private System.Windows.Forms.Button button27;
 		private System.Windows.Forms.Button InstructionsButton;
 		private System.Windows.Forms.CheckBox Realtime;
+		private System.Windows.Forms.Label ErrorLabel;
+		private System.Windows.Forms.RichTextBox ErrorBox;
+		private System.Windows.Forms.Button button28;
 	}
 }
 

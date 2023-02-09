@@ -12,12 +12,20 @@ namespace Maths_solver
 		public Steps()
 		{
 			InitializeComponent();
-			Maths.Maths.ShowSteps += ShowSteps;
+
+			Maths.Math.ShowSteps += ShowSteps;
 		}
 
 		#region Steps
 		private void ShowSteps(object sender, Step step)
 		{
+			string input = EquationStr(step.input, false);
+			string output = EquationStr(step.output, false);
+
+			if (step.input == null || step.input.Count == 0) input = "0";
+			if (step.output == null || step.output.Count == 0) output = "0";
+
+
 			if (tabCount < 0) tabCount = 0;
 
 			if (!(step.rule == Rule.None &&
