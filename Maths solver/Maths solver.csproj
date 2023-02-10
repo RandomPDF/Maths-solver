@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Maths\Objects\Equation.cs" />
     <Compile Include="UI\Instructions.cs">
       <SubType>Form</SubType>
     </Compile>

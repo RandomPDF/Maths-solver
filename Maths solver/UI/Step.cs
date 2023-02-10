@@ -1,5 +1,4 @@
 ﻿using Maths_solver.Maths;
-using System.Collections.Generic;
 
 namespace Maths_solver.UI
 {
@@ -17,10 +16,10 @@ namespace Maths_solver.UI
 	{
 		public Rule rule;
 		public Phase phase;
-		public List<EquationItem> input;
-		public List<EquationItem> output;
+		public Equation input;
+		public Equation output;
 
-		public Step(Rule rule, Phase phase, List<EquationItem> input, List<EquationItem> output)
+		public Step(Rule rule, Phase phase, Equation input, Equation output)
 		{
 			this.rule = rule;
 			this.output = output;
@@ -28,7 +27,7 @@ namespace Maths_solver.UI
 			this.phase = phase;
 		}
 
-		public Step(Rule rule, Phase phase, List<EquationItem> input)
+		public Step(Rule rule, Phase phase, Equation input)
 		{
 			this.rule = rule;
 			this.input = input;
