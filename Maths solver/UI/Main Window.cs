@@ -650,10 +650,10 @@ namespace Maths_solver.UI
 		{
 			ErrorBox.Text = String.Empty;
 
-			//string output = EquationStr(math.Start(StringToEquation(InputBox.Text)), false);
+			string output = EquationStr(math.Start(StringToEquation(InputBox.Text)), false);
 
 			//debugging
-			string output = EquationStr(StringToEquation(InputBox.Text), false);
+			//string output = EquationStr(StringToEquation(InputBox.Text), false);
 
 			if (output != String.Empty || InputBox.Text == String.Empty) OutputBox.Text = output;
 			else OutputBox.Text = "ERROR";

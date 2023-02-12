@@ -53,25 +53,36 @@ namespace Maths_solver.Maths
 		public static event EventHandler<Step> ShowSteps;
 
 		#region Differentiate
-		private Equation DifferentiateEquation(Equation equation)
-		{
-			if (equation == null) return null;
 
-			Equation newEquation = new Equation();
+		private bool ValidEquation(Equation equation, ref Equation newEquation)
+		{
+			if (equation == null) return false;
 
 			//if equation just constant, say its 0
 			if (equation.Count == 1 && equation[0].GetType() == typeof(Term) &&
 				((Term)equation[0]).function == Function.constant)
 			{
 				newEquation.Add(new Term(0f));
+				return false;
 			}
 
+			return true;
+		}
+
+		private void Differentiate(Equation equation, ref Equation newEquation, ref Stack<OperationEnum> brackets)
+		{
+			Equation input = new Equation();
+
 			//find term or operation in equation
-			foreach (EquationItem equationItem in equation)
+			for (int index = 0; index < equation.Count; index++)
 			{
-				if (equationItem.GetType() == typeof(Term))
+				FindBrackets(equation, ref index, ref brackets, ref input, ref newEquation, ref equation);
+
+				if (brackets.Count > 0 || index >= equation.Count) continue;
+
+				if (equation[index].GetType() == typeof(Term))
 				{
-					Term term = (Term)equationItem;
+					Term term = (Term)equation[index];
 					Equation baseDifferential = new Equation();
 
 					//find differential by function
@@ -81,8 +92,104 @@ namespace Maths_solver.Maths
 					DifferentiateTerm(baseDifferential, term, ref newEquation);
 				}
 
-				if (equationItem.GetType() == typeof(Operation)) newEquation.Add(equationItem);
+				if (equation[index].GetType() == typeof(Operation)) newEquation.Add(equation[index]);
 			}
+		}
+
+		private void FindBrackets(Equation equation, ref int index, ref Stack<OperationEnum> brackets,
+			ref Equation input, ref Equation newEquation, ref Equation origionalEquation)
+		{
+			if (equation[index].GetType() == typeof(Operation))
+			{
+				OperationEnum operation = ((Operation)equation[index]).operation;
+
+				if (operation == OperationEnum.OpenBracket)
+				{
+					brackets.Push(operation);
+
+					if (brackets.Count == 1) return;
+				}
+
+				if (operation == OperationEnum.ClosedBracket) brackets.Pop();
+			}
+
+			if (brackets.Count > 0) input.Add(equation[index]);
+
+			if (brackets.Count == 0 && input.Count > 0)
+			{
+				DifferentiateInput(input, ref index, ref newEquation, ref origionalEquation);
+			}
+		}
+
+		private void DifferentiateInput(Equation input, ref int index, ref Equation newEquation,
+			ref Equation origionalEquation)
+		{
+			float exponent = 1;
+
+			//if bracket has exponent
+			if (index + 1 < origionalEquation.Count && origionalEquation[index + 1].GetType() == typeof(Operation)
+				&& ((Operation)origionalEquation[index + 1]).operation == OperationEnum.Power)
+			{
+				//assume next term is exponent which is just a constant
+				exponent = ((Term)origionalEquation[index + 2]).coeficient;
+
+				index += 2;
+			}
+
+			//if exponent 0, is just a constant so differentiates to 0
+			if (exponent == 0) return;
+
+			//if bracket is to a power perform x^n -> nx^n-1
+			if (exponent != 1)
+			{
+				//add n to front
+				newEquation.Add(new Term(exponent));
+				newEquation.Add(new Operation(OperationEnum.Multiplication));
+
+				newEquation.Add(new Operation(OperationEnum.OpenBracket));
+
+				//add x
+				for (int i = 0; i < input.Count; i++)
+				{
+					newEquation.Add(input[i]);
+				}
+
+				newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
+				//add n-1
+				if (exponent != 2)
+				{
+					newEquation.Add(new Operation(OperationEnum.Power));
+					newEquation.Add(new Term(exponent - 1));
+				}
+
+				newEquation.Add(new Operation(OperationEnum.Multiplication));
+			}
+
+			//multiply by differential
+			Equation inputEquation = DifferentiateEquation(input);
+
+			//if differential term isn't just 1
+			if (inputEquation.Count != 1 || inputEquation[0].GetType() != typeof(Term) ||
+				((Term)inputEquation[0]).function != Function.constant || ((Term)inputEquation[0]).coeficient != 1)
+			{
+				for (int i = 0; i < inputEquation.Count; i++)
+				{
+					newEquation.Add(inputEquation[i]);
+				}
+			}
+
+			index++;
+		}
+
+		private Equation DifferentiateEquation(Equation equation)
+		{
+			Equation newEquation = new Equation();
+
+			if (!ValidEquation(equation, ref newEquation)) return newEquation;
+
+			Stack<OperationEnum> brackets = new Stack<OperationEnum>();
+			Differentiate(equation, ref newEquation, ref brackets);
 
 			FormatEquation(ref newEquation);
 
