@@ -225,7 +225,7 @@ namespace Maths_solver.UI
 				FormatBracketsStack(finalInput, nextIndex, ref brackets);
 
 				FindCoefficient(ref currentPart, finalInput[nextIndex], ref coefficient);
-				FindFunction(finalInput, nextIndex, ref function, ref currentPart);
+				if (brackets.Count == 0 || finalInput[nextIndex] == '(') FindFunction(finalInput, nextIndex, ref function, ref currentPart);
 
 				FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent, ref foundExponent);
 
@@ -248,6 +248,10 @@ namespace Maths_solver.UI
 			Function function, ref string currentPart, ref float coefficient, ref Equation exponent,
 			ref Equation functionInput, ref Equation equation, ref bool foundExponent)
 		{
+			if (brackets.Count <= 0 && function == Function.constant && IsSuperscript(currentPart, out _))
+				FindBracketExponent(finalInput, nextIndex, ref currentPart, ref function,
+				ref functionInput, ref coefficient, ref exponent, ref foundExponent, ref equation);
+
 			//finding input and exponent
 			if (brackets.Count <= 0 && (currentPart.Length <= 0 || finalInput[nextIndex] != ')')) return false;
 
@@ -255,16 +259,42 @@ namespace Maths_solver.UI
 			FindInput(function, ref currentPart, ref functionInput, ref brackets, ref equation);
 
 			//find exponent after input
-			FindInputExponent(function, finalInput, nextIndex, functionInput, ref coefficient,
-				ref exponent, ref currentPart, ref equation, ref foundExponent);
+			if (brackets.Count <= 0) FindFunctionInputExponent(function, finalInput, nextIndex, functionInput,
+				ref coefficient, ref exponent, ref currentPart, ref equation, ref foundExponent);
 
 			return true;
 		}
 
-		private bool FindInputExponent(Function function, string finalInput, int nextIndex,
+		private void FindBracketExponent(string finalInput, int nextIndex, ref string currentPart,
+			ref Function function, ref Equation functionInput, ref float coefficient, ref Equation exponent,
+			ref bool foundExponent, ref Equation equation)
+		{
+			FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent,
+				ref foundExponent);
+
+			if (!foundExponent) return;
+
+			equation.Add(new Operation(OperationEnum.Power));
+
+			for (int i = 0; i < exponent.Count; i++)
+			{
+				equation.Add(exponent[i]);
+			}
+
+			//restart a new term.
+			coefficient = 1;
+			function = Function.NONE;
+			functionInput = null;
+			exponent = new Equation { new Term() };
+			currentPart = String.Empty;
+			foundExponent = false;
+		}
+
+		private bool FindFunctionInputExponent(Function function, string finalInput, int nextIndex,
 			Equation functionInput, ref float coefficient, ref Equation exponent,
 			ref string currentPart, ref Equation equation, ref bool foundExponent)
 		{
+			//input of function
 			if (requiresInput.ContainsKey(function) && requiresInput[function])
 			{
 				if (finalInput[nextIndex] != ')' && functionInput != null)
@@ -275,7 +305,8 @@ namespace Maths_solver.UI
 					return true;
 				}
 
-				FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent, ref foundExponent);
+				FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent,
+					ref foundExponent);
 
 				//don't create term twice from bracket of input
 				if (finalInput[nextIndex] != ')' || nextIndex >= finalInput.Length - 1)
@@ -301,6 +332,8 @@ namespace Maths_solver.UI
 				}
 
 				equation.Add(new Operation(OperationEnum.ClosedBracket));
+
+				currentPart = String.Empty;
 			}
 			//input is within function input
 			else
@@ -411,7 +444,8 @@ namespace Maths_solver.UI
 				function = newFunction;
 				currentPart = String.Empty;
 			}
-			else if (nextOperation != OperationEnum.NONE || nextIndex == input.Length - 1)
+			else if ((nextOperation != OperationEnum.NONE && nextOperation != OperationEnum.ClosedBracket)
+				|| nextIndex == input.Length - 1)
 			{
 				function = Function.constant;
 			}
@@ -612,12 +646,13 @@ namespace Maths_solver.UI
 		{
 			ErrorBox.Text = String.Empty;
 
-			string output = EquationStr(math.Start(StringToEquation(InputBox.Text)), false);
-			if (output != String.Empty || InputBox.Text == String.Empty) OutputBox.Text = output;
-			else OutputBox.Text = "ERROR";
+			//string output = EquationStr(math.Start(StringToEquation(InputBox.Text)), false);
 
 			//debugging
-			//OutputBox.Text = EquationStr(stringToEquation(InputBox.Text), false);
+			string output = EquationStr(StringToEquation(InputBox.Text), false);
+
+			if (output != String.Empty || InputBox.Text == String.Empty) OutputBox.Text = output;
+			else OutputBox.Text = "ERROR";
 		}
 
 		private void ExitButton_Click(object sender, EventArgs e) { Application.Exit(); }
