@@ -225,7 +225,9 @@ namespace Maths_solver.UI
 				FormatBracketsStack(finalInput, nextIndex, ref brackets);
 
 				FindCoefficient(ref currentPart, finalInput[nextIndex], ref coefficient);
-				if (brackets.Count == 0 || finalInput[nextIndex] == '(') FindFunction(finalInput, nextIndex, ref function, ref currentPart);
+
+				if (brackets.Count <= 0 || (finalInput[nextIndex] == '(' && brackets.Count == 1))
+					FindFunction(finalInput, nextIndex, ref function, ref currentPart);
 
 				FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent, ref foundExponent);
 
@@ -272,7 +274,9 @@ namespace Maths_solver.UI
 			FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent,
 				ref foundExponent);
 
-			if (!foundExponent) return;
+			//if exponent not found or exponent is just a 1
+			if (!foundExponent || (exponent.Count <= 1 && exponent[0].GetType() == typeof(Term) &&
+				((Term)exponent[0]).coeficient == 1 && ((Term)exponent[0]).function == Function.constant)) return;
 
 			equation.Add(new Operation(OperationEnum.Power));
 
