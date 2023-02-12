@@ -49,10 +49,12 @@ namespace Maths_solver.Maths
 				}
 			}
 
-			if (newTerm.exponent == null) return;
-
 			//convert x^0 to constant
 			Equation equationTermExponent = newTerm.exponent;
+
+			if (equationTermExponent == null || equationTermExponent.Count <= 0 ||
+				equationTermExponent[0].GetType() != typeof(Term)) return;
+
 			Term equationFirstTermExponent = (Term)equationTermExponent[0];
 
 			if (equationFirstTermExponent.coeficient == 0 &&
