@@ -426,6 +426,8 @@ namespace Maths_solver.Maths
 			Equation equation = new Equation();
 			Term xRule = ApplyXRule(term);
 
+			if (xRule == null) return null;
+
 			if (xRule.coeficient != 1 && xRule.function != Function.constant)
 			{
 				equation.Add(xRule);
@@ -437,6 +439,8 @@ namespace Maths_solver.Maths
 
 		private Term ApplyXRule(Term term)
 		{
+			if (term.exponent == null || term.exponent.Count <= 0) return null;
+
 			Term exponent = (Term)term.exponent[0];
 
 			//ax^n => anx^(n-1)

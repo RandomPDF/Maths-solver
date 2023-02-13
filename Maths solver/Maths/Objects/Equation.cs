@@ -63,6 +63,7 @@ namespace Maths_solver.Maths
 
 		public void Add(Equation equation)
 		{
+			if (equation == null) return;
 			for (int i = 0; i < equation.Count; i++) Add(equation[i]);
 		}
 
