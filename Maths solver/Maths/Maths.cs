@@ -149,10 +149,7 @@ namespace Maths_solver.Maths
 				newEquation.Add(new Operation(OperationEnum.OpenBracket));
 
 				//add x
-				for (int i = 0; i < input.Count; i++)
-				{
-					newEquation.Add(input[i]);
-				}
+				newEquation.Add(input);
 
 				newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 
@@ -170,13 +167,9 @@ namespace Maths_solver.Maths
 			Equation inputEquation = DifferentiateEquation(input);
 
 			//if differential term isn't just 1
-			if (inputEquation.Count != 1 || inputEquation[0].GetType() != typeof(Term) ||
-				((Term)inputEquation[0]).function != Function.constant || ((Term)inputEquation[0]).coeficient != 1)
+			if (inputEquation.EquationsEqual(new Equation { new Term(1) }))
 			{
-				for (int i = 0; i < inputEquation.Count; i++)
-				{
-					newEquation.Add(inputEquation[i]);
-				}
+				newEquation.Add(inputEquation);
 			}
 
 			index++;
@@ -204,7 +197,7 @@ namespace Maths_solver.Maths
 
 			shouldChainInput = false;
 
-			if (!EquationsEqual(term.input, new Equation { new Term(Function.x) }))
+			if (!term.input.EquationsEqual(new Equation { new Term(Function.x) }))
 			{
 				shouldChainInput = true;
 
@@ -239,14 +232,13 @@ namespace Maths_solver.Maths
 				Term first = null;
 				if (inputDifferential.Count > 0) { first = (Term)inputDifferential[firstIndex]; }
 
-				//if is constant with coefficient of 1 or 0 ignore adding
-				if (first != null && !(first.function == Function.constant &&
-					(first.coeficient == 0 || first.coeficient == 1)))
+				//if is 1 or 0 ignore adding
+				if (!inputDifferential.EquationsEqual(new Equation { new Term(0f) }) &&
+					!inputDifferential.EquationsEqual(new Equation { new Term(1) }))
 				{
 					if (!isOneTerm) equation.Add(new Operation(OperationEnum.OpenBracket));
 
-					for (int i = 0; i < inputDifferential.Count; i++)
-						equation.Add(inputDifferential[i]);
+					equation.Add(inputDifferential);
 
 					if (!isOneTerm) equation.Add(new Operation(OperationEnum.ClosedBracket));
 
@@ -266,19 +258,19 @@ namespace Maths_solver.Maths
 
 			if (Differentials.ContainsKey(term.function))
 			{
-				Equation newTermEquation = new Equation();
-
-				newTermEquation = ChainInput(term, out bool shouldChainInput);
+				Equation newTermEquation = ChainInput(term, out bool shouldChainInput);
 
 				ChainFunction(differential, term, ref newTerm, ref newTermEquation);
 
-				Equation xRule = ChainXRule(term);
-				for (int i = 0; i < xRule.Count; i++) differential.Add(xRule[i]);
+				//Shouldn't apply if exponent is 1
+				if (!term.exponent.EquationsEqual(new Equation { new Term(1) }))
+					newTermEquation.Add(ChainXRule(term));
 
 				#region show steps
 				//keep coefficients when showing steps
 				Equation shownDifferential = new Equation();
 				Term firstTerm = (Term)differential[0];
+
 				for (int i = 0; i < differential.Count; i++)
 				{
 					if (i == 0) shownDifferential.Add(new Term(term.coeficient * firstTerm.coeficient, firstTerm.function, firstTerm.input, firstTerm.exponent));
@@ -299,7 +291,7 @@ namespace Maths_solver.Maths
 				ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, new Equation { term },
 					newTermEquation));
 
-				for (int i = 0; i < newTermEquation.Count; i++) newEquation.Add(newTermEquation[i]);
+				newEquation.Add(newTermEquation);
 
 				#endregion
 			}
@@ -365,21 +357,19 @@ namespace Maths_solver.Maths
 			Equation differential = ChainInput(term, out bool shouldChainInput);
 
 			Equation xRule = ChainXRule(term);
+			differential.Add(xRule);
 
 			ShowSteps?.Invoke(thisSender, new Step(Rule.x, Phase.End,
 					new Equation { term }, xRule));
 
-			for (int i = 0; i < xRule.Count; i++) differential.Add(xRule[i]);
-
 			//if the input isn't nothing. Add brackets if the count is greater than 1 or the first term isn't a constant nor has a coefficient of 1
 
 			bool addBrackets = term.input.Count > 0 && term.input != null &&
-				(term.input.Count > 1 || (term.input[0].GetType() == typeof(Term) &&
-				((Term)term.input[0]).function != Function.constant && ((Term)term.input[0]).coeficient != 1));
+				(term.input.Count > 1 || !term.input.EquationsEqual(new Equation { new Term(1) }));
 
 			if (addBrackets) differential.Add(new Operation(OperationEnum.OpenBracket));
 
-			for (int i = 0; i < term.input.Count; i++) differential.Add(term.input[i]);
+			differential.Add(term.input);
 
 			if (addBrackets) differential.Add(new Operation(OperationEnum.ClosedBracket));
 
@@ -388,7 +378,7 @@ namespace Maths_solver.Maths
 
 			FormatEquation(ref differential);
 
-			for (int i = 0; i < differential.Count; i++) newEquation.Add(differential[i]);
+			newEquation.Add(differential);
 
 			ShowSteps?.Invoke(thisSender, new Step(Rule.ln, Phase.End,
 				new Equation { term }, differential));
@@ -492,16 +482,13 @@ namespace Maths_solver.Maths
 						}
 					}
 
-					Term first = (Term)exponentDifferential[firstIndex];
-
-					//if is constant with coefficient of 1 or 0 ignore adding
-					if (!(first.function == Function.constant &&
-						(first.coeficient == 0 || first.coeficient == 1)))
+					//if 1 or 0 ignore adding
+					if (!exponentDifferential.EquationsEqual(new Equation { new Term(1) }) &&
+						!exponentDifferential.EquationsEqual(new Equation { new Term(0f) }))
 					{
 						if (!oneTerm) newTerm.Add(new Operation(OperationEnum.OpenBracket));
 
-						for (int i = 0; i < exponentDifferential.Count; i++)
-							newTerm.Add(exponentDifferential[i]);
+						newTerm.Add(exponentDifferential);
 
 						if (!oneTerm) newTerm.Add(new Operation(OperationEnum.ClosedBracket));
 
@@ -519,7 +506,7 @@ namespace Maths_solver.Maths
 				ShowSteps?.Invoke(thisSender, new Step(Rule.ln, Phase.Start, new Equation { new Term(term.coeficient) }));
 
 				newTerm.Add(new Term(1, Function.ln,
-					new Equation { new Term(term.coeficient) }, new Equation { new Term() }));
+					new Equation { new Term(term.coeficient) }, new Equation { new Term(1) }));
 
 				newTerm.Add(new Operation(OperationEnum.Multiplication));
 
@@ -543,55 +530,6 @@ namespace Maths_solver.Maths
 
 			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End,
 				new Equation { term }, newTerm));
-		}
-
-		private bool EquationsEqual(Equation equation1, Equation equation2)
-		{
-			if (equation1.Count != equation2.Count) return false;
-
-			for (int i = 0; i < equation1.Count; i++)
-			{
-				//check if terms equal
-				if (equation1[i].GetType() == typeof(Term) && equation2[i].GetType() == typeof(Term))
-				{
-					Term term1 = (Term)equation1[i];
-					Term term2 = (Term)equation2[i];
-					if (!TermsEqual(term1, term2, false)) return false;
-				}
-
-				//check if operations equal
-				if (equation1[i].GetType() == typeof(Operation) &&
-				equation2[i].GetType() == typeof(Operation))
-				{
-					Operation operation1 = (Operation)equation1[i];
-					Operation operation2 = (Operation)equation2[i];
-
-					if (operation1.operation != operation2.operation) return false;
-				}
-				//check if same type
-				if (equation1[i].GetType() != equation2[i].GetType()) return false;
-			}
-			return true;
-		}
-		private bool TermsEqual(Term term1, Term term2, bool areExponents)
-		{
-			if (!areExponents)
-			{
-				//check if coefficients match
-				if (term1.coeficient != term2.coeficient) return false;
-
-				//check if functions match
-				if (term1.function == term2.function)
-				{
-					if (term1.exponent != null && term2.exponent != null &&
-						EquationsEqual(term1.exponent, term2.exponent)) return true;
-
-					if (term1.exponent == null && term2.exponent == null) return true;
-				}
-			}
-			if (areExponents && term1.exponent == term2.exponent &&
-				term1.exponent == term2.exponent) return true;
-			return false;
 		}
 
 		public Equation Start(Equation newEquation)
@@ -688,8 +626,8 @@ namespace Maths_solver.Maths
 					if (secondTerm.coeficient == 1) return true;
 
 					//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken rn)
-					if (!EquationsEqual(firstTerm.exponent, new Equation { new Term(Function.x) }) &&
-						!EquationsEqual(secondTerm.exponent, new Equation { new Term(Function.x) }))
+					if (!firstTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }) &&
+						!secondTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }))
 					{
 						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
 							firstTerm.function, firstTerm.input, firstTerm.exponent);
@@ -713,7 +651,7 @@ namespace Maths_solver.Maths
 			if (equation[i + 1].GetType() == typeof(Operation) && equation[i].GetType() == typeof(Term))
 			{
 				Term currentTerm = (Term)equation[i];
-				Term startingTerm = new Term();
+				Term startingTerm = new Term(1);
 
 				if (startTerm != -1) startingTerm = (Term)equation[startTerm];
 

@@ -199,7 +199,7 @@ namespace Maths_solver.UI
 			float coefficient = 1;
 			Function function = Function.NONE;
 			Equation functionInput = null;
-			Equation exponent = new Equation { new Term() };
+			Equation exponent = new Equation { new Term(1) };
 
 			#region format input
 			rawInput = rawInput.ToLower();
@@ -275,21 +275,17 @@ namespace Maths_solver.UI
 				ref foundExponent);
 
 			//if exponent not found or exponent is just a 1
-			if (!foundExponent || (exponent.Count <= 1 && exponent[0].GetType() == typeof(Term) &&
-				((Term)exponent[0]).coeficient == 1 && ((Term)exponent[0]).function == Function.constant)) return;
+			if (!foundExponent || exponent.EquationsEqual(new Equation { new Term(1) })) return;
 
 			equation.Add(new Operation(OperationEnum.Power));
 
-			for (int i = 0; i < exponent.Count; i++)
-			{
-				equation.Add(exponent[i]);
-			}
+			equation.Add(exponent);
 
 			//restart a new term.
 			coefficient = 1;
 			function = Function.NONE;
 			functionInput = null;
-			exponent = new Equation { new Term() };
+			exponent = new Equation { new Term(1) };
 			currentPart = String.Empty;
 			foundExponent = false;
 		}
@@ -330,10 +326,7 @@ namespace Maths_solver.UI
 			//input is within brackets
 			if (function == Function.NONE || function == Function.constant || function == Function.e)
 			{
-				for (int i = 0; i < inputEquation.Count; i++)
-				{
-					equation.Add(inputEquation[i]);
-				}
+				equation.Add(inputEquation);
 
 				equation.Add(new Operation(OperationEnum.ClosedBracket));
 
@@ -519,7 +512,7 @@ namespace Maths_solver.UI
 				coefficient = 1;
 				function = Function.NONE;
 				functionInput = null;
-				exponent = new Equation { new Term() };
+				exponent = new Equation { new Term(1) };
 				currentPart = String.Empty;
 				foundExponent = false;
 

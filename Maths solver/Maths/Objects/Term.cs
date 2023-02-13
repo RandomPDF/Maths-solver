@@ -72,7 +72,7 @@
 			this.exponent = new Equation { new Term() };
 		}
 
-		//1
+		//base term case
 		public Term()
 		{
 			this.coeficient = 1;
