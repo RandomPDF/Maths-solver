@@ -60,7 +60,8 @@ namespace Maths_solver.Maths
 
 			//if equation just constant, say its 0
 			if (equation.Count == 1 && equation[0].GetType() == typeof(Term) &&
-				((Term)equation[0]).function == Function.constant)
+				((Term)equation[0]).function == Function.constant && (((Term)equation[0]).exponent == null
+				|| ((Term)equation[0]).exponent.EquationsEqual(new Equation { new Term(1) })))
 			{
 				newEquation.Add(new Term(0f));
 				return false;
@@ -167,9 +168,15 @@ namespace Maths_solver.Maths
 			Equation inputEquation = DifferentiateEquation(input);
 
 			//if differential term isn't just 1
-			if (inputEquation.EquationsEqual(new Equation { new Term(1) }))
+			if (!inputEquation.EquationsEqual(new Equation { new Term(1) }) || exponent == 1)
 			{
+				bool addBrackets = inputEquation.Count > 1;
+
+				if (addBrackets) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+
 				newEquation.Add(inputEquation);
+
+				if (addBrackets) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 			}
 
 			index++;
@@ -258,9 +265,11 @@ namespace Maths_solver.Maths
 
 			if (Differentials.ContainsKey(term.function))
 			{
-				Equation newTermEquation = ChainInput(term, out bool shouldChainInput);
+				Equation newTermEquation = new Equation();
 
 				ChainFunction(differential, term, ref newTerm, ref newTermEquation);
+
+				newTermEquation.Add(ChainInput(term, out bool shouldChainInput));
 
 				//Shouldn't apply if exponent is 1
 				if (!term.exponent.EquationsEqual(new Equation { new Term(1) }))
@@ -555,7 +564,8 @@ namespace Maths_solver.Maths
 			}
 
 			//if last term is operation
-			if (equation.Count > 0 && equation[equation.Count - 1].GetType() == typeof(Operation))
+			if (equation.Count > 0 && equation[equation.Count - 1].GetType() == typeof(Operation) &&
+				((Operation)equation[equation.Count - 1]).operation != OperationEnum.ClosedBracket)
 			{
 				equation.RemoveAt(equation.Count - 1);
 			}
@@ -567,7 +577,11 @@ namespace Maths_solver.Maths
 			for (int i = 0; i < equation.Count - 1; i++)
 			{
 				if (FormatOperations(i, ref equation)) continue;
-				FormatCoefficients(i, startTerm, ref newCoefficient, ref equation);
+				if (i < equation.Count - 1) FormatCoefficients(i, startTerm, ref newCoefficient, ref equation);
+			}
+
+			for (int i = 0; i < equation.Count; i++)
+			{
 				FormatConstants(i, ref equation);
 			}
 		}
@@ -676,7 +690,7 @@ namespace Maths_solver.Maths
 			if (((i - 1 >= 0 && equation[i - 1].GetType() == typeof(Operation) &&
 				((Operation)equation[i - 1]).operation == OperationEnum.Multiplication) ||
 
-				(i + 1 >= 0 && equation[i + 1].GetType() == typeof(Operation) &&
+				(i + 1 < equation.Count && equation[i + 1].GetType() == typeof(Operation) &&
 				((Operation)equation[i + 1]).operation == OperationEnum.Multiplication)) &&
 
 				(equation[i].GetType() == typeof(Term) && ((Term)equation[i]).function == Function.constant &&

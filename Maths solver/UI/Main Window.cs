@@ -250,7 +250,7 @@ namespace Maths_solver.UI
 			Function function, ref string currentPart, ref float coefficient, ref Equation exponent,
 			ref Equation functionInput, ref Equation equation, ref bool foundExponent)
 		{
-			if (brackets.Count <= 0 && function == Function.constant && IsSuperscript(currentPart, out _))
+			if (brackets.Count <= 0 && function == Function.NONE && IsSuperscript(currentPart, out _))
 				FindBracketExponent(finalInput, nextIndex, ref currentPart, ref function,
 				ref functionInput, ref coefficient, ref exponent, ref foundExponent, ref equation);
 
@@ -441,8 +441,11 @@ namespace Maths_solver.UI
 				function = newFunction;
 				currentPart = String.Empty;
 			}
-			else if ((nextOperation != OperationEnum.NONE && nextOperation != OperationEnum.ClosedBracket)
-				|| nextIndex == input.Length - 1)
+			else if (!(nextIndex - 1 >= 0 && stringToOperation.ContainsKey(input[nextIndex - 1]) &&
+				stringToOperation[input[nextIndex - 1]] == OperationEnum.ClosedBracket) &&
+
+				((nextOperation != OperationEnum.NONE && nextOperation != OperationEnum.ClosedBracket)
+				|| nextIndex == input.Length - 1))
 			{
 				function = Function.constant;
 			}
