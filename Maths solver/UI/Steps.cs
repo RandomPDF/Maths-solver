@@ -49,11 +49,21 @@ namespace Maths_solver
 							break;
 
 						case Rule.Input:
-							StepsBox.Text += $"Multiply the input differential by the main differential using the chain rule keeping the input the same.\n";
+							StepsBox.Text += $"Multiply the input differential ( {EquationStr(step.input, false)} )" +
+								$" by the differential ( {EquationStr(step.output, false)} )" +
+								$" using the chain rule keeping the input the same.\n";
 							break;
 
 						case Rule.Exponent:
-							StepsBox.Text += $"Multiply the exponent differential by the main differential using the chain rule keeping the exponent the same.\n";
+							StepsBox.Text += $"Multiply the exponent differential " +
+								$"( {EquationStr(step.input, false)} ) by the term " +
+								$"( {EquationStr(step.output, false)} ) using the chain rule" +
+								$"keeping the exponent the same.\n";
+							break;
+
+						case Rule.ln:
+							StepsBox.Text += $"Multiply the differential ( {EquationStr(step.input, false)} )" +
+								$"by standard result ( {EquationStr(step.output, false)} ) using the chain rule.\n";
 							break;
 
 						default:
@@ -70,7 +80,7 @@ namespace Maths_solver
 					switch (step.rule)
 					{
 						case Rule.Constant:
-							StepsBox.Text += $"Using the constant rule: {EquationStr(step.input, false)} → 0\n";
+							StepsBox.Text += $"Using the constant rule: {EquationStr(step.input, false)} → 0\n\n";
 							break;
 
 						case Rule.Input:
