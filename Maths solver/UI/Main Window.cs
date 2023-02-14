@@ -10,7 +10,7 @@ namespace Maths_solver.UI
 {
 	public partial class Main : Form
 	{
-		private Maths.Math math = new Maths.Math();
+		private Maths.Maths math = new Maths.Maths();
 
 		private static Dictionary<char, char> CharacterToSuperscript = new Dictionary<char, char>()
 		{
@@ -99,12 +99,23 @@ namespace Maths_solver.UI
 		{
 			string formatTerm = String.Empty;
 
+			if (term.coeficient == 0 && equationLength == 1) return "0";
+			if (term.coeficient == 0) return String.Empty;
+
 			#region coefficient
 			//format coefficient
 			if (((term.function == Function.constant || System.Math.Abs(term.coeficient) != 1) && !useSuperscript)
 				|| (term.coeficient != 1 || (equationLength != 1 && term.function == Function.constant)) && useSuperscript)
 			{
-				formatTerm += PartStr(term.coeficient.ToString(), useSuperscript);
+				if (int.TryParse((term.coeficient / (float)Math.E).ToString(), out int multiplier))
+				{
+					if (multiplier != 1) formatTerm += PartStr(multiplier.ToString(), useSuperscript);
+					formatTerm += PartStr("e", useSuperscript);
+				}
+				else
+				{
+					formatTerm += PartStr(term.coeficient.ToString(), useSuperscript);
+				}
 			}
 
 			else if (term.coeficient == -1 && !useSuperscript) formatTerm += PartStr("-", useSuperscript);
@@ -224,17 +235,18 @@ namespace Maths_solver.UI
 				//if open bracket, add to stack. If closed bracket, remove from stack
 				FormatBracketsStack(finalInput, nextIndex, ref brackets);
 
-				FindCoefficient(ref currentPart, finalInput[nextIndex], ref coefficient);
+				FindCoefficient(finalInput, nextIndex, ref currentPart, finalInput[nextIndex], ref coefficient);
 
 				if (brackets.Count <= 0 || (finalInput[nextIndex] == '(' && brackets.Count == 1))
 					FindFunction(finalInput, nextIndex, ref function, ref currentPart);
 
-				FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent, ref foundExponent);
+				FindExponent(finalInput, nextIndex, currentPart, coefficient, function, functionInput, ref exponent,
+					ref foundExponent);
 
 				currentPart += finalInput[nextIndex];
 
 				//find input and then exponents after
-				if (FindInputExponents(finalInput, nextIndex, brackets, function, ref currentPart, ref coefficient,
+				if (FindInputs(finalInput, nextIndex, brackets, function, ref currentPart, ref coefficient,
 					ref exponent, ref functionInput, ref equation, ref foundExponent)) continue;
 
 				CreateEquation(function, coefficient, functionInput, exponent, foundExponent, ref equation);
@@ -246,7 +258,7 @@ namespace Maths_solver.UI
 			return equation;
 		}
 
-		private bool FindInputExponents(string finalInput, int nextIndex, Stack<char> brackets,
+		private bool FindInputs(string finalInput, int nextIndex, Stack<char> brackets,
 			Function function, ref string currentPart, ref float coefficient, ref Equation exponent,
 			ref Equation functionInput, ref Equation equation, ref bool foundExponent)
 		{
@@ -258,7 +270,7 @@ namespace Maths_solver.UI
 			if (brackets.Count <= 0 && (currentPart.Length <= 0 || finalInput[nextIndex] != ')')) return false;
 
 			//finds bracket or function input
-			FindInput(function, ref currentPart, ref functionInput, ref brackets, ref equation);
+			FindInput(coefficient, function, ref currentPart, ref functionInput, ref brackets, ref equation);
 
 			//find exponent after input
 			if (brackets.Count <= 0) FindFunctionInputExponent(function, finalInput, nextIndex, functionInput,
@@ -271,7 +283,7 @@ namespace Maths_solver.UI
 			ref Function function, ref Equation functionInput, ref float coefficient, ref Equation exponent,
 			ref bool foundExponent, ref Equation equation)
 		{
-			FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent,
+			FindExponent(finalInput, nextIndex, currentPart, coefficient, function, functionInput, ref exponent,
 				ref foundExponent);
 
 			//if exponent not found or exponent is just a 1
@@ -305,7 +317,7 @@ namespace Maths_solver.UI
 					return true;
 				}
 
-				FindExponent(finalInput, nextIndex, currentPart, function, functionInput, ref exponent,
+				FindExponent(finalInput, nextIndex, currentPart, coefficient, function, functionInput, ref exponent,
 					ref foundExponent);
 
 				//don't create term twice from bracket of input
@@ -316,7 +328,7 @@ namespace Maths_solver.UI
 			return false;
 		}
 
-		private void FindInput(Function function, ref string currentPart,
+		private void FindInput(float coefficient, Function function, ref string currentPart,
 			ref Equation functionInput, ref Stack<char> brackets, ref Equation equation)
 		{
 			if (brackets.Count != 0 || currentPart.Length < 2) return;
@@ -324,7 +336,7 @@ namespace Maths_solver.UI
 			Equation inputEquation = StringToEquation(currentPart.Substring(1, currentPart.Length - 2));
 
 			//input is within brackets
-			if (function == Function.NONE || function == Function.constant || function == Function.e)
+			if (function == Function.NONE || function == Function.constant)
 			{
 				equation.Add(inputEquation);
 
@@ -364,16 +376,46 @@ namespace Maths_solver.UI
 			if (finalInput[nextIndex] == ')' && brackets.Count > 0) brackets.Pop();
 		}
 
-		private void FindCoefficient(ref string currentPart, char nextCharacter, ref float coefficient)
+		private void FindCoefficient(string finalInput, int index, ref string currentPart, char nextCharacter, ref float coefficient)
 		{
-			float newCoefficient;
+			float newCoefficient = 1;
 
 			//current part is int, but next part isn't, must be whole coefficient
-			if (float.TryParse(currentPart, out newCoefficient) &&
-				!float.TryParse(nextCharacter.ToString(), out float _) && nextCharacter != '.')
+			if (!float.TryParse(nextCharacter.ToString(), out float _)
+				&& nextCharacter != '.' && (nextCharacter != 'e' || index >= finalInput.Length - 1))
 			{
-				coefficient = newCoefficient;
-				currentPart = String.Empty;
+				bool found = false;
+				string look = currentPart;
+
+				if (index >= finalInput.Length - 1) look = nextCharacter.ToString();
+
+				if (look.Contains('e'))
+				{
+					int i = look.IndexOf('e');
+
+					if (look.Remove(i).Length > 0 && float.TryParse(look.Remove(i), out float foundCoefficient))
+					{
+						newCoefficient = foundCoefficient;
+						found = true;
+					}
+
+					newCoefficient *= (float)Math.E;
+				}
+				else
+				{
+					if (look != String.Empty && float.TryParse(look, out float foundCoefficient))
+					{
+						newCoefficient = foundCoefficient;
+						found = true;
+					}
+				}
+
+				if ((found || (!found && IsSuperscript(nextCharacter.ToString(), out _)) && coefficient == 1))
+				{
+					coefficient = newCoefficient;
+
+					if (index < finalInput.Length - 1) currentPart = String.Empty;
+				}
 			}
 
 			else if (float.TryParse(currentPart + nextCharacter.ToString(), out newCoefficient))
@@ -451,7 +493,7 @@ namespace Maths_solver.UI
 			}
 		}
 
-		private void FindExponent(string input, int nextIndex, string currentPart, Function function, Equation functionInput, ref Equation exponent, ref bool foundExponent)
+		private void FindExponent(string input, int nextIndex, string currentPart, float coefficient, Function function, Equation functionInput, ref Equation exponent, ref bool foundExponent)
 		{
 			if (foundExponent) return;
 
@@ -465,8 +507,8 @@ namespace Maths_solver.UI
 					foundExponent = true;
 				}
 
-				if (function == Function.x || function == Function.constant ||
-					function == Function.e) foundExponent = true;
+				if (function == Function.x || function == Function.constant)
+					foundExponent = true;
 			}
 			//end of string, but try to find exponent
 			else if (IsSuperscript(input[nextIndex].ToString(), out string _) && nextIndex >= input.Length - 1 &&

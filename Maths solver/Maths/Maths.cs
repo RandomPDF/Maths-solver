@@ -5,7 +5,7 @@ using static Maths_solver.Maths.Operation;
 
 namespace Maths_solver.Maths
 {
-	internal class Math : Functions
+	internal class Maths : Functions
 	{
 		private Dictionary<Function, Equation> Differentials =
 			new Dictionary<Function, Equation>()
@@ -111,7 +111,7 @@ namespace Maths_solver.Maths
 					if (brackets.Count == 1) return;
 				}
 
-				if (operation == OperationEnum.ClosedBracket) brackets.Pop();
+				if (operation == OperationEnum.ClosedBracket && brackets.Count > 0) brackets.Pop();
 			}
 
 			if (brackets.Count > 0) input.Add(equation[index]);
@@ -394,6 +394,8 @@ namespace Maths_solver.Maths
 			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, new Equation { term }, differential));
 
+			differential.Add(new Operation(OperationEnum.Multiplication));
+
 			//if the input isn't nothing. Add brackets if the count is greater than 1 and isn't just an x
 
 			Equation standardResult = new Equation();
@@ -555,7 +557,8 @@ namespace Maths_solver.Maths
 			}
 			#endregion
 
-			if (term.function == Function.constant && chainExponent)
+			if (term.function == Function.constant && chainExponent &&
+				!int.TryParse((term.coeficient / (float)Math.E).ToString(), out _))
 			{
 				ShowSteps?.Invoke(thisSender, new Step(Rule.ln, Phase.Start, new Equation { new Term(term.coeficient) }));
 

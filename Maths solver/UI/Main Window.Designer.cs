@@ -35,7 +35,6 @@
 			this.DifferentiateButton = new System.Windows.Forms.Button();
 			this.StepsButton = new System.Windows.Forms.Button();
 			this.ExitButton = new System.Windows.Forms.Button();
-			this.piButton = new System.Windows.Forms.Button();
 			this.button1 = new System.Windows.Forms.Button();
 			this.button2 = new System.Windows.Forms.Button();
 			this.button3 = new System.Windows.Forms.Button();
@@ -161,22 +160,10 @@
 			this.ExitButton.UseVisualStyleBackColor = true;
 			this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
 			// 
-			// piButton
-			// 
-			this.piButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.piButton.Location = new System.Drawing.Point(992, 237);
-			this.piButton.Margin = new System.Windows.Forms.Padding(4);
-			this.piButton.Name = "piButton";
-			this.piButton.Size = new System.Drawing.Size(52, 37);
-			this.piButton.TabIndex = 10;
-			this.piButton.Text = "π";
-			this.piButton.UseVisualStyleBackColor = true;
-			this.piButton.Click += new System.EventHandler(this.ConstantClick);
-			// 
 			// button1
 			// 
 			this.button1.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button1.Location = new System.Drawing.Point(1052, 237);
+			this.button1.Location = new System.Drawing.Point(1022, 237);
 			this.button1.Margin = new System.Windows.Forms.Padding(4);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(52, 37);
@@ -260,7 +247,7 @@
 			// button8
 			// 
 			this.button8.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button8.Location = new System.Drawing.Point(1112, 237);
+			this.button8.Location = new System.Drawing.Point(1082, 237);
 			this.button8.Margin = new System.Windows.Forms.Padding(4);
 			this.button8.Name = "button8";
 			this.button8.Size = new System.Drawing.Size(52, 37);
@@ -611,7 +598,6 @@
 			this.Controls.Add(this.button3);
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.button1);
-			this.Controls.Add(this.piButton);
 			this.Controls.Add(this.ExitButton);
 			this.Controls.Add(this.StepsButton);
 			this.Controls.Add(this.DifferentiateButton);
@@ -635,7 +621,6 @@
 		private System.Windows.Forms.Button DifferentiateButton;
 		private System.Windows.Forms.Button StepsButton;
         private System.Windows.Forms.Button ExitButton;
-        private System.Windows.Forms.Button piButton;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button button3;

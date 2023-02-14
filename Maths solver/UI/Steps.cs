@@ -13,7 +13,7 @@ namespace Maths_solver
 		{
 			InitializeComponent();
 
-			Maths.Math.ShowSteps += ShowSteps;
+			Maths.Maths.ShowSteps += ShowSteps;
 		}
 
 		#region Steps
