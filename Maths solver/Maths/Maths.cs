@@ -237,7 +237,8 @@ namespace Maths_solver.Maths
 				}
 
 				Term first = null;
-				if (inputDifferential.Count > 0) { first = (Term)inputDifferential[firstIndex]; }
+				if (inputDifferential.Count > 0 && inputDifferential[firstIndex].GetType() == typeof(Term))
+					first = (Term)inputDifferential[firstIndex];
 
 				//if is 1 or 0 ignore adding
 				if (!inputDifferential.EquationsEqual(new Equation { new Term(0f) }) &&
@@ -540,13 +541,13 @@ namespace Maths_solver.Maths
 					if (!exponentDifferential.EquationsEqual(new Equation { new Term(1) }) &&
 						!exponentDifferential.EquationsEqual(new Equation { new Term(0f) }))
 					{
+						newTerm.Add(new Operation(OperationEnum.Multiplication));
+
 						if (!oneTerm) newTerm.Add(new Operation(OperationEnum.OpenBracket));
 
 						newTerm.Add(exponentDifferential);
 
 						if (!oneTerm) newTerm.Add(new Operation(OperationEnum.ClosedBracket));
-
-						newTerm.Add(new Operation(OperationEnum.Multiplication));
 					}
 
 					ShowSteps?.Invoke(thisSender, new Step(Rule.Exponent, Phase.End, exponentDifferential,
@@ -587,6 +588,8 @@ namespace Maths_solver.Maths
 
 		public Equation Start(Equation newEquation)
 		{
+			FormatEquation(ref newEquation);
+
 			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.Reset, newEquation, null));
 			return DifferentiateEquation(newEquation);
 		}

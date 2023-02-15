@@ -235,7 +235,7 @@ namespace Maths_solver.UI
 				//if open bracket, add to stack. If closed bracket, remove from stack
 				FormatBracketsStack(finalInput, nextIndex, ref brackets);
 
-				FindCoefficient(finalInput, nextIndex, ref currentPart, finalInput[nextIndex], ref coefficient);
+				FindCoefficient(brackets, finalInput, nextIndex, ref currentPart, finalInput[nextIndex], ref coefficient);
 
 				if (brackets.Count <= 0 || (finalInput[nextIndex] == '(' && brackets.Count == 1))
 					FindFunction(finalInput, nextIndex, ref function, ref currentPart);
@@ -376,7 +376,7 @@ namespace Maths_solver.UI
 			if (finalInput[nextIndex] == ')' && brackets.Count > 0) brackets.Pop();
 		}
 
-		private void FindCoefficient(string finalInput, int index, ref string currentPart, char nextCharacter, ref float coefficient)
+		private void FindCoefficient(Stack<char> brackets, string finalInput, int index, ref string currentPart, char nextCharacter, ref float coefficient)
 		{
 			float newCoefficient = 1;
 
@@ -387,39 +387,49 @@ namespace Maths_solver.UI
 				bool found = false;
 				string look = currentPart;
 
-				if (index >= finalInput.Length - 1) look = nextCharacter.ToString();
+				stringToCoefficient(currentPart, ref newCoefficient, ref found);
+				if (index >= finalInput.Length - 1 && newCoefficient == 1) look = nextCharacter.ToString();
 
-				if (look.Contains('e'))
-				{
-					int i = look.IndexOf('e');
+				newCoefficient = 1;
 
-					if (look.Remove(i).Length > 0 && float.TryParse(look.Remove(i), out float foundCoefficient))
-					{
-						newCoefficient = foundCoefficient;
-						found = true;
-					}
+				stringToCoefficient(look, ref newCoefficient, ref found);
 
-					newCoefficient *= (float)Math.E;
-				}
-				else
-				{
-					if (look != String.Empty && float.TryParse(look, out float foundCoefficient))
-					{
-						newCoefficient = foundCoefficient;
-						found = true;
-					}
-				}
-
-				if ((found || (!found && IsSuperscript(nextCharacter.ToString(), out _)) && coefficient == 1))
+				if ((found || (!found &&
+					(IsSuperscript(nextCharacter.ToString(), out _) ||
+					(index >= finalInput.Length - 1 && finalInput[index] != ')')))
+					&& coefficient == 1) && brackets.Count == 0)
 				{
 					coefficient = newCoefficient;
-
-					if (index < finalInput.Length - 1) currentPart = String.Empty;
+					currentPart = String.Empty;
 				}
 			}
 
 			else if (float.TryParse(currentPart + nextCharacter.ToString(), out newCoefficient))
 				coefficient = newCoefficient;
+		}
+
+		private void stringToCoefficient(string look, ref float newCoefficient, ref bool found)
+		{
+			if (look.Contains('e'))
+			{
+				int i = look.IndexOf('e');
+
+				if (look.Remove(i).Length > 0 && float.TryParse(look.Remove(i), out float foundCoefficient))
+				{
+					newCoefficient = foundCoefficient;
+					found = true;
+				}
+
+				newCoefficient *= (float)Math.E;
+			}
+			else
+			{
+				if (look != String.Empty && float.TryParse(look, out float foundCoefficient))
+				{
+					newCoefficient = foundCoefficient;
+					found = true;
+				}
+			}
 		}
 
 		private bool IsSuperscript(string input, out string inputToSuperscript)
@@ -534,15 +544,23 @@ namespace Maths_solver.UI
 			ref Equation exponent, ref string currentPart, ref Equation equation,
 			ref bool foundExponent)
 		{
-			char operation = input[nextIndex];
+			OperationEnum prevEnum = OperationEnum.NONE;
+			if (nextIndex - 1 > 0)
+			{
+				char prevOperation = input[nextIndex - 1];
+
+				if (stringToOperation.ContainsKey(prevOperation)) prevEnum = stringToOperation[prevOperation];
+			}
+
+			char nextOperation = input[nextIndex];
 
 			//if operation, new term
-			OperationEnum operationEnum = OperationEnum.NONE;
-			if (stringToOperation.ContainsKey(operation)) operationEnum = stringToOperation[operation];
+			OperationEnum nextEnum = OperationEnum.NONE;
+			if (stringToOperation.ContainsKey(nextOperation)) nextEnum = stringToOperation[nextOperation];
 
 			//if end of current term
-			if ((operationEnum != OperationEnum.NONE && operationEnum != OperationEnum.OpenBracket)
-				|| nextIndex >= input.Length - 1)
+			if ((nextEnum != OperationEnum.NONE && nextEnum != OperationEnum.OpenBracket)
+				|| (nextIndex >= input.Length - 1 && prevEnum != OperationEnum.ClosedBracket))
 			{
 				//if nothing can be found, assume constant
 				if (function == Function.NONE)
@@ -561,7 +579,7 @@ namespace Maths_solver.UI
 				currentPart = String.Empty;
 				foundExponent = false;
 
-				if (operationEnum != OperationEnum.NONE) equation.Add(new Operation(operationEnum));
+				if (nextEnum != OperationEnum.NONE) equation.Add(new Operation(nextEnum));
 			}
 		}
 
