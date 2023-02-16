@@ -73,111 +73,6 @@ namespace Maths_solver.UI
 			InstructionsForm.Hide();
 		}
 
-		#region Equation to string
-		public static string EquationStr(Equation equation, bool useSuperscript)
-		{
-			bool returnSuperscript = false;
-
-			if (equation == null || equation.Count == 0) return String.Empty;
-
-			string equationString = String.Empty;
-
-			foreach (EquationItem equationItem in equation)
-			{
-				if (equationItem == null) continue;
-
-				if (equationItem.GetType() == typeof(Term)) equationString += TermStr((Term)equationItem, equation.Count, ref useSuperscript, ref returnSuperscript);
-
-				else if (equationItem.GetType() == typeof(Operation)) equationString += TermStr((Operation)equationItem, ref useSuperscript, ref returnSuperscript);
-			}
-
-			return equationString;
-		}
-
-		private static string TermStr(Term term, int equationLength, ref bool useSuperscript,
-			ref bool returnSuperscript)
-		{
-			string formatTerm = String.Empty;
-
-			if (term.coeficient == 0 && equationLength == 1) return "0";
-			if (term.coeficient == 0) return String.Empty;
-
-			#region coefficient
-			//format coefficient
-			if (((term.function == Function.constant || System.Math.Abs(term.coeficient) != 1) && !useSuperscript)
-				|| (term.coeficient != 1 || (equationLength != 1 && term.function == Function.constant)) && useSuperscript)
-			{
-				if (int.TryParse((term.coeficient / (float)Math.E).ToString(), out int multiplier))
-				{
-					if (multiplier != 1) formatTerm += PartStr(multiplier.ToString(), useSuperscript);
-					formatTerm += PartStr("e", useSuperscript);
-				}
-				else
-				{
-					formatTerm += PartStr(term.coeficient.ToString(), useSuperscript);
-				}
-			}
-
-			else if (term.coeficient == -1 && !useSuperscript) formatTerm += PartStr("-", useSuperscript);
-			#endregion
-
-			if (term.function != Function.constant)
-				formatTerm += PartStr(term.function.ToString(), useSuperscript);
-
-			#region exponent
-			//format exponent
-			if (term.exponent != null)
-			{
-				string exponent = EquationStr(term.exponent, true);
-
-				//if exponent 0 return coefficient only
-				if (exponent == CharacterToSuperscript['0'].ToString()) return term.coeficient.ToString();
-				else formatTerm += exponent;
-			}
-			#endregion
-
-			//format input
-			if (requiresInput[term.function])
-			{
-				if (!useSuperscript) formatTerm += $"({EquationStr(term.input, false)})";
-				else formatTerm += CharacterToSuperscript['('] + EquationStr(term.input, true) + CharacterToSuperscript[')'];
-			}
-
-			if (returnSuperscript)
-			{
-				returnSuperscript = false;
-				useSuperscript = false;
-			}
-
-			return formatTerm;
-		}
-
-		private static string TermStr(Operation operation, ref bool useSuperscript,
-			ref bool returnSuperscript)
-		{
-			if (useSuperscript)
-			{
-				return $" {CharacterToSuperscript[(operationToString[operation.operation].Trim())[0]]} ";
-			}
-			else if (operationToString.ContainsKey(operation.operation))
-			{
-				return operationToString[operation.operation];
-			}
-			else
-			{
-				returnSuperscript = true;
-				useSuperscript = true;
-				return String.Empty;
-			}
-		}
-		private static string PartStr(string part, bool superscript)
-		{
-			if (!superscript) return part;
-
-			return ToSuperscript(part);
-		}
-		#endregion
-
 		#region String to equation
 
 		private bool CheckEquation(string input, ref Equation equation)
@@ -279,7 +174,7 @@ namespace Maths_solver.UI
 			return true;
 		}
 
-		private void FindBracketExponent(string finalInput, int nextIndex, ref string currentPart,
+		private bool FindBracketExponent(string finalInput, int nextIndex, ref string currentPart,
 			ref Function function, ref Equation functionInput, ref float coefficient, ref Equation exponent,
 			ref bool foundExponent, ref Equation equation)
 		{
@@ -287,7 +182,7 @@ namespace Maths_solver.UI
 				ref foundExponent);
 
 			//if exponent not found or exponent is just a 1
-			if (!foundExponent || exponent.EquationsEqual(new Equation { new Term(1) })) return;
+			if (!foundExponent || exponent.EquationsEqual(new Equation { new Term(1) })) return false;
 
 			equation.Add(new Operation(OperationEnum.Power));
 
@@ -300,6 +195,8 @@ namespace Maths_solver.UI
 			exponent = new Equation { new Term(1) };
 			currentPart = String.Empty;
 			foundExponent = false;
+
+			return false;
 		}
 
 		private bool FindFunctionInputExponent(Function function, string finalInput, int nextIndex,
@@ -461,7 +358,7 @@ namespace Maths_solver.UI
 			return true;
 		}
 
-		private static string ToSuperscript(string input)
+		public static string ToSuperscript(string input)
 		{
 			string inputToSuperscript = String.Empty;
 			for (int i = 0; i < input.Length; i++)
@@ -706,10 +603,10 @@ namespace Maths_solver.UI
 		{
 			ErrorBox.Text = String.Empty;
 
-			string output = EquationStr(math.Start(StringToEquation(InputBox.Text)), false);
+			Equation inputEquation = StringToEquation(InputBox.Text);
+			Equation.CheckForErrors(ref inputEquation, ref ErrorBox);
 
-			//debugging
-			//string output = EquationStr(StringToEquation(InputBox.Text), false);
+			string output = Equation.AsString(math.Start(inputEquation), false);
 
 			if (output != String.Empty || InputBox.Text == String.Empty) OutputBox.Text = output;
 			else OutputBox.Text = "ERROR";

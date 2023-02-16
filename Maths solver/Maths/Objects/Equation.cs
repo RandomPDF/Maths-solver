@@ -1,10 +1,121 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using static Maths_solver.Maths.Functions;
 using static Maths_solver.Maths.Operation;
+using static Maths_solver.UI.Main;
 
 namespace Maths_solver.Maths
 {
 	public class Equation : List<EquationItem>
 	{
+		#region Equation to string
+		public static string AsString(Equation equation, bool useSuperscript)
+		{
+			bool returnSuperscript = false;
+
+			if (equation == null || equation.Count == 0) return String.Empty;
+
+			string equationString = String.Empty;
+
+			for (int i = 0; i < equation.Count; i++)
+			{
+				if (equation[i] == null) continue;
+
+				if (equation[i].GetType() == typeof(Term)) equationString += TermStr((Term)equation[i],
+					equation.Count, ref useSuperscript, ref returnSuperscript);
+
+				else if (equation[i].GetType() == typeof(Operation))
+					equationString += TermStr((Operation)equation[i], ref useSuperscript, ref returnSuperscript);
+			}
+
+			return equationString;
+		}
+
+		private static string TermStr(Term term, int equationLength, ref bool useSuperscript,
+			ref bool returnSuperscript)
+		{
+			string formatTerm = String.Empty;
+
+			if (term.coeficient == 0 && equationLength == 1) return "0";
+
+			#region coefficient
+			//format coefficient
+			if (((term.function == Function.constant || System.Math.Abs(term.coeficient) != 1) && !useSuperscript)
+				|| (term.coeficient != 1 || (equationLength != 1 && term.function == Function.constant)) && useSuperscript)
+			{
+				if (int.TryParse((term.coeficient / (float)Math.E).ToString(), out int multiplier))
+				{
+					if (multiplier != 1) formatTerm += PartStr(multiplier.ToString(), useSuperscript);
+					formatTerm += PartStr("e", useSuperscript);
+				}
+				else
+				{
+					formatTerm += PartStr(term.coeficient.ToString(), useSuperscript);
+				}
+			}
+
+			else if (term.coeficient == -1 && !useSuperscript) formatTerm += PartStr("-", useSuperscript);
+			#endregion
+
+			if (term.function != Function.constant)
+				formatTerm += PartStr(term.function.ToString(), useSuperscript);
+
+			#region exponent
+			//format exponent
+			if (term.exponent != null)
+			{
+				string exponent = AsString(term.exponent, true);
+
+				//if exponent 0 return coefficient only
+				if (exponent == ToSuperscript("0").ToString()) return term.coeficient.ToString();
+				else formatTerm += exponent;
+			}
+			#endregion
+
+			//format input
+			if (requiresInput[term.function])
+			{
+				if (!useSuperscript) formatTerm += $"({AsString(term.input, false)})";
+				else formatTerm += ToSuperscript("(") + AsString(term.input, true) + ToSuperscript("(");
+			}
+
+			if (returnSuperscript)
+			{
+				returnSuperscript = false;
+				useSuperscript = false;
+			}
+
+			return formatTerm;
+		}
+
+		private static string TermStr(Operation operation, ref bool useSuperscript,
+			ref bool returnSuperscript)
+		{
+			if (useSuperscript)
+			{
+				return $" {ToSuperscript(operationToString[operation.operation].Trim()[0].ToString())} ";
+			}
+			else if (operationToString.ContainsKey(operation.operation))
+			{
+				return operationToString[operation.operation];
+			}
+			else
+			{
+				returnSuperscript = true;
+				useSuperscript = true;
+				return String.Empty;
+			}
+		}
+		private static string PartStr(string part, bool superscript)
+		{
+			if (!superscript) return part;
+
+			return ToSuperscript(part);
+		}
+		#endregion
+
+		#region Equal
 		public bool EquationsEqual(Equation equation)
 		{
 			//if length not equal, equations not equal
@@ -60,7 +171,9 @@ namespace Maths_solver.Maths
 			return false;
 		}
 
+		#endregion
 
+		#region Add
 		public void Add(Equation equation)
 		{
 			if (equation == null) return;
@@ -123,5 +236,224 @@ namespace Maths_solver.Maths
 				base[Count - 1] = new Term(newTerm.coeficient);
 			}
 		}
+		#endregion
+
+		#region Format
+
+		public static void Format(ref Equation equation)
+		{
+			if (equation == null || equation.Count == 0) return;
+
+			#region format operations
+
+			//if first term is addition
+			if (equation.Count > 0 && equation[0].GetType() == typeof(Operation) &&
+				((Operation)equation[0]).operation == OperationEnum.Addition)
+			{
+				equation.RemoveAt(0);
+			}
+
+			//if last term is operation
+			if (equation.Count > 0 && equation[equation.Count - 1].GetType() == typeof(Operation) &&
+				((Operation)equation[equation.Count - 1]).operation != OperationEnum.ClosedBracket)
+			{
+				equation.RemoveAt(equation.Count - 1);
+			}
+			#endregion
+
+			float newCoefficient = 1;
+			int startTerm = -1;
+
+			for (int i = 0; i < equation.Count - 1; i++)
+			{
+				if (FormatOperations(i, ref equation)) continue;
+				if (i < equation.Count - 1) FormatCoefficients(i, startTerm, ref newCoefficient, ref equation);
+			}
+
+			for (int i = 0; i < equation.Count; i++)
+			{
+				FormatConstants(i, ref equation);
+			}
+		}
+
+		private static bool FormatOperations(int i, ref Equation equation)
+		{
+			//format operations
+			if (equation[i].GetType() == typeof(Operation))
+			{
+				#region format all operations
+				Operation first = (Operation)(equation[i]);
+
+				if (equation[i + 1].GetType() == typeof(Operation))
+				{
+					bool formatted = false;
+					Operation second = (Operation)(equation[i + 1]);
+
+					//if equal and both subtaction
+					if (first.operation == second.operation &&
+						first.operation == OperationEnum.Subtraction)
+					{
+						//change to one addition
+						equation[i] = new Operation(OperationEnum.Addition);
+						equation.RemoveAt(i + 1);
+						formatted = true;
+					}
+					//one operation addition and the other subtraction
+					else if ((first.operation == OperationEnum.Addition &&
+						second.operation == OperationEnum.Subtraction) ||
+						(first.operation == OperationEnum.Subtraction &&
+						second.operation == OperationEnum.Addition))
+
+					{
+						//change to one subraction
+						equation[i] = new Operation(OperationEnum.Subtraction);
+						equation.RemoveAt(i + 1);
+						formatted = true;
+					}
+
+					if (formatted) Format(ref equation);
+				}
+
+				#endregion
+
+				#region format coefficients
+
+
+				//sort out coefficients for multiple multiplied terms
+				if (i >= 1 && first.operation == OperationEnum.Multiplication &&
+					equation[i - 1].GetType() == typeof(Term) &&
+					equation[i + 1].GetType() == typeof(Term))
+				{
+					Term firstTerm = (Term)equation[i - 1];
+					Term secondTerm = (Term)equation[i + 1];
+
+					if (secondTerm.coeficient == 1) return true;
+
+					//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken rn)
+					if (!firstTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }) &&
+						!secondTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }))
+					{
+						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
+							firstTerm.function, firstTerm.input, firstTerm.exponent);
+
+						equation[i + 1] = new Term(1, secondTerm.function, secondTerm.input, secondTerm.exponent);
+
+						Format(ref equation);
+					}
+				}
+
+				#endregion
+			}
+
+			return false;
+		}
+
+		private static void FormatCoefficients(int i, int startTerm, ref float newCoefficient,
+			ref Equation equation)
+		{
+			//format coefficients with multiple multiplied terms
+			if (equation[i + 1].GetType() == typeof(Operation) && equation[i].GetType() == typeof(Term))
+			{
+				Term currentTerm = (Term)equation[i];
+				Term startingTerm = new Term(1);
+
+				if (startTerm != -1) startingTerm = (Term)equation[startTerm];
+
+				Operation nextOperation = (Operation)equation[i + 1];
+				if (nextOperation.operation == OperationEnum.Multiplication)
+				{
+					if (startTerm == -1) startTerm = i;
+					newCoefficient *= currentTerm.coeficient;
+				}
+				else if (startTerm != -1)
+				{
+					equation[startTerm] = new Term(newCoefficient, startingTerm.function, startingTerm.input, startingTerm.exponent);
+
+					newCoefficient = 1;
+				}
+			}
+		}
+
+		private static void FormatConstants(int i, ref Equation equation)
+		{
+			//if left term is a multiplication
+			if (i - 1 >= 0 && equation[i - 1].GetType() == typeof(Operation) &&
+				((Operation)equation[i - 1]).operation == OperationEnum.Multiplication &&
+
+				equation[i].GetType() == typeof(Term) && ((Term)equation[i]).function == Function.constant)
+			{
+				Term term = (Term)equation[i];
+
+				//current term is just a 1
+				if (term.coeficient == 1) equation.RemoveAt(i);
+
+				if (term.coeficient == 0 && equation[i - 2].GetType() == typeof(Term))
+					equation[i - 2] = new Term(0f);
+
+				Format(ref equation);
+			}
+
+			//if right term is a multiplication
+			if (i + 1 < equation.Count && equation[i + 1].GetType() == typeof(Operation) &&
+				((Operation)equation[i + 1]).operation == OperationEnum.Multiplication &&
+
+				equation[i].GetType() == typeof(Term) && ((Term)equation[i]).function == Function.constant)
+			{
+				Term term = (Term)equation[i];
+
+				//current term is just a 1
+				if (((Term)equation[i]).coeficient == 1)
+				{
+					equation.RemoveAt(i);
+					Format(ref equation);
+				}
+
+				if (term.coeficient == 0 && equation[i + 2].GetType() == typeof(Term))
+				{
+					equation[i + 2] = new Term(0f);
+					Format(ref equation);
+				}
+			}
+
+			//turn all 0 coefficients to a constant of 0
+			if (equation[i].GetType() == typeof(Term))
+			{
+				Term term = (Term)equation[i];
+
+				if (term.coeficient == 0) equation[i] = new Term(0f);
+			}
+		}
+
+		public static void CheckForErrors(ref Equation input, ref RichTextBox errorText)
+		{
+			bool error = false;
+
+			for (int i = 0; i < input.Count; i++)
+			{
+				if (input[i].GetType() == typeof(Term))
+				{
+					Term term = (Term)input[i];
+
+					//if function requies constant exponent, and exponent not constant or has more than one term
+					if (constantExponent(term.function) && (term.exponent.Count != 1 || (term.exponent.Count == 1
+						&& ((Term)term.exponent[0]).function != Function.constant)))
+					{
+						ExponentError(AsString(new Equation { input[i] }, false), term.function.ToString(),
+							ref errorText);
+
+						error = true;
+					}
+				}
+			}
+
+			if (error) input = null;
+		}
+
+		private static void ExponentError(string term, string function, ref RichTextBox errorText)
+		{
+			errorText.Text += $"The term '{term}' has an invalid exponent. As it is using '{function}' the exponent must only consist of one constant term.\n";
+		}
+
+		#endregion
 	}
 }

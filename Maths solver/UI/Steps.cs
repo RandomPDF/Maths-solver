@@ -1,7 +1,7 @@
-﻿using Maths_solver.UI;
+﻿using Maths_solver.Maths;
+using Maths_solver.UI;
 using System;
 using System.Windows.Forms;
-using static Maths_solver.UI.Main;
 
 namespace Maths_solver
 {
@@ -19,8 +19,8 @@ namespace Maths_solver
 		#region Steps
 		private void ShowSteps(object sender, Step step)
 		{
-			string input = EquationStr(step.input, false);
-			string output = EquationStr(step.output, false);
+			string input = Equation.AsString(step.input, false);
+			string output = Equation.AsString(step.output, false);
 
 			if (step.input == null || step.input.Count == 0) input = "0";
 			if (step.output == null || step.output.Count == 0) output = "0";
@@ -43,33 +43,34 @@ namespace Maths_solver
 						case Rule.None:
 							if (step.input != null && step.output != null)
 							{
-								StepsBox.Text += $"So {EquationStr(step.input, false)} → " +
-									$"{EquationStr(step.output, false)}\n\n";
+								StepsBox.Text += $"So {Equation.AsString(step.input, false)} → " +
+									$"{Equation.AsString(step.output, false)}\n\n";
 							}
 							break;
 
 						case Rule.Input:
-							StepsBox.Text += $"Multiply the input differential ( {EquationStr(step.input, false)} )" +
-								$" by the differential ( {EquationStr(step.output, false)} )" +
+							StepsBox.Text += $"Multiply the input differential " +
+								$"( {Equation.AsString(step.input, false)} )" +
+								$" by the differential ( {Equation.AsString(step.output, false)} )" +
 								$" using the chain rule keeping the input the same.\n";
 							break;
 
 						case Rule.Exponent:
 							StepsBox.Text += $"Multiply the exponent differential " +
-								$"( {EquationStr(step.input, false)} ) by the term " +
-								$"( {EquationStr(step.output, false)} ) using the chain rule" +
+								$"( {Equation.AsString(step.input, false)} ) by the term " +
+								$"( {Equation.AsString(step.output, false)} ) using the chain rule" +
 								$"keeping the exponent the same.\n";
 							break;
 
 						case Rule.ln:
-							StepsBox.Text += $"Multiply the differential ( {EquationStr(step.input, false)} )" +
-								$"by standard result ( {EquationStr(step.output, false)} ) using the chain rule.\n";
+							StepsBox.Text += $"Multiply the differential ( {Equation.AsString(step.input, false)} )" +
+								$"by standard result ( {Equation.AsString(step.output, false)} ) using the chain rule.\n";
 							break;
 
 						default:
 							StepsBox.Text += $"Using the {step.rule.ToString()} rule: " +
-								$"{EquationStr(step.input, false)} → " +
-								$"{EquationStr(step.output, false)}\n\n";
+								$"{Equation.AsString(step.input, false)} → " +
+								$"{Equation.AsString(step.output, false)}\n\n";
 							break;
 					}
 
@@ -80,28 +81,28 @@ namespace Maths_solver
 					switch (step.rule)
 					{
 						case Rule.Constant:
-							StepsBox.Text += $"Using the constant rule: {EquationStr(step.input, false)} → 0\n\n";
+							StepsBox.Text += $"Using the constant rule: {Equation.AsString(step.input, false)} → 0\n\n";
 							break;
 
 						case Rule.Input:
 							StepsBox.Text += $"Differentiate input " +
-								$"{EquationStr(step.input, false)}:\n";
+								$"{Equation.AsString(step.input, false)}:\n";
 							break;
 
 						case Rule.Exponent:
 							StepsBox.Text += $"Differentiate exponent " +
-								$"{EquationStr(step.input, false)}:\n";
+								$"{Equation.AsString(step.input, false)}:\n";
 							break;
 
 						case Rule.ln:
-							StepsBox.Text += $"Multiply by ln({EquationStr(step.input, false)})\n";
+							StepsBox.Text += $"Multiply by ln({Equation.AsString(step.input, false)})\n";
 							break;
 
 						case Rule.None:
 							break;
 
 						default:
-							StepsBox.Text += $"Differentiate term {EquationStr(step.input, false)}:\n";
+							StepsBox.Text += $"Differentiate term {Equation.AsString(step.input, false)}:\n";
 							break;
 					}
 
@@ -110,7 +111,7 @@ namespace Maths_solver
 
 				case Phase.Reset:
 					tabCount = 1;
-					StepsBox.Text = $"Differentiate equation {EquationStr(step.input, false)}:\n";
+					StepsBox.Text = $"Differentiate equation {Equation.AsString(step.input, false)}:\n";
 					break;
 			}
 		}

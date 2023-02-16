@@ -191,7 +191,7 @@ namespace Maths_solver.Maths
 			Stack<OperationEnum> brackets = new Stack<OperationEnum>();
 			Differentiate(equation, ref newEquation, ref brackets);
 
-			FormatEquation(ref newEquation);
+			Equation.Format(ref newEquation);
 
 			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, equation, newEquation));
 
@@ -240,9 +240,8 @@ namespace Maths_solver.Maths
 				if (inputDifferential.Count > 0 && inputDifferential[firstIndex].GetType() == typeof(Term))
 					first = (Term)inputDifferential[firstIndex];
 
-				//if is 1 or 0 ignore adding
-				if (!inputDifferential.EquationsEqual(new Equation { new Term(0f) }) &&
-					!inputDifferential.EquationsEqual(new Equation { new Term(1) }))
+				//if is 1 ignore adding
+				if (!inputDifferential.EquationsEqual(new Equation { new Term(1) }))
 				{
 					if (!isOneTerm) equation.Add(new Operation(OperationEnum.OpenBracket));
 
@@ -313,7 +312,7 @@ namespace Maths_solver.Maths
 
 				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 
-				FormatEquation(ref newTermEquation);
+				Equation.Format(ref newTermEquation);
 
 				ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, new Equation { term },
 					newTermEquation));
@@ -390,7 +389,7 @@ namespace Maths_solver.Maths
 			ShowSteps?.Invoke(thisSender, new Step(Rule.Input, Phase.End, differential, xRule));
 
 			differential.Add(xRule);
-			FormatEquation(ref differential);
+			Equation.Format(ref differential);
 
 			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, new Equation { term }, differential));
@@ -400,6 +399,7 @@ namespace Maths_solver.Maths
 			//if the input isn't nothing. Add brackets if the count is greater than 1 and isn't just an x
 
 			Equation standardResult = new Equation();
+
 			bool addBrackets = term.input.Count > 0 && term.input != null &&
 				!term.input.EquationsEqual(new Equation { new Term(Function.x) });
 
@@ -422,7 +422,7 @@ namespace Maths_solver.Maths
 
 			differential.Add(standardResult);
 
-			FormatEquation(ref differential);
+			Equation.Format(ref differential);
 
 			newEquation.Add(differential);
 
@@ -588,164 +588,10 @@ namespace Maths_solver.Maths
 
 		public Equation Start(Equation newEquation)
 		{
-			FormatEquation(ref newEquation);
+			Equation.Format(ref newEquation);
 
 			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.Reset, newEquation, null));
 			return DifferentiateEquation(newEquation);
-		}
-
-		#endregion
-
-		#region Format
-		private void FormatEquation(ref Equation equation)
-		{
-			if (equation.Count == 0) return;
-
-			#region format operations
-
-			//if first term is addition
-			if (equation.Count > 0 && equation[0].GetType() == typeof(Operation) &&
-				((Operation)equation[0]).operation == OperationEnum.Addition)
-			{
-				equation.RemoveAt(0);
-			}
-
-			//if last term is operation
-			if (equation.Count > 0 && equation[equation.Count - 1].GetType() == typeof(Operation) &&
-				((Operation)equation[equation.Count - 1]).operation != OperationEnum.ClosedBracket)
-			{
-				equation.RemoveAt(equation.Count - 1);
-			}
-			#endregion
-
-			float newCoefficient = 1;
-			int startTerm = -1;
-
-			for (int i = 0; i < equation.Count - 1; i++)
-			{
-				if (FormatOperations(i, ref equation)) continue;
-				if (i < equation.Count - 1) FormatCoefficients(i, startTerm, ref newCoefficient, ref equation);
-			}
-
-			for (int i = 0; i < equation.Count; i++)
-			{
-				FormatConstants(i, ref equation);
-			}
-		}
-
-		private bool FormatOperations(int i, ref Equation equation)
-		{
-			//format operations
-			if (equation[i].GetType() == typeof(Operation))
-			{
-				#region format all operations
-				Operation first = (Operation)(equation[i]);
-
-				if (equation[i + 1].GetType() == typeof(Operation))
-				{
-					bool formatted = false;
-					Operation second = (Operation)(equation[i + 1]);
-
-					//if equal and both subtaction
-					if (first.operation == second.operation &&
-						first.operation == OperationEnum.Subtraction)
-					{
-						//change to one addition
-						equation[i] = new Operation(OperationEnum.Addition);
-						equation.RemoveAt(i + 1);
-						formatted = true;
-					}
-					//one operation addition and the other subtraction
-					else if ((first.operation == OperationEnum.Addition &&
-						second.operation == OperationEnum.Subtraction) ||
-						(first.operation == OperationEnum.Subtraction &&
-						second.operation == OperationEnum.Addition))
-
-					{
-						//change to one subraction
-						equation[i] = new Operation(OperationEnum.Subtraction);
-						equation.RemoveAt(i + 1);
-						formatted = true;
-					}
-
-					if (formatted) FormatEquation(ref equation);
-				}
-
-				#endregion
-
-				#region format coefficients
-
-
-				//sort out coefficients for multiple multiplied terms
-				if (i >= 1 && first.operation == OperationEnum.Multiplication &&
-					equation[i - 1].GetType() == typeof(Term) &&
-					equation[i + 1].GetType() == typeof(Term))
-				{
-					Term firstTerm = (Term)equation[i - 1];
-					Term secondTerm = (Term)equation[i + 1];
-
-					if (secondTerm.coeficient == 1) return true;
-
-					//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken rn)
-					if (!firstTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }) &&
-						!secondTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }))
-					{
-						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
-							firstTerm.function, firstTerm.input, firstTerm.exponent);
-
-						equation[i + 1] = new Term(1, secondTerm.function, secondTerm.input, secondTerm.exponent);
-
-						FormatEquation(ref equation);
-					}
-				}
-
-				#endregion
-			}
-
-			return false;
-		}
-
-		private void FormatCoefficients(int i, int startTerm, ref float newCoefficient,
-			ref Equation equation)
-		{
-			//format coefficients with multiple multiplied terms
-			if (equation[i + 1].GetType() == typeof(Operation) && equation[i].GetType() == typeof(Term))
-			{
-				Term currentTerm = (Term)equation[i];
-				Term startingTerm = new Term(1);
-
-				if (startTerm != -1) startingTerm = (Term)equation[startTerm];
-
-				Operation nextOperation = (Operation)equation[i + 1];
-				if (nextOperation.operation == OperationEnum.Multiplication)
-				{
-					if (startTerm == -1) startTerm = i;
-					newCoefficient *= currentTerm.coeficient;
-				}
-				else if (startTerm != -1)
-				{
-					equation[startTerm] = new Term(newCoefficient, startingTerm.function, startingTerm.input, startingTerm.exponent);
-
-					newCoefficient = 1;
-				}
-			}
-		}
-
-		private void FormatConstants(int i, ref Equation equation)
-		{
-			//if left or right term is a multiplication and the current term is just a 1
-			if (((i - 1 >= 0 && equation[i - 1].GetType() == typeof(Operation) &&
-				((Operation)equation[i - 1]).operation == OperationEnum.Multiplication) ||
-
-				(i + 1 < equation.Count && equation[i + 1].GetType() == typeof(Operation) &&
-				((Operation)equation[i + 1]).operation == OperationEnum.Multiplication)) &&
-
-				(equation[i].GetType() == typeof(Term) && ((Term)equation[i]).function == Function.constant &&
-				((Term)equation[i]).coeficient == 1))
-			{
-				equation.RemoveAt(i);
-				FormatEquation(ref equation);
-			}
 		}
 
 		#endregion

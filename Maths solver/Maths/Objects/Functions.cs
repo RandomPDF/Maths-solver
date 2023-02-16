@@ -29,5 +29,11 @@ namespace Maths_solver.Maths
 			{Function.constant, false},
 			{Function.x, false},
 		};
+
+		//Dictionary of function names, and if they require a constant exponent
+		public static bool constantExponent(Function function)
+		{
+			return requiresInput[function];
+		}
 	}
 }
