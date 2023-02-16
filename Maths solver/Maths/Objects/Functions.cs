@@ -27,13 +27,28 @@ namespace Maths_solver.Maths
 			{Function.ln, true},
 
 			{Function.constant, false},
-			{Function.x, false},
+			{Function.x, false}
 		};
 
 		//Dictionary of function names, and if they require a constant exponent
-		public static bool constantExponent(Function function)
+		public static Dictionary<Function, bool> constantExponent = new Dictionary<Function, bool>()
 		{
-			return requiresInput[function];
-		}
+			{Function.sin, true},
+			{Function.cos, true},
+			{Function.tan, true},
+			{Function.cosec, true},
+			{Function.sec, true},
+			{Function.cot, true},
+			{Function.sinh, true},
+			{Function.cosh, true},
+			{Function.tanh, true},
+			{Function.cosech, true},
+			{Function.sech, true},
+			{Function.coth, true},
+			{Function.ln, true},
+			{Function.x, true},
+
+			{Function.constant, false}
+		};
 	}
 }

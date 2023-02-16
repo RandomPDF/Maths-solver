@@ -68,6 +68,7 @@
 			this.ErrorLabel = new System.Windows.Forms.Label();
 			this.ErrorBox = new System.Windows.Forms.RichTextBox();
 			this.button28 = new System.Windows.Forms.Button();
+			this.DifferentiateOutputButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// InputBox
@@ -539,7 +540,7 @@
 			// 
 			// ErrorBox
 			// 
-			this.ErrorBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ErrorBox.Font = new System.Drawing.Font("Cambria", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ErrorBox.Location = new System.Drawing.Point(29, 824);
 			this.ErrorBox.Name = "ErrorBox";
 			this.ErrorBox.ReadOnly = true;
@@ -560,11 +561,24 @@
 			this.button28.UseVisualStyleBackColor = true;
 			this.button28.Click += new System.EventHandler(this.ConstantClick);
 			// 
+			// DifferentiateOutputButton
+			// 
+			this.DifferentiateOutputButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.DifferentiateOutputButton.Location = new System.Drawing.Point(682, 646);
+			this.DifferentiateOutputButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+			this.DifferentiateOutputButton.Name = "DifferentiateOutputButton";
+			this.DifferentiateOutputButton.Size = new System.Drawing.Size(362, 37);
+			this.DifferentiateOutputButton.TabIndex = 46;
+			this.DifferentiateOutputButton.Text = "DIFFERENTIATE OUTPUT";
+			this.DifferentiateOutputButton.UseVisualStyleBackColor = true;
+			this.DifferentiateOutputButton.Click += new System.EventHandler(this.DifferentiateOutputButton_Click);
+			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1902, 1033);
+			this.Controls.Add(this.DifferentiateOutputButton);
 			this.Controls.Add(this.button28);
 			this.Controls.Add(this.ErrorLabel);
 			this.Controls.Add(this.ErrorBox);
@@ -654,6 +668,7 @@
 		private System.Windows.Forms.Label ErrorLabel;
 		private System.Windows.Forms.RichTextBox ErrorBox;
 		private System.Windows.Forms.Button button28;
+		private System.Windows.Forms.Button DifferentiateOutputButton;
 	}
 }
 

@@ -416,7 +416,7 @@ namespace Maths_solver.Maths
 			}
 
 			//turn all 0 coefficients to a constant of 0
-			if (equation[i].GetType() == typeof(Term))
+			if (i < equation.Count && equation[i].GetType() == typeof(Term))
 			{
 				Term term = (Term)equation[i];
 
@@ -435,7 +435,7 @@ namespace Maths_solver.Maths
 					Term term = (Term)input[i];
 
 					//if function requies constant exponent, and exponent not constant or has more than one term
-					if (constantExponent(term.function) && (term.exponent.Count != 1 || (term.exponent.Count == 1
+					if (constantExponent[term.function] && (term.exponent.Count != 1 || (term.exponent.Count == 1
 						&& ((Term)term.exponent[0]).function != Function.constant)))
 					{
 						ExponentError(AsString(new Equation { input[i] }, false), term.function.ToString(),

@@ -73,10 +73,25 @@ namespace Maths_solver.Maths
 		private void Differentiate(Equation equation, ref Equation newEquation, ref Stack<OperationEnum> brackets)
 		{
 			Equation input = new Equation();
+			bool findingProduct = false;
 
 			//find term or operation in equation
 			for (int index = 0; index < equation.Count; index++)
 			{
+				if (index + 1 < equation.Count && equation[index + 1].GetType() == typeof(Operation) &&
+					((Operation)equation[index + 1]).operation == OperationEnum.Multiplication)
+				{
+					if (equation[index + 2].GetType() == typeof(Term))
+					{
+						DifferentiateProduct(new Equation { equation[index] },
+							new Equation { equation[index + 2] }, ref newEquation, ref index);
+
+						continue;
+					}
+
+					findingProduct = true;
+				}
+
 				FindBrackets(equation, ref index, ref brackets, ref input, ref newEquation, ref equation);
 
 				if (brackets.Count > 0 || index >= equation.Count) continue;
@@ -95,6 +110,22 @@ namespace Maths_solver.Maths
 
 				if (equation[index].GetType() == typeof(Operation)) newEquation.Add(equation[index]);
 			}
+		}
+
+		private void DifferentiateProduct(Equation equation1, Equation equation2, ref Equation newEquation,
+			ref int index)
+		{
+			newEquation.Add(equation1);
+			newEquation.Add(new Operation(OperationEnum.Multiplication));
+			newEquation.Add(DifferentiateEquation(equation2));
+
+			newEquation.Add(new Operation(OperationEnum.Addition));
+
+			newEquation.Add(equation2);
+			newEquation.Add(new Operation(OperationEnum.Multiplication));
+			newEquation.Add(DifferentiateEquation(equation1));
+
+			index += 3;
 		}
 
 		private void FindBrackets(Equation equation, ref int index, ref Stack<OperationEnum> brackets,

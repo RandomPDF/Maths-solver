@@ -297,7 +297,7 @@ namespace Maths_solver.UI
 					&& coefficient == 1) && brackets.Count == 0)
 				{
 					coefficient = newCoefficient;
-					currentPart = String.Empty;
+					if (newCoefficient != 1) currentPart = String.Empty;
 				}
 			}
 
@@ -610,6 +610,12 @@ namespace Maths_solver.UI
 
 			if (output != String.Empty || InputBox.Text == String.Empty) OutputBox.Text = output;
 			else OutputBox.Text = "ERROR";
+		}
+
+		private void DifferentiateOutputButton_Click(object sender, EventArgs e)
+		{
+			InputBox.Text = OutputBox.Text;
+			DifferentaiteButton_Click(sender, e);
 		}
 
 		private void ExitButton_Click(object sender, EventArgs e) { Application.Exit(); }
