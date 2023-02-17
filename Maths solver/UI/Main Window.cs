@@ -18,10 +18,9 @@ namespace Maths_solver.UI
 			{'4', (char)0X2074}, {'5', (char)0X2075}, {'6', (char)0X2076}, {'7', (char)0X2077},
 			{'8', (char)0X2078}, {'9', (char)0X2079},
 
-			{'+', (char)0X207A}, {'-', (char)0X207B}, {' ', ' '}, {'.', (char)0X0387},
-			{'(', (char)0X207D}, {')', (char)0X207E},
+			{'+', (char)0X207A}, {'-', (char)0X207B}, {(char)0X00D7, '*'}, {'.', (char)0X0387},
+			{'(', (char)0X207D}, {')', (char)0X207E}, {'*', '*'}, {' ', ' '},
 
-			{'π', (char)0X2DEB},
 			{'a', (char)0X1D43}, {'b', (char)0X1D47}, {'c', (char)0X1D9C}, {'d', (char)0X1D48},
 			{'e', (char)0X1D49}, {'f', (char)0X1DA0}, {'g', (char)0X1D4D}, {'h', (char)0X02B0},
 			{'i', (char)0X2071}, {'j', (char)0X02B2}, {'k', (char)0X1D4F}, {'l', (char)0X02E1},
@@ -558,6 +557,14 @@ namespace Maths_solver.UI
 			else
 			{
 				UpdateBox(senderBox, currentInput, newCharIndex + 1);
+			}
+
+			//use actual multiply symbol
+			if (newChar == '*' && !isSuperscript)
+			{
+				UpdateBox(senderBox,
+					senderBox.Text.Remove(newCharIndex, 1).Insert(newCharIndex, ((char)0X00D7).ToString()),
+					newCharIndex + 1);
 			}
 
 			previousInput = senderBox.Text.ToLower();

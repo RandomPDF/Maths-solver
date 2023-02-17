@@ -77,7 +77,7 @@ namespace Maths_solver.Maths
 			if (requiresInput[term.function])
 			{
 				if (!useSuperscript) formatTerm += $"({AsString(term.input, false)})";
-				else formatTerm += ToSuperscript("(") + AsString(term.input, true) + ToSuperscript("(");
+				else formatTerm += ToSuperscript("(") + AsString(term.input, true) + ToSuperscript(")");
 			}
 
 			if (returnSuperscript)
@@ -94,7 +94,10 @@ namespace Maths_solver.Maths
 		{
 			if (useSuperscript)
 			{
-				return $" {ToSuperscript(operationToString[operation.operation].Trim()[0].ToString())} ";
+				string operationString = operationToString[operation.operation];
+
+				if (operationString == String.Empty) return "";
+				return $" {ToSuperscript(operationString.Trim()[0].ToString())} ";
 			}
 			else if (operationToString.ContainsKey(operation.operation))
 			{
@@ -246,14 +249,14 @@ namespace Maths_solver.Maths
 
 			#region format operations
 
-			//if first term is addition
+			//if first term is operation and not open bracket
 			if (equation.Count > 0 && equation[0].GetType() == typeof(Operation) &&
-				((Operation)equation[0]).operation == OperationEnum.Addition)
+				((Operation)equation[0]).operation != OperationEnum.OpenBracket)
 			{
 				equation.RemoveAt(0);
 			}
 
-			//if last term is operation
+			//if last term is operation and not closed bracket
 			if (equation.Count > 0 && equation[equation.Count - 1].GetType() == typeof(Operation) &&
 				((Operation)equation[equation.Count - 1]).operation != OperationEnum.ClosedBracket)
 			{
@@ -329,9 +332,10 @@ namespace Maths_solver.Maths
 
 					if (secondTerm.coeficient == 1) return true;
 
-					//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken rn)
-					if (!firstTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }) &&
-						!secondTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }))
+					//checks is not case ln(2)2^x where the constant would otherwise come out to front
+					if (firstTerm.exponent.EquationsEqual(new Equation { new Term(1) }) &&
+						secondTerm.exponent.EquationsEqual(new Equation { new Term(1) }) &&
+						firstTerm.function == Function.constant && secondTerm.function == Function.constant)
 					{
 						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
 							firstTerm.function, firstTerm.input, firstTerm.exponent);
@@ -376,42 +380,53 @@ namespace Maths_solver.Maths
 
 		private static void FormatConstants(int i, ref Equation equation)
 		{
-			//if left term is a multiplication
-			if (i - 1 >= 0 && equation[i - 1].GetType() == typeof(Operation) &&
-				((Operation)equation[i - 1]).operation == OperationEnum.Multiplication &&
-
-				equation[i].GetType() == typeof(Term) && ((Term)equation[i]).function == Function.constant)
+			if (equation[i].GetType() == typeof(Term) && ((Term)equation[i]).function == Function.constant &&
+				((Term)equation[i]).exponent.EquationsEqual(new Equation { new Term(1) }))
 			{
-				Term term = (Term)equation[i];
-
-				//current term is just a 1
-				if (term.coeficient == 1) equation.RemoveAt(i);
-
-				if (term.coeficient == 0 && equation[i - 2].GetType() == typeof(Term))
-					equation[i - 2] = new Term(0f);
-
-				Format(ref equation);
-			}
-
-			//if right term is a multiplication
-			if (i + 1 < equation.Count && equation[i + 1].GetType() == typeof(Operation) &&
-				((Operation)equation[i + 1]).operation == OperationEnum.Multiplication &&
-
-				equation[i].GetType() == typeof(Term) && ((Term)equation[i]).function == Function.constant)
-			{
-				Term term = (Term)equation[i];
-
-				//current term is just a 1
-				if (((Term)equation[i]).coeficient == 1)
+				//if left term is a multiplication
+				if (i - 1 >= 0 && equation[i - 1].GetType() == typeof(Operation) &&
+					((Operation)equation[i - 1]).operation == OperationEnum.Multiplication)
 				{
-					equation.RemoveAt(i);
-					Format(ref equation);
+					Term term = (Term)equation[i];
+
+					bool format = false;
+
+					//current term is just a 1
+					if (term.coeficient == 1)
+					{
+						equation.RemoveAt(i);
+						format = true;
+					}
+
+					if (term.coeficient == 0 && equation[i - 2].GetType() == typeof(Term))
+					{
+						equation[i - 2] = new Term(0f);
+						format = true;
+					}
+
+					if (format) Format(ref equation);
 				}
 
-				if (term.coeficient == 0 && equation[i + 2].GetType() == typeof(Term))
+				//if right term is a multiplication
+				if (i + 1 < equation.Count && equation[i + 1].GetType() == typeof(Operation) &&
+					((Operation)equation[i + 1]).operation == OperationEnum.Multiplication &&
+
+					equation[i].GetType() == typeof(Term) && ((Term)equation[i]).function == Function.constant)
 				{
-					equation[i + 2] = new Term(0f);
-					Format(ref equation);
+					Term term = (Term)equation[i];
+
+					//current term is just a 1
+					if (((Term)equation[i]).coeficient == 1)
+					{
+						equation.RemoveAt(i);
+						Format(ref equation);
+					}
+
+					if (term.coeficient == 0 && equation[i + 2].GetType() == typeof(Term))
+					{
+						equation[i + 2] = new Term(0f);
+						Format(ref equation);
+					}
 				}
 			}
 

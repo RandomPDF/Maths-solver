@@ -70,62 +70,86 @@ namespace Maths_solver.Maths
 			return true;
 		}
 
-		private void Differentiate(Equation equation, ref Equation newEquation, ref Stack<OperationEnum> brackets)
+		private void Differentiate(List<List<Equation>> differentials, ref Equation newEquation, ref Stack<OperationEnum> brackets)
 		{
 			Equation input = new Equation();
-			bool findingProduct = false;
 
 			//find term or operation in equation
-			for (int index = 0; index < equation.Count; index++)
+			for (int differentialIndex = 0; differentialIndex < differentials.Count; differentialIndex++)
 			{
-				if (index + 1 < equation.Count && equation[index + 1].GetType() == typeof(Operation) &&
-					((Operation)equation[index + 1]).operation == OperationEnum.Multiplication)
+				//Differentiate singular terms
+				if (differentials[differentialIndex].Count == 1)
 				{
-					if (equation[index + 2].GetType() == typeof(Term))
-					{
-						DifferentiateProduct(new Equation { equation[index] },
-							new Equation { equation[index + 2] }, ref newEquation, ref index);
+					Equation equation = differentials[differentialIndex][0];
 
-						continue;
+					for (int termIndex = 0; termIndex < equation.Count; termIndex++)
+					{
+						FindBrackets(equation, ref termIndex, ref brackets, ref input, ref newEquation, ref equation);
+
+						if (brackets.Count > 0 || termIndex >= equation.Count) continue;
+
+						if (equation[termIndex].GetType() == typeof(Term))
+						{
+							Term term = (Term)equation[termIndex];
+							Equation baseDifferential = new Equation();
+
+							//find differential by function
+							if (Differentials.ContainsKey(term.function))
+								baseDifferential = Differentials[term.function];
+
+							DifferentiateTerm(baseDifferential, term, ref newEquation);
+						}
+
+						if (equation[termIndex].GetType() == typeof(Operation)) newEquation.Add(equation[termIndex]);
+					}
+				}
+				//Differentiate product of equations
+				else
+				{
+					Equation equation1 = differentials[differentialIndex][0];
+
+					Equation equation2 = new Equation();
+					for (int equationIndex = 1; equationIndex < differentials[differentialIndex].Count;
+						equationIndex++)
+					{
+						equation2.Add(differentials[differentialIndex][equationIndex]);
 					}
 
-					findingProduct = true;
+					Equation.Format(ref equation1);
+					Equation.Format(ref equation2);
+
+					DifferentiateProduct(equation1, equation2, ref newEquation);
 				}
-
-				FindBrackets(equation, ref index, ref brackets, ref input, ref newEquation, ref equation);
-
-				if (brackets.Count > 0 || index >= equation.Count) continue;
-
-				if (equation[index].GetType() == typeof(Term))
-				{
-					Term term = (Term)equation[index];
-					Equation baseDifferential = new Equation();
-
-					//find differential by function
-					if (Differentials.ContainsKey(term.function))
-						baseDifferential = Differentials[term.function];
-
-					DifferentiateTerm(baseDifferential, term, ref newEquation);
-				}
-
-				if (equation[index].GetType() == typeof(Operation)) newEquation.Add(equation[index]);
 			}
 		}
 
-		private void DifferentiateProduct(Equation equation1, Equation equation2, ref Equation newEquation,
-			ref int index)
+		private void DifferentiateProduct(Equation equation1, Equation equation2, ref Equation newEquation)
 		{
+			if (equation1.Count > 1) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 			newEquation.Add(equation1);
+			if (equation1.Count > 1) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
 			newEquation.Add(new Operation(OperationEnum.Multiplication));
-			newEquation.Add(DifferentiateEquation(equation2));
+
+			Equation differential2 = DifferentiateEquation(equation2);
+			if (differential2.Count > 1) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+			newEquation.Add(differential2);
+			if (differential2.Count > 1) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
 
 			newEquation.Add(new Operation(OperationEnum.Addition));
 
-			newEquation.Add(equation2);
-			newEquation.Add(new Operation(OperationEnum.Multiplication));
-			newEquation.Add(DifferentiateEquation(equation1));
 
-			index += 3;
+			if (equation2.Count > 1) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+			newEquation.Add(equation2);
+			if (equation2.Count > 1) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+
+			newEquation.Add(new Operation(OperationEnum.Multiplication));
+
+			Equation differential1 = DifferentiateEquation(equation1);
+			if (differential1.Count > 1) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+			newEquation.Add(differential1);
+			if (differential1.Count > 1) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 		}
 
 		private void FindBrackets(Equation equation, ref int index, ref Stack<OperationEnum> brackets,
@@ -213,6 +237,53 @@ namespace Maths_solver.Maths
 			index++;
 		}
 
+		private List<List<Equation>> FindDifferentials(Equation equation, ref Equation newEquation)
+		{
+			Stack<OperationEnum> brackets = new Stack<OperationEnum>();
+
+			List<List<Equation>> Differentials = new List<List<Equation>>() { new List<Equation>() };
+
+			Equation currentPart = new Equation();
+
+			int differentialIndex = 0;
+
+			for (int index = 0; index < equation.Count; index++)
+			{
+				if (equation[index].GetType() == typeof(Operation))
+				{
+					OperationEnum operation = ((Operation)equation[index]).operation;
+
+					if (operation == OperationEnum.OpenBracket) brackets.Push(operation);
+					if (operation == OperationEnum.ClosedBracket && brackets.Count > 0) brackets.Pop();
+
+					//if not multiplied, differentiate term as normal
+					if (operation != OperationEnum.Multiplication && operation != OperationEnum.ClosedBracket
+						&& brackets.Count == 0)
+					{
+						Differentials[differentialIndex].Add(currentPart);
+
+						currentPart = new Equation();
+						differentialIndex++;
+						Differentials.Add(new List<Equation>());
+					}
+
+					//if multiplied, use product rule on list of Equations
+					if (operation == OperationEnum.Multiplication && brackets.Count == 0)
+					{
+						Differentials[differentialIndex].Add(currentPart);
+
+						currentPart = new Equation();
+					}
+				}
+
+				currentPart.Add(equation[index]);
+			}
+
+			Differentials[differentialIndex].Add(currentPart);
+
+			return Differentials;
+		}
+
 		private Equation DifferentiateEquation(Equation equation)
 		{
 			Equation newEquation = new Equation();
@@ -220,7 +291,10 @@ namespace Maths_solver.Maths
 			if (!ValidEquation(equation, ref newEquation)) return newEquation;
 
 			Stack<OperationEnum> brackets = new Stack<OperationEnum>();
-			Differentiate(equation, ref newEquation, ref brackets);
+
+			List<List<Equation>> Differentials = FindDifferentials(equation, ref newEquation);
+
+			Differentiate(Differentials, ref newEquation, ref brackets);
 
 			Equation.Format(ref newEquation);
 

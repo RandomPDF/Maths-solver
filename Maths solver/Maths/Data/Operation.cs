@@ -32,7 +32,7 @@ namespace Maths_solver.Maths
 			{
 				{'+', OperationEnum.Addition},
 				{'-', OperationEnum.Subtraction},
-				{'*', OperationEnum.Multiplication},
+				{(char)0X00D7, OperationEnum.Multiplication},
 				{'/', OperationEnum.Division},
 				{'(', OperationEnum.OpenBracket},
 				{')', OperationEnum.ClosedBracket}
