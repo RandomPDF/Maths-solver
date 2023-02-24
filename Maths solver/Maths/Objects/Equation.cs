@@ -44,7 +44,7 @@ namespace Maths_solver.Maths
 			if (((term.function == Function.constant || System.Math.Abs(term.coeficient) != 1) && !useSuperscript)
 				|| (term.coeficient != 1 || (equationLength != 1 && term.function == Function.constant)) && useSuperscript)
 			{
-				if (int.TryParse((term.coeficient / (float)Math.E).ToString(), out int multiplier))
+				if (int.TryParse((term.coeficient / (float)Math.E).ToString(), out int multiplier) && term.coeficient != 0)
 				{
 					if (multiplier != 1) formatTerm += PartStr(multiplier.ToString(), useSuperscript);
 					formatTerm += PartStr("e", useSuperscript);
@@ -118,7 +118,7 @@ namespace Maths_solver.Maths
 			}
 		}
 		private static string formatExponent(Term term, int equationLength, bool inputted, ref string formatTerm)
-        {
+		{
 			//format exponent if not null or 1
 			if (term.exponent != null && !term.exponent.EquationsEqual(new Equation { new Term(1) }))
 			{
@@ -355,8 +355,11 @@ namespace Maths_solver.Maths
 					if (secondTerm.coeficient == 1) return true;
 
 					//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken)
-					if (!firstTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }) &&
-						!secondTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }))
+					if (!(!firstTerm.exponent.EquationsEqual(new Equation { new Term(1) }) &&
+						firstTerm.function == Function.constant) &&
+
+						!(!secondTerm.exponent.EquationsEqual(new Equation { new Term(1) }) &&
+						secondTerm.function == Function.constant))
 					{
 						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
 							firstTerm.function, firstTerm.input, firstTerm.exponent);

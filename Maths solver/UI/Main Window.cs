@@ -85,7 +85,7 @@ namespace Maths_solver.UI
 
 			if (input.Count(f => f == '(') != input.Count(f => f == ')'))
 			{
-				ErrorBox.Text += $"The equation '{input}' has a bracket imbalance. There must be an equal number of closed and open brackets. \n";
+				ErrorBox.Text += $"The equation '{input}' has a bracket imbalance. There must be an equal number of closed and open brackets. (If your using an exponent with a function requiring an input, that exponent must be after the brackets) \n";
 
 				return false;
 			}
@@ -134,8 +134,8 @@ namespace Maths_solver.UI
 				if (brackets.Count <= 0 || (finalInput[nextIndex] == '(' && brackets.Count == 1))
 					FindFunction(finalInput, nextIndex, equation, ref function, ref currentPart);
 
-				FindExponent(finalInput, nextIndex, currentPart, coefficient, function, functionInput, ref exponent,
-					ref foundExponent);
+				FindExponent(finalInput, nextIndex, currentPart, coefficient, function, functionInput,
+					ref exponent, ref foundExponent);
 
 				currentPart += finalInput[nextIndex];
 
@@ -187,7 +187,10 @@ namespace Maths_solver.UI
 					ref foundExponent);
 
 			//if exponent not found or exponent is just a 1
-			if (!foundExponent || exponent.EquationsEqual(new Equation { new Term(1) })) return false;
+			if (!foundExponent || exponent.EquationsEqual(new Equation { new Term(1) }) ||
+				equation == null || equation.Count == 0 ||
+				(equation.Last().GetType() == typeof(Operation) &&
+				((Operation)equation.Last()).operation != OperationEnum.ClosedBracket)) return false;
 
 			equation.Add(new Operation(OperationEnum.Power));
 
@@ -477,7 +480,7 @@ namespace Maths_solver.UI
 				|| (nextIndex >= input.Length - 1 && prevEnum != OperationEnum.ClosedBracket))
 			{
 				//if nothing can be found, assume constant
-				if (function == Function.NONE)
+				if (function == Function.NONE && equation.Last().GetType() != typeof(Term))
 				{
 					function = Function.constant;
 					foundExponent = true;
@@ -499,7 +502,8 @@ namespace Maths_solver.UI
 
 		private static void CreateEquation(Function function, float coefficient, Equation funcInput, Equation exponent, bool foundExponent, ref Equation equation)
 		{
-			if (function == Function.NONE || !foundExponent) return;
+			if (function == Function.NONE || !foundExponent ||
+				(equation != null && equation.Count > 0 && equation.Last().GetType() == typeof(Term))) return;
 
 			//if has input and requires input
 			if (funcInput != null && funcInput.Count != 0 && requiresInput[function])
