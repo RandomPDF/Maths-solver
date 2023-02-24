@@ -332,10 +332,9 @@ namespace Maths_solver.Maths
 
 					if (secondTerm.coeficient == 1) return true;
 
-					//checks is not case ln(2)2^x where the constant would otherwise come out to front
-					if (firstTerm.exponent.EquationsEqual(new Equation { new Term(1) }) &&
-						secondTerm.exponent.EquationsEqual(new Equation { new Term(1) }) &&
-						firstTerm.function == Function.constant && secondTerm.function == Function.constant)
+					//checks is not case ln(2)2^x where the constant would otherwise come out to front (broken)
+					if (!firstTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }) &&
+						!secondTerm.exponent.EquationsEqual(new Equation { new Term(Function.x) }))
 					{
 						equation[i - 1] = new Term(firstTerm.coeficient * secondTerm.coeficient,
 							firstTerm.function, firstTerm.input, firstTerm.exponent);

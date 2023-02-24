@@ -132,7 +132,7 @@ namespace Maths_solver.UI
 				FindCoefficient(brackets, finalInput, nextIndex, ref currentPart, finalInput[nextIndex], ref coefficient);
 
 				if (brackets.Count <= 0 || (finalInput[nextIndex] == '(' && brackets.Count == 1))
-					FindFunction(finalInput, nextIndex, ref function, ref currentPart);
+					FindFunction(finalInput, nextIndex, equation, ref function, ref currentPart);
 
 				FindExponent(finalInput, nextIndex, currentPart, coefficient, function, functionInput, ref exponent,
 					ref foundExponent);
@@ -140,7 +140,7 @@ namespace Maths_solver.UI
 				currentPart += finalInput[nextIndex];
 
 				//find input and then exponents after
-				if (FindInputs(finalInput, nextIndex, brackets, function, ref currentPart, ref coefficient,
+				if (FindInputs(finalInput, ref nextIndex, brackets, function, ref currentPart, ref coefficient,
 					ref exponent, ref functionInput, ref equation, ref foundExponent)) continue;
 
 				CreateEquation(function, coefficient, functionInput, exponent, foundExponent, ref equation);
@@ -152,7 +152,7 @@ namespace Maths_solver.UI
 			return equation;
 		}
 
-		private bool FindInputs(string finalInput, int nextIndex, Stack<char> brackets,
+		private bool FindInputs(string finalInput, ref int nextIndex, Stack<char> brackets,
 			Function function, ref string currentPart, ref float coefficient, ref Equation exponent,
 			ref Equation functionInput, ref Equation equation, ref bool foundExponent)
 		{
@@ -164,7 +164,8 @@ namespace Maths_solver.UI
 			if (brackets.Count <= 0 && (currentPart.Length <= 0 || finalInput[nextIndex] != ')')) return false;
 
 			//finds bracket or function input
-			FindInput(coefficient, function, ref currentPart, ref functionInput, ref brackets, ref equation);
+			FindInput(coefficient, function, ref currentPart, ref functionInput, ref brackets,
+				ref equation);
 
 			//find exponent after input
 			if (brackets.Count <= 0) FindFunctionInputExponent(function, finalInput, nextIndex, functionInput,
@@ -177,8 +178,13 @@ namespace Maths_solver.UI
 			ref Function function, ref Equation functionInput, ref float coefficient, ref Equation exponent,
 			ref bool foundExponent, ref Equation equation)
 		{
-			FindExponent(finalInput, nextIndex, currentPart, coefficient, function, functionInput, ref exponent,
-				ref foundExponent);
+			if (nextIndex + 1 < finalInput.Length)
+				FindExponent(finalInput, nextIndex + 1, currentPart, coefficient, function, functionInput,
+					ref exponent, ref foundExponent);
+
+			else
+				FindExponent(finalInput, nextIndex, currentPart, coefficient, function, functionInput, ref exponent,
+					ref foundExponent);
 
 			//if exponent not found or exponent is just a 1
 			if (!foundExponent || exponent.EquationsEqual(new Equation { new Term(1) })) return false;
@@ -290,6 +296,13 @@ namespace Maths_solver.UI
 
 				stringToCoefficient(look, ref newCoefficient, ref found);
 
+				if (look == "-" && index + 1 < finalInput.Length &&
+					!int.TryParse(finalInput[index + 1].ToString(), out _))
+				{
+					coefficient = -1;
+					currentPart = String.Empty;
+				}
+
 				if ((found || (!found &&
 					(IsSuperscript(nextCharacter.ToString(), out _) ||
 					(index >= finalInput.Length - 1 && finalInput[index] != ')')))
@@ -369,12 +382,15 @@ namespace Maths_solver.UI
 			return inputToSuperscript;
 		}
 
-		private void FindFunction(string input, int nextIndex, ref Function function, ref string currentPart)
+		private void FindFunction(string input, int nextIndex, Equation equation, ref Function function, ref string currentPart)
 		{
 			if (function != Function.NONE) return;
 
 			OperationEnum nextOperation = OperationEnum.NONE;
-			if (stringToOperation.ContainsKey(input[nextIndex])) nextOperation = stringToOperation[input[nextIndex]];
+
+			if (stringToOperation.ContainsKey(input[nextIndex]) && nextIndex > 0)
+				nextOperation = stringToOperation[input[nextIndex]];
+
 			Function newFunction = Function.NONE;
 
 			//if next character is superscript or next char is input
@@ -389,11 +405,11 @@ namespace Maths_solver.UI
 				function = newFunction;
 				currentPart = String.Empty;
 			}
-			else if (!(nextIndex - 1 >= 0 && stringToOperation.ContainsKey(input[nextIndex - 1]) &&
+			else if ((!(nextIndex - 1 >= 0 && stringToOperation.ContainsKey(input[nextIndex - 1]) &&
 				stringToOperation[input[nextIndex - 1]] == OperationEnum.ClosedBracket) &&
 
 				((nextOperation != OperationEnum.NONE && nextOperation != OperationEnum.ClosedBracket)
-				|| nextIndex == input.Length - 1))
+				|| nextIndex == input.Length - 1)))
 			{
 				function = Function.constant;
 			}
@@ -440,6 +456,8 @@ namespace Maths_solver.UI
 			ref Equation exponent, ref string currentPart, ref Equation equation,
 			ref bool foundExponent)
 		{
+			if (nextIndex == 0) return;
+
 			OperationEnum prevEnum = OperationEnum.NONE;
 			if (nextIndex - 1 > 0)
 			{

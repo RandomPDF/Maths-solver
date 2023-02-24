@@ -52,6 +52,8 @@ namespace Maths_solver.Maths
 		private object thisSender;
 		public static event EventHandler<Step> ShowSteps;
 
+		public Equation outputEquation;
+
 		#region Differentiate
 
 		private bool ValidEquation(Equation equation, ref Equation newEquation)
@@ -257,8 +259,8 @@ namespace Maths_solver.Maths
 					if (operation == OperationEnum.ClosedBracket && brackets.Count > 0) brackets.Pop();
 
 					//if not multiplied, differentiate term as normal
-					if (operation != OperationEnum.Multiplication && operation != OperationEnum.ClosedBracket
-						&& brackets.Count == 0)
+					if (operation != OperationEnum.Multiplication && operation != OperationEnum.Power
+						&& operation != OperationEnum.ClosedBracket && brackets.Count == 0)
 					{
 						Differentials[differentialIndex].Add(currentPart);
 
