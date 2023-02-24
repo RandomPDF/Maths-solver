@@ -302,6 +302,7 @@ namespace Maths_solver.Maths
 
 			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, equation, newEquation));
 
+			outputEquation = newEquation;
 			return newEquation;
 		}
 

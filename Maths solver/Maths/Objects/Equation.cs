@@ -10,7 +10,7 @@ namespace Maths_solver.Maths
 	public class Equation : List<EquationItem>
 	{
 		#region Equation to string
-		public static string AsString(Equation equation, bool useSuperscript)
+		public static string AsString(Equation equation, bool inputted, bool useSuperscript)
 		{
 			bool returnSuperscript = false;
 
@@ -23,16 +23,16 @@ namespace Maths_solver.Maths
 				if (equation[i] == null) continue;
 
 				if (equation[i].GetType() == typeof(Term)) equationString += TermStr((Term)equation[i],
-					equation.Count, ref useSuperscript, ref returnSuperscript);
+					equation.Count, inputted, ref useSuperscript, ref returnSuperscript);
 
 				else if (equation[i].GetType() == typeof(Operation))
-					equationString += TermStr((Operation)equation[i], ref useSuperscript, ref returnSuperscript);
+					equationString += TermStr((Operation)equation[i], inputted, ref useSuperscript, ref returnSuperscript);
 			}
 
 			return equationString;
 		}
 
-		private static string TermStr(Term term, int equationLength, ref bool useSuperscript,
+		private static string TermStr(Term term, int equationLength, bool inputted, ref bool useSuperscript,
 			ref bool returnSuperscript)
 		{
 			string formatTerm = String.Empty;
@@ -61,23 +61,24 @@ namespace Maths_solver.Maths
 			if (term.function != Function.constant)
 				formatTerm += PartStr(term.function.ToString(), useSuperscript);
 
-			#region exponent
-			//format exponent
-			if (term.exponent != null)
+			//exponent if not inputted into input box
+			if (!inputted &&
+				formatExponent(term, equationLength, inputted, ref formatTerm) == term.coeficient.ToString())
 			{
-				string exponent = AsString(term.exponent, true);
-
-				//if exponent 0 return coefficient only
-				if (exponent == ToSuperscript("0").ToString()) return term.coeficient.ToString();
-				else formatTerm += exponent;
+				return term.coeficient.ToString();
 			}
-			#endregion
 
 			//format input
 			if (requiresInput[term.function])
 			{
-				if (!useSuperscript) formatTerm += $"({AsString(term.input, false)})";
-				else formatTerm += ToSuperscript("(") + AsString(term.input, true) + ToSuperscript(")");
+				if (!useSuperscript) formatTerm += $"({AsString(term.input, inputted, false)})";
+				else formatTerm += ToSuperscript("(") + AsString(term.input, inputted, true) + ToSuperscript(")");
+			}
+
+			if (inputted &&
+				formatExponent(term, equationLength, inputted, ref formatTerm) == term.coeficient.ToString())
+			{
+				return term.coeficient.ToString();
 			}
 
 			if (returnSuperscript)
@@ -89,18 +90,24 @@ namespace Maths_solver.Maths
 			return formatTerm;
 		}
 
-		private static string TermStr(Operation operation, ref bool useSuperscript,
+		private static string TermStr(Operation operation, bool inputted, ref bool useSuperscript,
 			ref bool returnSuperscript)
 		{
 			if (useSuperscript)
 			{
 				string operationString = operationToString[operation.operation];
 
-				if (operationString == String.Empty) return "";
+				if (operationString == String.Empty)
+				{
+					if (inputted) return "*";
+					return "";
+				}
+
 				return $" {ToSuperscript(operationString.Trim()[0].ToString())} ";
 			}
 			else if (operationToString.ContainsKey(operation.operation))
 			{
+				if (operation.operation == OperationEnum.Multiplication && inputted) return ((char)0X00D7).ToString();
 				return operationToString[operation.operation];
 			}
 			else
@@ -110,6 +117,21 @@ namespace Maths_solver.Maths
 				return String.Empty;
 			}
 		}
+		private static string formatExponent(Term term, int equationLength, bool inputted, ref string formatTerm)
+        {
+			//format exponent if not null or 1
+			if (term.exponent != null && !term.exponent.EquationsEqual(new Equation { new Term(1) }))
+			{
+				string exponent = AsString(term.exponent, inputted, true);
+
+				//if exponent 0 return coefficient only
+				if (exponent == ToSuperscript("0").ToString()) return term.coeficient.ToString();
+				else formatTerm += exponent;
+			}
+
+			return String.Empty;
+		}
+
 		private static string PartStr(string part, bool superscript)
 		{
 			if (!superscript) return part;
@@ -452,7 +474,7 @@ namespace Maths_solver.Maths
 					if (constantExponent[term.function] && (term.exponent.Count != 1 || (term.exponent.Count == 1
 						&& ((Term)term.exponent[0]).function != Function.constant)))
 					{
-						ExponentError(AsString(new Equation { input[i] }, false), term.function.ToString(),
+						ExponentError(AsString(new Equation { input[i] }, false, false), term.function.ToString(),
 							ref errorText);
 
 						error = true;

@@ -631,7 +631,7 @@ namespace Maths_solver.UI
 			Equation inputEquation = StringToEquation(InputBox.Text);
 			Equation.CheckForErrors(ref inputEquation, ref ErrorBox);
 
-			string output = Equation.AsString(math.Start(inputEquation), false);
+			string output = Equation.AsString(math.Start(inputEquation), false, false);
 
 			if (output != String.Empty || InputBox.Text == String.Empty) OutputBox.Text = output;
 			else OutputBox.Text = "ERROR";
@@ -639,7 +639,7 @@ namespace Maths_solver.UI
 
 		private void DifferentiateOutputButton_Click(object sender, EventArgs e)
 		{
-			InputBox.Text = OutputBox.Text;
+			InputBox.Text = Equation.AsString(math.outputEquation, true, false);
 			DifferentaiteButton_Click(sender, e);
 		}
 
