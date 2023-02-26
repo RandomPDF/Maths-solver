@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Maths_solver.Maths.Functions;
 using static Maths_solver.Maths.Operation;
 using static Maths_solver.UI.Main;
@@ -11,7 +12,7 @@ namespace Maths_solver.Maths
 		#region Equation to string
 		public static string AsString(Equation equation, bool inputted, bool useSuperscript)
 		{
-			bool returnSuperscript = false;
+			bool exponentSearching = false;
 
 			if (equation == null || equation.Count == 0) return String.Empty;
 
@@ -22,17 +23,17 @@ namespace Maths_solver.Maths
 				if (equation[i] == null) continue;
 
 				if (equation[i].GetType() == typeof(Term)) equationString += TermStr((Term)equation[i],
-					equation.Count, inputted, ref useSuperscript, ref returnSuperscript);
+					equation.Count, inputted, ref useSuperscript, ref exponentSearching);
 
 				else if (equation[i].GetType() == typeof(Operation))
-					equationString += TermStr((Operation)equation[i], inputted, ref useSuperscript, ref returnSuperscript);
+					equationString += TermStr((Operation)equation[i], inputted, ref useSuperscript, ref exponentSearching);
 			}
 
 			return equationString;
 		}
 
 		private static string TermStr(Term term, int equationLength, bool inputted, ref bool useSuperscript,
-			ref bool returnSuperscript)
+			ref bool exponentSearching)
 		{
 			string formatTerm = String.Empty;
 
@@ -80,9 +81,9 @@ namespace Maths_solver.Maths
 				return term.coeficient.ToString();
 			}
 
-			if (returnSuperscript)
+			if (exponentSearching)
 			{
-				returnSuperscript = false;
+				exponentSearching = false;
 				useSuperscript = false;
 			}
 
@@ -90,7 +91,7 @@ namespace Maths_solver.Maths
 		}
 
 		private static string TermStr(Operation operation, bool inputted, ref bool useSuperscript,
-			ref bool returnSuperscript)
+			ref bool exponentSearching)
 		{
 			if (useSuperscript)
 			{
@@ -109,9 +110,10 @@ namespace Maths_solver.Maths
 				if (operation.operation == OperationEnum.Multiplication && inputted) return ((char)0X00D7).ToString();
 				return operationToString[operation.operation];
 			}
+			//must have been power operation
 			else
 			{
-				returnSuperscript = true;
+				exponentSearching = true;
 				useSuperscript = true;
 				return String.Empty;
 			}
@@ -313,9 +315,9 @@ namespace Maths_solver.Maths
 					bool formatted = false;
 					Operation second = (Operation)(equation[i + 1]);
 
-					//if equal and both subtaction
+					//if equal and both subtaction or both addition
 					if (first.operation == second.operation &&
-						first.operation == OperationEnum.Subtraction)
+						(first.operation == OperationEnum.Subtraction || first.operation == OperationEnum.Addition))
 					{
 						//change to one addition
 						equation[i] = new Operation(OperationEnum.Addition);
@@ -460,6 +462,46 @@ namespace Maths_solver.Maths
 
 				if (term.coeficient == 0) equation[i] = new Term(0f);
 			}
+		}
+
+		#endregion
+
+		#region Useful
+		public bool requiresBrackets()
+		{
+			return Count > 1 &&
+				!(this.Last().GetType() == typeof(Operation) &&
+				((Operation)this.Last()).operation == OperationEnum.ClosedBracket &&
+				this.First().GetType() == typeof(Operation) &&
+				((Operation)this.First()).operation == OperationEnum.OpenBracket) &&
+
+				!IsOne();
+		}
+
+		private bool IsOne()
+		{
+			//checks if equation is one term all multiplied
+			for (int i = 0; i < Count; i++)
+			{
+				if (this[i].GetType() == typeof(Operation))
+				{
+					OperationEnum operation = ((Operation)this[i]).operation;
+
+					if (operation != OperationEnum.Multiplication && operation != OperationEnum.Power &&
+					operation != OperationEnum.OpenBracket && operation != OperationEnum.ClosedBracket)
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		public bool IsConstant()
+		{
+			//if exponent just a constant
+			return Count == 1 && ((Term)this[0]).function == Function.constant;
 		}
 
 		#endregion

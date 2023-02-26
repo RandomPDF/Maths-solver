@@ -194,7 +194,9 @@ namespace Maths_solver.UI
 
 			equation.Add(new Operation(OperationEnum.Power));
 
+			if (exponent.requiresBrackets()) equation.Add(new Operation(OperationEnum.OpenBracket));
 			equation.Add(exponent);
+			if (exponent.requiresBrackets()) equation.Add(new Operation(OperationEnum.ClosedBracket));
 
 			//restart a new term.
 			coefficient = 1;

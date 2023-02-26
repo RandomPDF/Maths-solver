@@ -1,7 +1,6 @@
 ﻿using Maths_solver.UI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using static Maths_solver.Maths.Operation;
 
 namespace Maths_solver.Maths
@@ -126,42 +125,33 @@ namespace Maths_solver.Maths
 			}
 		}
 
-		private bool requiresBrackets(Equation equation)
-		{
-			return equation.Count > 1 &&
-				!(equation.Last().GetType() == typeof(Operation) &&
-				((Operation)equation.Last()).operation == OperationEnum.ClosedBracket &&
-				equation.First().GetType() == typeof(Operation) &&
-				((Operation)equation.First()).operation == OperationEnum.OpenBracket);
-		}
-
 		private void DifferentiateProduct(Equation equation1, Equation equation2, ref Equation newEquation)
 		{
-			if (requiresBrackets(equation1)) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+			if (equation1.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 			newEquation.Add(equation1);
-			if (requiresBrackets(equation1)) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+			if (equation1.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 
 			newEquation.Add(new Operation(OperationEnum.Multiplication));
 
 			Equation differential2 = DifferentiateEquation(equation2);
-			if (requiresBrackets(differential2)) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+			if (differential2.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 			newEquation.Add(differential2);
-			if (requiresBrackets(differential2)) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+			if (differential2.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 
 
 			newEquation.Add(new Operation(OperationEnum.Addition));
 
 
-			if (requiresBrackets(equation2)) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+			if (equation2.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 			newEquation.Add(equation2);
-			if (requiresBrackets(equation2)) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+			if (equation2.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 
 			newEquation.Add(new Operation(OperationEnum.Multiplication));
 
 			Equation differential1 = DifferentiateEquation(equation1);
-			if (requiresBrackets(differential1)) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+			if (differential1.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 			newEquation.Add(differential1);
-			if (requiresBrackets(differential1)) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+			if (differential1.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 		}
 
 		private void FindBrackets(Equation equation, ref int index, ref Stack<OperationEnum> brackets,
@@ -192,28 +182,49 @@ namespace Maths_solver.Maths
 		private void DifferentiateInput(Equation input, ref int index, ref Equation newEquation,
 			ref Equation origionalEquation)
 		{
-			float exponent = 1;
+			Equation exponent = new Equation();
+			Equation inputEquation = new Equation();
 
 			//if bracket has exponent
 			if (index + 1 < origionalEquation.Count && origionalEquation[index + 1].GetType() == typeof(Operation)
 				&& ((Operation)origionalEquation[index + 1]).operation == OperationEnum.Power)
 			{
-				//assume next term is exponent which is just a constant
-				exponent = ((Term)origionalEquation[index + 2]).coeficient;
+				Stack<OperationEnum> brackets = new Stack<OperationEnum>();
+				int count = 1;
 
-				index += 2;
+				for (int i = index + 2; i < origionalEquation.Count; i++)
+				{
+					count++;
+					exponent.Add(origionalEquation[i]);
+
+					if (origionalEquation[i].GetType() == typeof(Operation))
+					{
+						OperationEnum operation = ((Operation)origionalEquation[i]).operation;
+						if (operation == OperationEnum.OpenBracket) brackets.Push(operation);
+						else if (operation == OperationEnum.ClosedBracket && brackets.Count > 0) brackets.Pop();
+					}
+					//if term is exponent which is just a constant or exponent found
+					if (i == index + 2 && origionalEquation[i].GetType() == typeof(Term) || brackets.Count == 0)
+					{
+						index += count;
+						break;
+					}
+
+				}
 			}
 
 			//if exponent 0, is just a constant so differentiates to 0
-			if (exponent == 0) return;
+			if (exponent.EquationsEqual(new Equation { new Term(0f) })) return;
 
 			//if bracket is to a power perform x^n -> nx^n-1
-			if (exponent != 1)
+			if (!exponent.EquationsEqual(new Equation { new Term(1) }) && (exponent.IsConstant() ||
+				exponent.Count == 0))
 			{
 				//add n to front
-				newEquation.Add(new Term(exponent));
+				newEquation.Add(exponent);
 				newEquation.Add(new Operation(OperationEnum.Multiplication));
 
+				//adds power to brackets to must always be there
 				newEquation.Add(new Operation(OperationEnum.OpenBracket));
 
 				//add x
@@ -222,29 +233,42 @@ namespace Maths_solver.Maths
 				newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 
 				//add n-1
-				if (exponent != 2)
+				if (exponent.EquationsEqual(new Equation { new Term(2) }))
 				{
 					newEquation.Add(new Operation(OperationEnum.Power));
-					newEquation.Add(new Term(exponent - 1));
+					newEquation.Add(new Term(((Term)exponent[0]).coeficient - 1));
 				}
 
 				newEquation.Add(new Operation(OperationEnum.Multiplication));
+
+				//multiply by differential
+				inputEquation = DifferentiateEquation(input);
+
+				//if differential term isn't just 1
+				if (!inputEquation.EquationsEqual(new Equation { new Term(1) }) ||
+					exponent.EquationsEqual(new Equation { new Term(1) }))
+				{
+					if (inputEquation.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+
+					newEquation.Add(inputEquation);
+
+					if (inputEquation.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+				}
+
+				index++;
 			}
-
-			//multiply by differential
-			Equation inputEquation = DifferentiateEquation(input);
-
-			//if differential term isn't just 1
-			if (!inputEquation.EquationsEqual(new Equation { new Term(1) }) || exponent == 1)
+			else if (!exponent.EquationsEqual(new Equation { new Term(1) }) &&
+				!exponent.IsConstant() && exponent.Count > 1)
 			{
-				newEquation.Add(new Operation(OperationEnum.OpenBracket));
+				//perform x^f(x) where x is the input of the brackets
+				Equation equation = new Equation() { new Operation(OperationEnum.OpenBracket) };
+				equation.Add(input);
+				equation.Add(new Operation(OperationEnum.ClosedBracket));
+				equation.Add(new Operation(OperationEnum.Power));
+				equation.Add(exponent);
 
-				newEquation.Add(inputEquation);
-
-				newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+				newEquation.Add(PowerRule(equation, input, exponent));
 			}
-
-			index++;
 		}
 
 		private List<List<Equation>> FindDifferentials(Equation equation, ref Equation newEquation)
@@ -329,18 +353,6 @@ namespace Maths_solver.Maths
 				//chain rule
 				Equation inputDifferential = DifferentiateEquation(term.input);
 
-				//checks if equation is one term all multiplied
-				bool isOneTerm = true;
-				for (int i = 0; i < inputDifferential.Count; i++)
-				{
-					if (inputDifferential[i].GetType() == typeof(Operation) &&
-						((Operation)inputDifferential[i]).operation != OperationEnum.Multiplication)
-					{
-						isOneTerm = false;
-						break;
-					}
-				}
-
 				//get the first term in input differential
 				int firstIndex = 0;
 				for (int i = 0; i < inputDifferential.Count; i++)
@@ -359,11 +371,12 @@ namespace Maths_solver.Maths
 				//if is 1 ignore adding
 				if (!inputDifferential.EquationsEqual(new Equation { new Term(1) }))
 				{
-					if (!isOneTerm) equation.Add(new Operation(OperationEnum.OpenBracket));
+					if (inputDifferential.requiresBrackets()) equation.Add(new Operation(OperationEnum.OpenBracket));
 
 					equation.Add(inputDifferential);
 
-					if (!isOneTerm) equation.Add(new Operation(OperationEnum.ClosedBracket));
+					if (inputDifferential.requiresBrackets())
+						equation.Add(new Operation(OperationEnum.ClosedBracket));
 
 					equation.Add(new Operation(OperationEnum.Multiplication));
 				}
@@ -381,22 +394,14 @@ namespace Maths_solver.Maths
 
 			if (Differentials.ContainsKey(term.function))
 			{
-				bool constantExponent = false;
 				bool shouldChainInput = false;
 
 				Equation inputDifferential = null;
 
-				//if exponent just a constant
-				if (term.exponent.Count == 1 && term.exponent.Count == 1 &&
-					((Term)term.exponent[0]).function == Function.constant)
-				{
-					constantExponent = true;
-				}
-
 				Equation newTermEquation = new Equation();
 
 				//don't chain input or exponent if using power rule
-				if (constantExponent)
+				if (term.exponent.IsConstant())
 				{
 					ChainFunction(differential, term, ref newTerm, ref newTermEquation);
 
@@ -407,7 +412,7 @@ namespace Maths_solver.Maths
 				//Shouldn't apply if exponent is 1
 				if (!term.exponent.EquationsEqual(new Equation { new Term(1) }))
 				{
-					if (constantExponent)
+					if (term.exponent.IsConstant())
 					{
 						newTermEquation.Add(ChainXRule(new Term(1, term.function, term.input, term.exponent)));
 					}
@@ -492,16 +497,41 @@ namespace Maths_solver.Maths
 			Equation multiplier = new Equation { new Term(1, Function.ln, new Equation { function },
 				new Equation { new Term(1)}), new Operation(OperationEnum.Multiplication)};
 
-			if (term.exponent.Count > 1) multiplier.Add(new Operation(OperationEnum.OpenBracket));
+			if (term.exponent.requiresBrackets()) multiplier.Add(new Operation(OperationEnum.OpenBracket));
 			multiplier.Add(term.exponent);
-			if (term.exponent.Count > 1) multiplier.Add(new Operation(OperationEnum.ClosedBracket));
+			if (term.exponent.requiresBrackets()) multiplier.Add(new Operation(OperationEnum.ClosedBracket));
 
 			Equation multiplierDifferential = DifferentiateEquation(multiplier);
 			differential.Add(new Operation(OperationEnum.Multiplication));
 
-			if (multiplierDifferential.Count > 1) differential.Add(new Operation(OperationEnum.OpenBracket));
+			if (multiplierDifferential.requiresBrackets()) differential.Add(new Operation(OperationEnum.OpenBracket));
 			differential.Add(multiplierDifferential);
-			if (multiplierDifferential.Count > 1) differential.Add(new Operation(OperationEnum.ClosedBracket));
+
+			if (multiplierDifferential.requiresBrackets())
+				differential.Add(new Operation(OperationEnum.ClosedBracket));
+
+			return differential;
+		}
+
+		private Equation PowerRule(Equation equation, Equation input, Equation exponent)
+		{
+			Equation differential = equation;
+
+			Equation multiplier = new Equation { new Term(1, Function.ln, input,
+				new Equation { new Term(1)}), new Operation(OperationEnum.Multiplication)};
+
+			if (exponent.requiresBrackets()) multiplier.Add(new Operation(OperationEnum.OpenBracket));
+			multiplier.Add(exponent);
+			if (exponent.requiresBrackets()) multiplier.Add(new Operation(OperationEnum.ClosedBracket));
+
+			Equation multiplierDifferential = DifferentiateEquation(multiplier);
+			differential.Add(new Operation(OperationEnum.Multiplication));
+
+			if (multiplierDifferential.requiresBrackets()) differential.Add(new Operation(OperationEnum.OpenBracket));
+			differential.Add(multiplierDifferential);
+
+			if (multiplierDifferential.requiresBrackets())
+				differential.Add(new Operation(OperationEnum.ClosedBracket));
 
 			return differential;
 		}
@@ -544,20 +574,11 @@ namespace Maths_solver.Maths
 
 		private void DifferntiateLn(Term term, ref Equation newEquation)
 		{
-			bool constantExponent = false;
-
-			//if exponent just a constant
-			if (term.exponent.Count == 1 && term.exponent.Count == 1 &&
-				((Term)term.exponent[0]).function == Function.constant)
-			{
-				constantExponent = true;
-			}
-
 			Equation differential = new Equation();
 			Equation xRule = new Equation();
 			Equation standardResult = new Equation();
 
-			if (constantExponent)
+			if (term.exponent.IsConstant())
 			{
 				differential = ChainInput(term, out bool shouldChainInput);
 				xRule = ChainXRule(term);
@@ -568,9 +589,9 @@ namespace Maths_solver.Maths
 
 				differential.Add(xRule);
 
+				//special case for adding brackets
 				//if the input isn't nothing. Add brackets if the count is greater than 1 and isn't just an x
-				bool addBrackets = term.input.Count > 0 && term.input != null &&
-					!term.input.EquationsEqual(new Equation { new Term(Function.x) });
+				bool addBrackets = term.input != null && term.input.Count > 1;
 
 				if (addBrackets) standardResult.Add(new Operation(OperationEnum.OpenBracket));
 
@@ -613,19 +634,10 @@ namespace Maths_solver.Maths
 
 		private void DifferentiateX(Term term, ref Term newTerm, ref Equation newEquation)
 		{
-			bool constantExponent = false;
-
-			//if exponent just a constant
-			if (term.exponent.Count == 1 && term.exponent.Count == 1 &&
-				((Term)term.exponent[0]).function == Function.constant)
-			{
-				constantExponent = true;
-			}
-
 			//if exponent not 0
 			if (!term.exponent.EquationsEqual(new Equation { new Term(0f) }))
 			{
-				if (constantExponent)
+				if (term.exponent.IsConstant())
 				{
 					newTerm = ApplyXRule(term);
 					newEquation.Add(newTerm);
@@ -704,20 +716,6 @@ namespace Maths_solver.Maths
 					//chain rule
 					Equation exponentDifferential = DifferentiateEquation(term.exponent);
 
-					//checks if equation is one term all multiplied
-					bool oneTerm = true;
-					for (int i = 0; i < exponentDifferential.Count; i++)
-					{
-						if (exponentDifferential[i].GetType() != typeof(Operation)) continue;
-
-						Operation exponentDifferentialOperation = (Operation)exponentDifferential[i];
-						if (exponentDifferentialOperation.operation != OperationEnum.Multiplication)
-						{
-							oneTerm = false;
-							break;
-						}
-					}
-
 					//get the first term in exponent differential
 					int firstIndex = 0;
 					for (int i = 0; i < exponentDifferential.Count; i++)
@@ -735,11 +733,13 @@ namespace Maths_solver.Maths
 					{
 						newTerm.Add(new Operation(OperationEnum.Multiplication));
 
-						if (!oneTerm) newTerm.Add(new Operation(OperationEnum.OpenBracket));
+						if (exponentDifferential.requiresBrackets())
+							newTerm.Add(new Operation(OperationEnum.OpenBracket));
 
 						newTerm.Add(exponentDifferential);
 
-						if (!oneTerm) newTerm.Add(new Operation(OperationEnum.ClosedBracket));
+						if (exponentDifferential.requiresBrackets())
+							newTerm.Add(new Operation(OperationEnum.ClosedBracket));
 					}
 
 					ShowSteps?.Invoke(thisSender, new Step(Rule.Exponent, Phase.End, exponentDifferential,
