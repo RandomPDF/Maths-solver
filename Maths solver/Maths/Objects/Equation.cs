@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using static Maths_solver.Maths.Functions;
 using static Maths_solver.Maths.Operation;
 using static Maths_solver.UI.Main;
@@ -461,36 +460,6 @@ namespace Maths_solver.Maths
 
 				if (term.coeficient == 0) equation[i] = new Term(0f);
 			}
-		}
-
-		public static void CheckForErrors(ref Equation input, ref RichTextBox errorText)
-		{
-			bool error = false;
-
-			for (int i = 0; i < input.Count; i++)
-			{
-				if (input[i].GetType() == typeof(Term))
-				{
-					Term term = (Term)input[i];
-
-					//if function requies constant exponent, and exponent not constant or has more than one term
-					if (constantExponent[term.function] && (term.exponent.Count != 1 || (term.exponent.Count == 1
-						&& ((Term)term.exponent[0]).function != Function.constant)))
-					{
-						ExponentError(AsString(new Equation { input[i] }, false, false), term.function.ToString(),
-							ref errorText);
-
-						error = true;
-					}
-				}
-			}
-
-			if (error) input = null;
-		}
-
-		private static void ExponentError(string term, string function, ref RichTextBox errorText)
-		{
-			errorText.Text += $"The term '{term}' has an invalid exponent. As it is using '{function}' the exponent must only consist of one constant term.\n";
 		}
 
 		#endregion

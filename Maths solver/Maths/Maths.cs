@@ -381,16 +381,42 @@ namespace Maths_solver.Maths
 
 			if (Differentials.ContainsKey(term.function))
 			{
+				bool constantExponent = false;
+				bool shouldChainInput = false;
+
+				Equation inputDifferential = null;
+
+				//if exponent just a constant
+				if (term.exponent.Count == 1 && term.exponent.Count == 1 &&
+					((Term)term.exponent[0]).function == Function.constant)
+				{
+					constantExponent = true;
+				}
+
 				Equation newTermEquation = new Equation();
 
-				ChainFunction(differential, term, ref newTerm, ref newTermEquation);
+				//don't chain input or exponent if using power rule
+				if (constantExponent)
+				{
+					ChainFunction(differential, term, ref newTerm, ref newTermEquation);
 
-				Equation inputDifferential = ChainInput(term, out bool shouldChainInput);
-				newTermEquation.Add(inputDifferential);
+					inputDifferential = ChainInput(term, out shouldChainInput);
+					newTermEquation.Add(inputDifferential);
+				}
 
 				//Shouldn't apply if exponent is 1
 				if (!term.exponent.EquationsEqual(new Equation { new Term(1) }))
-					newTermEquation.Add(ChainXRule(new Term(1, term.function, term.input, term.exponent)));
+				{
+					if (constantExponent)
+					{
+						newTermEquation.Add(ChainXRule(new Term(1, term.function, term.input, term.exponent)));
+					}
+					//apply power rule
+					else
+					{
+						newTermEquation.Add(PowerRule(term));
+					}
+				}
 
 				#region show steps
 				//keep coefficients when showing steps
@@ -458,6 +484,28 @@ namespace Maths_solver.Maths
 			}
 		}
 
+		private Equation PowerRule(Term term)
+		{
+			Term function = new Term(term.coeficient, term.function, term.input, new Equation { new Term(1) });
+			Equation differential = new Equation { term };
+
+			Equation multiplier = new Equation { new Term(1, Function.ln, new Equation { function },
+				new Equation { new Term(1)}), new Operation(OperationEnum.Multiplication)};
+
+			if (term.exponent.Count > 1) multiplier.Add(new Operation(OperationEnum.OpenBracket));
+			multiplier.Add(term.exponent);
+			if (term.exponent.Count > 1) multiplier.Add(new Operation(OperationEnum.ClosedBracket));
+
+			Equation multiplierDifferential = DifferentiateEquation(multiplier);
+			differential.Add(new Operation(OperationEnum.Multiplication));
+
+			if (multiplierDifferential.Count > 1) differential.Add(new Operation(OperationEnum.OpenBracket));
+			differential.Add(multiplierDifferential);
+			if (multiplierDifferential.Count > 1) differential.Add(new Operation(OperationEnum.ClosedBracket));
+
+			return differential;
+		}
+
 		private void ChainFunction(Equation differential, Term term, ref Term newTerm,
 			ref Equation newEquation)
 		{
@@ -496,45 +544,62 @@ namespace Maths_solver.Maths
 
 		private void DifferntiateLn(Term term, ref Equation newEquation)
 		{
-			Equation differential = ChainInput(term, out bool shouldChainInput);
+			bool constantExponent = false;
 
-			Equation xRule = ChainXRule(term);
+			//if exponent just a constant
+			if (term.exponent.Count == 1 && term.exponent.Count == 1 &&
+				((Term)term.exponent[0]).function == Function.constant)
+			{
+				constantExponent = true;
+			}
 
-			ShowSteps?.Invoke(thisSender, new Step(Rule.x, Phase.End, new Equation { term }, xRule));
+			Equation differential = new Equation();
+			Equation xRule = new Equation();
+			Equation standardResult = new Equation();
 
-			ShowSteps?.Invoke(thisSender, new Step(Rule.Input, Phase.End, differential, xRule));
+			if (constantExponent)
+			{
+				differential = ChainInput(term, out bool shouldChainInput);
+				xRule = ChainXRule(term);
 
-			differential.Add(xRule);
+				ShowSteps?.Invoke(thisSender, new Step(Rule.x, Phase.End, new Equation { term }, xRule));
+
+				ShowSteps?.Invoke(thisSender, new Step(Rule.Input, Phase.End, differential, xRule));
+
+				differential.Add(xRule);
+
+				//if the input isn't nothing. Add brackets if the count is greater than 1 and isn't just an x
+				bool addBrackets = term.input.Count > 0 && term.input != null &&
+					!term.input.EquationsEqual(new Equation { new Term(Function.x) });
+
+				if (addBrackets) standardResult.Add(new Operation(OperationEnum.OpenBracket));
+
+				standardResult.Add(term.input);
+
+				if (addBrackets) standardResult.Add(new Operation(OperationEnum.ClosedBracket));
+
+				standardResult.Add(new Operation(OperationEnum.Power));
+				standardResult.Add(new Term(-1));
+
+				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
+				ShowSteps?.Invoke(thisSender, new Step(Rule.Standard, Phase.End,
+					new Equation { new Term(1, term.function, term.input, new Equation { new Term(1) }) },
+					standardResult));
+
+				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
+				ShowSteps?.Invoke(thisSender, new Step(Rule.ln, Phase.End, differential, standardResult));
+			}
+			else
+			{
+				differential = PowerRule(term);
+			}
+
 			Equation.Format(ref differential);
 
 			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, new Equation { term }, differential));
 
 			differential.Add(new Operation(OperationEnum.Multiplication));
-
-			//if the input isn't nothing. Add brackets if the count is greater than 1 and isn't just an x
-
-			Equation standardResult = new Equation();
-
-			bool addBrackets = term.input.Count > 0 && term.input != null &&
-				!term.input.EquationsEqual(new Equation { new Term(Function.x) });
-
-			if (addBrackets) standardResult.Add(new Operation(OperationEnum.OpenBracket));
-
-			standardResult.Add(term.input);
-
-			if (addBrackets) standardResult.Add(new Operation(OperationEnum.ClosedBracket));
-
-			standardResult.Add(new Operation(OperationEnum.Power));
-			standardResult.Add(new Term(-1));
-
-			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
-			ShowSteps?.Invoke(thisSender, new Step(Rule.Standard, Phase.End,
-				new Equation { new Term(1, term.function, term.input, new Equation { new Term(1) }) },
-				standardResult));
-
-			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
-			ShowSteps?.Invoke(thisSender, new Step(Rule.ln, Phase.End, differential, standardResult));
 
 			differential.Add(standardResult);
 
@@ -548,19 +613,30 @@ namespace Maths_solver.Maths
 
 		private void DifferentiateX(Term term, ref Term newTerm, ref Equation newEquation)
 		{
-			//if term is not only ax^n
-			if (term.exponent[0].GetType() != typeof(Term) || term.exponent.Count != 1) return;
+			bool constantExponent = false;
 
-			Term exponent = (Term)term.exponent[0];
-			if (exponent.function != Function.constant) return;
-
-			if (exponent.coeficient != 0)
+			//if exponent just a constant
+			if (term.exponent.Count == 1 && term.exponent.Count == 1 &&
+				((Term)term.exponent[0]).function == Function.constant)
 			{
-				newTerm = ApplyXRule(term);
-				newEquation.Add(newTerm);
+				constantExponent = true;
+			}
 
-				ShowSteps?.Invoke(thisSender, new Step(Rule.x, Phase.End,
-					new Equation { term }, new Equation { newTerm }));
+			//if exponent not 0
+			if (!term.exponent.EquationsEqual(new Equation { new Term(0f) }))
+			{
+				if (constantExponent)
+				{
+					newTerm = ApplyXRule(term);
+					newEquation.Add(newTerm);
+
+					ShowSteps?.Invoke(thisSender, new Step(Rule.x, Phase.End,
+						new Equation { term }, new Equation { newTerm }));
+				}
+				else
+				{
+					newEquation.Add(PowerRule(term));
+				}
 			}
 			else
 			{

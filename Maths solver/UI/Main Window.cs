@@ -633,7 +633,6 @@ namespace Maths_solver.UI
 			ErrorBox.Text = String.Empty;
 
 			Equation inputEquation = StringToEquation(InputBox.Text);
-			Equation.CheckForErrors(ref inputEquation, ref ErrorBox);
 
 			string output = Equation.AsString(math.Start(inputEquation), false, false);
 
