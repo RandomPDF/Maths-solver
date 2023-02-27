@@ -22,69 +22,107 @@ namespace Maths_solver.Maths
 			{
 				if (equation[i] == null) continue;
 
-				if (equation[i].GetType() == typeof(Term)) equationString += TermStr((Term)equation[i],
-					equation.Count, inputted, ref useSuperscript, ref exponentSearching);
+				if (equation[i].GetType() == typeof(Term)) equationString += TermStr(equation, (Term)equation[i],
+					ref i, equation.Count, inputted, ref useSuperscript, ref exponentSearching);
 
-				else if (equation[i].GetType() == typeof(Operation))
+				else if (equation[i].GetType() == typeof(Operation) && !exponentSearching)
 					equationString += TermStr((Operation)equation[i], inputted, ref useSuperscript, ref exponentSearching);
 			}
 
 			return equationString;
 		}
 
-		private static string TermStr(Term term, int equationLength, bool inputted, ref bool useSuperscript,
+		private static string TermStr(Equation equation, Term term, ref int index, int equationLength, bool inputted, ref bool useSuperscript,
 			ref bool exponentSearching)
 		{
 			string formatTerm = String.Empty;
 
 			if (term.coeficient == 0 && equationLength == 1) return "0";
 
-			#region coefficient
-			//format coefficient
-			if (((term.function == Function.constant || System.Math.Abs(term.coeficient) != 1) && !useSuperscript)
-				|| (term.coeficient != 1 || (equationLength != 1 && term.function == Function.constant)) && useSuperscript)
+			if (!exponentSearching)
 			{
-				if (int.TryParse((term.coeficient / (float)Math.E).ToString(), out int multiplier) && term.coeficient != 0)
+				#region coefficient
+				//format coefficient
+				if (((term.function == Function.constant || System.Math.Abs(term.coeficient) != 1) && !useSuperscript)
+					|| (term.coeficient != 1 || (equationLength != 1 && term.function == Function.constant)) && useSuperscript)
 				{
-					if (multiplier != 1) formatTerm += PartStr(multiplier.ToString(), useSuperscript);
-					formatTerm += PartStr("e", useSuperscript);
+					if (int.TryParse((term.coeficient / (float)Math.E).ToString(), out int multiplier) && term.coeficient != 0)
+					{
+						if (multiplier != 1) formatTerm += PartStr(multiplier.ToString(), useSuperscript);
+						formatTerm += PartStr("e", useSuperscript);
+					}
+					else
+					{
+						formatTerm += PartStr(term.coeficient.ToString(), useSuperscript);
+					}
 				}
-				else
+
+				else if (term.coeficient == -1 && !useSuperscript) formatTerm += PartStr("-", useSuperscript);
+				#endregion
+
+				if (term.function != Function.constant)
+					formatTerm += PartStr(term.function.ToString(), useSuperscript);
+
+				//exponent if not inputted into input box
+				if (!inputted &&
+					formatExponent(term, equationLength, inputted, ref formatTerm) == term.coeficient.ToString())
 				{
-					formatTerm += PartStr(term.coeficient.ToString(), useSuperscript);
+					return term.coeficient.ToString();
 				}
-			}
 
-			else if (term.coeficient == -1 && !useSuperscript) formatTerm += PartStr("-", useSuperscript);
-			#endregion
+				//format input
+				if (requiresInput[term.function])
+				{
+					if (!useSuperscript) formatTerm += $"({AsString(term.input, inputted, false)})";
+					else formatTerm += ToSuperscript("(") + AsString(term.input, inputted, true) + ToSuperscript(")");
+				}
 
-			if (term.function != Function.constant)
-				formatTerm += PartStr(term.function.ToString(), useSuperscript);
-
-			//exponent if not inputted into input box
-			if (!inputted &&
-				formatExponent(term, equationLength, inputted, ref formatTerm) == term.coeficient.ToString())
-			{
-				return term.coeficient.ToString();
-			}
-
-			//format input
-			if (requiresInput[term.function])
-			{
-				if (!useSuperscript) formatTerm += $"({AsString(term.input, inputted, false)})";
-				else formatTerm += ToSuperscript("(") + AsString(term.input, inputted, true) + ToSuperscript(")");
-			}
-
-			if (inputted &&
-				formatExponent(term, equationLength, inputted, ref formatTerm) == term.coeficient.ToString())
-			{
-				return term.coeficient.ToString();
+				if (inputted &&
+					formatExponent(term, equationLength, inputted, ref formatTerm) == term.coeficient.ToString())
+				{
+					return term.coeficient.ToString();
+				}
 			}
 
 			if (exponentSearching)
 			{
+				Equation exponent = new Equation();
+				Stack<OperationEnum> brackets = new Stack<OperationEnum>();
+
+				int start = index;
+				if (equation[index - 1].GetType() == typeof(Operation) &&
+					((Operation)equation[index - 1]).operation == OperationEnum.OpenBracket)
+				{
+					start = index - 1;
+				}
+
+				for (int i = start; i < equation.Count; i++)
+				{
+					if (equation[i].GetType() == typeof(Operation))
+					{
+						OperationEnum operation = ((Operation)equation[i]).operation;
+
+						if (operation == OperationEnum.OpenBracket) brackets.Push(OperationEnum.OpenBracket);
+
+						if (operation == OperationEnum.ClosedBracket && brackets.Count > 0) brackets.Pop();
+					}
+
+					exponent.Add(equation[i]);
+
+					if (brackets.Count == 0) break;
+
+					index++;
+				}
+
+				if (exponent.Count > 1)
+				{
+					//remove brackets from exponent used to find exponent
+					exponent.RemoveAt(0);
+					exponent.RemoveAt(exponent.Count - 1);
+				}
+
+				formatTerm += AsString(exponent, false, true);
 				exponentSearching = false;
-				useSuperscript = false;
 			}
 
 			return formatTerm;
@@ -93,7 +131,7 @@ namespace Maths_solver.Maths
 		private static string TermStr(Operation operation, bool inputted, ref bool useSuperscript,
 			ref bool exponentSearching)
 		{
-			if (useSuperscript)
+			if (useSuperscript && operationToString.ContainsKey(operation.operation))
 			{
 				string operationString = operationToString[operation.operation];
 
@@ -105,7 +143,7 @@ namespace Maths_solver.Maths
 
 				return $" {ToSuperscript(operationString.Trim()[0].ToString())} ";
 			}
-			else if (operationToString.ContainsKey(operation.operation))
+			if (operationToString.ContainsKey(operation.operation))
 			{
 				if (operation.operation == OperationEnum.Multiplication && inputted) return ((char)0X00D7).ToString();
 				return operationToString[operation.operation];
@@ -114,7 +152,6 @@ namespace Maths_solver.Maths
 			else
 			{
 				exponentSearching = true;
-				useSuperscript = true;
 				return String.Empty;
 			}
 		}
@@ -420,6 +457,7 @@ namespace Maths_solver.Maths
 					if (term.coeficient == 1)
 					{
 						equation.RemoveAt(i);
+						equation.RemoveAt(i - 1);
 						format = true;
 					}
 
@@ -441,9 +479,10 @@ namespace Maths_solver.Maths
 					Term term = (Term)equation[i];
 
 					//current term is just a 1
-					if (((Term)equation[i]).coeficient == 1)
+					if (term.coeficient == 1)
 					{
 						equation.RemoveAt(i);
+						equation.RemoveAt(i - 1);
 						Format(ref equation);
 					}
 
@@ -473,7 +512,12 @@ namespace Maths_solver.Maths
 				!(this.Last().GetType() == typeof(Operation) &&
 				((Operation)this.Last()).operation == OperationEnum.ClosedBracket &&
 				this.First().GetType() == typeof(Operation) &&
-				((Operation)this.First()).operation == OperationEnum.OpenBracket) &&
+				((Operation)this.First()).operation == OperationEnum.OpenBracket ||
+
+				(this.First().GetType() == typeof(Operation) &&
+				((Operation)this.First()).operation == OperationEnum.OpenBracket &&
+				this[Count - 2].GetType() == typeof(Operation) &&
+				((Operation)this[Count - 2]).operation == OperationEnum.Power)) &&
 
 				!IsOne();
 		}

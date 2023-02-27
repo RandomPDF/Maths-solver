@@ -216,9 +216,16 @@ namespace Maths_solver.Maths
 			//if exponent 0, is just a constant so differentiates to 0
 			if (exponent.EquationsEqual(new Equation { new Term(0f) })) return;
 
+			//if bracket is to the power of 1, differentiate input and add brackets if required
+			if (exponent.Count == 0 || exponent.EquationsEqual(new Equation { new Term(1) }))
+			{
+				inputEquation = DifferentiateEquation(input);
+				if (inputEquation.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.OpenBracket));
+				newEquation.Add(inputEquation);
+				if (inputEquation.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
+			}
 			//if bracket is to a power perform x^n -> nx^n-1
-			if (!exponent.EquationsEqual(new Equation { new Term(1) }) && (exponent.IsConstant() ||
-				exponent.Count == 0))
+			else if (exponent.IsConstant())
 			{
 				//add n to front
 				newEquation.Add(exponent);
@@ -233,11 +240,8 @@ namespace Maths_solver.Maths
 				newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 
 				//add n-1
-				if (exponent.EquationsEqual(new Equation { new Term(2) }))
-				{
-					newEquation.Add(new Operation(OperationEnum.Power));
-					newEquation.Add(new Term(((Term)exponent[0]).coeficient - 1));
-				}
+				newEquation.Add(new Operation(OperationEnum.Power));
+				newEquation.Add(new Term(((Term)exponent[0]).coeficient - 1));
 
 				newEquation.Add(new Operation(OperationEnum.Multiplication));
 
@@ -254,21 +258,23 @@ namespace Maths_solver.Maths
 
 					if (inputEquation.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 				}
-
-				index++;
 			}
-			else if (!exponent.EquationsEqual(new Equation { new Term(1) }) &&
-				!exponent.IsConstant() && exponent.Count > 1)
+			else
 			{
 				//perform x^f(x) where x is the input of the brackets
-				Equation equation = new Equation() { new Operation(OperationEnum.OpenBracket) };
-				equation.Add(input);
-				equation.Add(new Operation(OperationEnum.ClosedBracket));
-				equation.Add(new Operation(OperationEnum.Power));
-				equation.Add(exponent);
+				Equation equation = new Equation
+				{
+					new Operation(OperationEnum.OpenBracket),
+					input,
+					new Operation(OperationEnum.ClosedBracket),
+					new Operation(OperationEnum.Power),
+					exponent
+				};
 
 				newEquation.Add(PowerRule(equation, input, exponent));
 			}
+
+			index++;
 		}
 
 		private List<List<Equation>> FindDifferentials(Equation equation, ref Equation newEquation)
@@ -491,7 +497,7 @@ namespace Maths_solver.Maths
 
 		private Equation PowerRule(Term term)
 		{
-			Term function = new Term(term.coeficient, term.function, term.input, new Equation { new Term(1) });
+			Term function = new Term(1, term.function, term.input, new Equation { new Term(1) });
 			Equation differential = new Equation { term };
 
 			Equation multiplier = new Equation { new Term(1, Function.ln, new Equation { function },
