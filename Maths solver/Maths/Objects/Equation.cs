@@ -51,9 +51,13 @@ namespace Maths_solver.Maths
 						if (multiplier != 1) formatTerm += PartStr(multiplier.ToString(), useSuperscript);
 						formatTerm += PartStr("e", useSuperscript);
 					}
-					else
+					else if (term.coeficient != -1 || term.function == Function.constant)
 					{
 						formatTerm += PartStr(term.coeficient.ToString(), useSuperscript);
+					}
+					else
+					{
+						formatTerm += PartStr("-", useSuperscript);
 					}
 				}
 
@@ -482,7 +486,7 @@ namespace Maths_solver.Maths
 					if (term.coeficient == 1)
 					{
 						equation.RemoveAt(i);
-						equation.RemoveAt(i - 1);
+						equation.RemoveAt(i + 1);
 						Format(ref equation);
 					}
 
@@ -544,6 +548,8 @@ namespace Maths_solver.Maths
 
 		public bool IsConstant()
 		{
+			if (this[0].GetType() != typeof(Term)) return false;
+
 			//if exponent just a constant
 			return Count == 1 && ((Term)this[0]).function == Function.constant;
 		}

@@ -54,7 +54,6 @@ namespace Maths_solver.UI
 		private int currentCursorPosition = -1;
 
 		private Steps StepsForm = new Steps();
-		private Instructions InstructionsForm = new Instructions();
 
 		public Main()
 		{
@@ -66,10 +65,6 @@ namespace Maths_solver.UI
 			StepsForm.FormBorderStyle = FormBorderStyle.None;
 			StepsForm.WindowState = FormWindowState.Maximized;
 			StepsForm.Hide();
-
-			InstructionsForm.FormBorderStyle = FormBorderStyle.None;
-			InstructionsForm.WindowState = FormWindowState.Maximized;
-			InstructionsForm.Hide();
 		}
 
 		#region String to equation
@@ -85,7 +80,7 @@ namespace Maths_solver.UI
 
 			if (input.Count(f => f == '(') != input.Count(f => f == ')'))
 			{
-				ErrorBox.Text += $"The equation '{input}' has a bracket imbalance. There must be an equal number of closed and open brackets. (If your using an exponent with a function requiring an input, that exponent must be after the brackets) \n";
+				ErrorBox.Text += $"The equation '{input}' has a bracket imbalance. There must be an equal number of closed and open brackets. (If your using an exponent with a function requiring an input, that exponent must be after the brackets. You also must explicitly use the multiplication sign (×) and it respective superscript version (*)) \n";
 
 				return false;
 			}
@@ -328,9 +323,11 @@ namespace Maths_solver.UI
 			{
 				int i = look.IndexOf('e');
 
-				if (look.Remove(i).Length > 0 && float.TryParse(look.Remove(i), out float foundCoefficient))
+				if (look.Remove(i).Length > 0 && (float.TryParse(look.Remove(i), out float foundCoefficient)
+					|| look == "-"))
 				{
 					newCoefficient = foundCoefficient;
+					if (look == "-") newCoefficient = -1;
 					found = true;
 				}
 
@@ -338,9 +335,10 @@ namespace Maths_solver.UI
 			}
 			else
 			{
-				if (look != String.Empty && float.TryParse(look, out float foundCoefficient))
+				if (look != String.Empty && (float.TryParse(look, out float foundCoefficient) || look == "-"))
 				{
 					newCoefficient = foundCoefficient;
+					if (look == "-") newCoefficient = -1;
 					found = true;
 				}
 			}
@@ -441,6 +439,9 @@ namespace Maths_solver.UI
 			else if (IsSuperscript(input[nextIndex].ToString(), out string _) && nextIndex >= input.Length - 1 &&
 				IsSuperscript(currentPart + input[nextIndex], out exponentLong))
 			{
+				if (stringToOperation.ContainsKey(exponentLong[0]) &&
+					stringToOperation[exponentLong[0]] == OperationEnum.ClosedBracket) return;
+
 				exponent = StringToEquation(exponentLong);
 				foundExponent = true;
 			}
@@ -628,8 +629,6 @@ namespace Maths_solver.UI
 		#region Buttons
 		private void StepsButton_Click(object sender, EventArgs e) { StepsForm.Show(); }
 
-		private void InstructionsButton_Click(object sender, EventArgs e) { InstructionsForm.Show(); }
-
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{
 			ErrorBox.Text = String.Empty;
@@ -638,7 +637,9 @@ namespace Maths_solver.UI
 
 			string output = Equation.AsString(math.Start(inputEquation), false, false);
 
-			if (output != String.Empty || InputBox.Text == String.Empty) OutputBox.Text = output;
+			if ((output != String.Empty || InputBox.Text == String.Empty) && ErrorBox.Text == String.Empty)
+				OutputBox.Text = output;
+
 			else OutputBox.Text = "ERROR";
 		}
 

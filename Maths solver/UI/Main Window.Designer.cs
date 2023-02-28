@@ -63,7 +63,6 @@
 			this.button25 = new System.Windows.Forms.Button();
 			this.button26 = new System.Windows.Forms.Button();
 			this.button27 = new System.Windows.Forms.Button();
-			this.InstructionsButton = new System.Windows.Forms.Button();
 			this.Realtime = new System.Windows.Forms.CheckBox();
 			this.ErrorLabel = new System.Windows.Forms.Label();
 			this.ErrorBox = new System.Windows.Forms.RichTextBox();
@@ -131,7 +130,7 @@
 			// DifferentiateButton
 			// 
 			this.DifferentiateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.DifferentiateButton.Location = new System.Drawing.Point(682, 151);
+			this.DifferentiateButton.Location = new System.Drawing.Point(332, 153);
 			this.DifferentiateButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.DifferentiateButton.Name = "DifferentiateButton";
 			this.DifferentiateButton.Size = new System.Drawing.Size(253, 37);
@@ -143,7 +142,7 @@
 			// StepsButton
 			// 
 			this.StepsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.StepsButton.Location = new System.Drawing.Point(1284, 151);
+			this.StepsButton.Location = new System.Drawing.Point(934, 153);
 			this.StepsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.StepsButton.Name = "StepsButton";
 			this.StepsButton.Size = new System.Drawing.Size(253, 37);
@@ -506,23 +505,11 @@
 			this.button27.UseVisualStyleBackColor = true;
 			this.button27.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// InstructionsButton
-			// 
-			this.InstructionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.InstructionsButton.Location = new System.Drawing.Point(29, 151);
-			this.InstructionsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-			this.InstructionsButton.Name = "InstructionsButton";
-			this.InstructionsButton.Size = new System.Drawing.Size(253, 37);
-			this.InstructionsButton.TabIndex = 41;
-			this.InstructionsButton.Text = "INSTRUCTIONS";
-			this.InstructionsButton.UseVisualStyleBackColor = true;
-			this.InstructionsButton.Click += new System.EventHandler(this.InstructionsButton_Click);
-			// 
 			// Realtime
 			// 
 			this.Realtime.AutoSize = true;
 			this.Realtime.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Realtime.Location = new System.Drawing.Point(1004, 151);
+			this.Realtime.Location = new System.Drawing.Point(654, 153);
 			this.Realtime.Name = "Realtime";
 			this.Realtime.Size = new System.Drawing.Size(160, 33);
 			this.Realtime.TabIndex = 42;
@@ -625,7 +612,6 @@
 			this.Controls.Add(this.ErrorLabel);
 			this.Controls.Add(this.ErrorBox);
 			this.Controls.Add(this.Realtime);
-			this.Controls.Add(this.InstructionsButton);
 			this.Controls.Add(this.button27);
 			this.Controls.Add(this.button24);
 			this.Controls.Add(this.button25);
@@ -705,7 +691,6 @@
         private System.Windows.Forms.Button button25;
         private System.Windows.Forms.Button button26;
         private System.Windows.Forms.Button button27;
-		private System.Windows.Forms.Button InstructionsButton;
 		private System.Windows.Forms.CheckBox Realtime;
 		private System.Windows.Forms.Label ErrorLabel;
 		private System.Windows.Forms.RichTextBox ErrorBox;
