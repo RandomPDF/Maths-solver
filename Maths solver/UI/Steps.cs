@@ -7,12 +7,17 @@ namespace Maths_solver
 {
 	public partial class Steps : Form
 	{
+		public string StepsText
+		{
+			get { return StepsBox.Text; }
+			set { StepsBox.Text = value; }
+		}
+
 		private int tabCount = 0;
 
 		public Steps()
 		{
 			InitializeComponent();
-
 			Maths.Maths.ShowSteps += ShowSteps;
 		}
 
@@ -43,36 +48,39 @@ namespace Maths_solver
 						case Rule.None:
 							if (step.input != null && step.output != null)
 							{
-								StepsBox.Text += $"So {Equation.AsString(step.input, false, false)} → " +
-									$"{Equation.AsString(step.output, false, false)}\n\n";
+								StepsBox.Text += $"So {input} → {output}\n\n";
 							}
 							break;
 
 						case Rule.Input:
-							StepsBox.Text += $"Multiply the input differential " +
-								$"( {Equation.AsString(step.input, false, false)} )" +
-								$" by the differential ( {Equation.AsString(step.output, false, false)} )" +
+							StepsBox.Text += $"Multiply the input differential ( {input} )" +
+								$" by the differential ( {output} )" +
 								$" using the chain rule keeping the input the same.\n";
 							break;
 
 						case Rule.Exponent:
 							StepsBox.Text += $"Multiply the exponent differential " +
-								$"( {Equation.AsString(step.input, false, false)} ) by the term " +
-								$"( {Equation.AsString(step.output, false, false)} ) using the chain rule" +
+								$"( {input} ) by the term " +
+								$"( {output} ) using the chain rule" +
 								$"keeping the exponent the same.\n";
 							break;
 
 						case Rule.ln:
-							StepsBox.Text += $"Multiply the differential " +
-                                $"( {Equation.AsString(step.input, false, false)} )" +
+							StepsBox.Text += $"Multiply the differential ( {input} ) " +
 								$"by standard result " +
-                                $"( {Equation.AsString(step.output,false, false)} ) using the chain rule.\n";
+								$"( {output} ) using the chain rule.\n";
+							break;
+
+						case Rule.xRule:
+							StepsBox.Text += $"Multiply the standard differential ( {input} ) " +
+								$"by x rule result " +
+								$"( {output} ) using the chain rule for exponents.\n";
 							break;
 
 						default:
 							StepsBox.Text += $"Using the {step.rule.ToString()} rule: " +
-								$"{Equation.AsString(step.input, false, false)} → " +
-								$"{Equation.AsString(step.output, false, false)}\n\n";
+								$"{input} → " +
+								$"{output}\n\n";
 							break;
 					}
 
@@ -83,28 +91,34 @@ namespace Maths_solver
 					switch (step.rule)
 					{
 						case Rule.Constant:
-							StepsBox.Text += $"Using the constant rule: {Equation.AsString(step.input, false, false)} → 0\n\n";
+							StepsBox.Text += $"Using the constant rule: {input} → 0\n\n";
 							break;
 
 						case Rule.Input:
 							StepsBox.Text += $"Differentiate input " +
-								$"{Equation.AsString(step.input, false, false)}:\n";
+								$"{input}:\n";
 							break;
 
 						case Rule.Exponent:
 							StepsBox.Text += $"Differentiate exponent " +
-								$"{Equation.AsString(step.input, false, false)}:\n";
+								$"{input}:\n";
 							break;
 
 						case Rule.ln:
-							StepsBox.Text += $"Multiply by ln({Equation.AsString(step.input, false, false)})\n";
+							StepsBox.Text += $"Multiply by ln({input})\n";
+							break;
+
+						case Rule.Product:
+							StepsBox.Text += $"Perform product rule: Multiply ( {input} ) " +
+								$"by the differential of ( {output} ) and add that to the " +
+								$"product of the ( {output} ) and the differential of ( {input} )\n";
 							break;
 
 						case Rule.None:
 							break;
 
 						default:
-							StepsBox.Text += $"Differentiate term {Equation.AsString(step.input, false, false)}:\n";
+							StepsBox.Text += $"Differentiate term {input}:\n";
 							break;
 					}
 
@@ -113,7 +127,7 @@ namespace Maths_solver
 
 				case Phase.Reset:
 					tabCount = 1;
-					StepsBox.Text = $"Differentiate equation {Equation.AsString(step.input, false, false)}:\n";
+					StepsBox.Text = $"Differentiate equation {input}:\n";
 					break;
 			}
 		}

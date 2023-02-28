@@ -31,7 +31,6 @@ namespace Maths_solver.UI
 		};
 
 		private bool isRealtime = false;
-
 		private bool baseIsSuperscript = false;
 
 		private bool isSuperscript
@@ -640,7 +639,11 @@ namespace Maths_solver.UI
 			if ((output != String.Empty || InputBox.Text == String.Empty) && ErrorBox.Text == String.Empty)
 				OutputBox.Text = output;
 
-			else OutputBox.Text = "ERROR";
+			else
+			{
+				OutputBox.Text = "ERROR";
+				StepsForm.StepsText = String.Empty;
+			}
 		}
 
 		private void DifferentiateOutputButton_Click(object sender, EventArgs e)
