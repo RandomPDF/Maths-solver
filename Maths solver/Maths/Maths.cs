@@ -224,6 +224,7 @@ namespace Maths_solver.Maths
 			//if bracket is to the power of 1, differentiate input and add brackets if required
 			if (exponent.Count == 0 || exponent.EquationsEqual(new Equation { new Term(1) }))
 			{
+				ShowSteps?.Invoke(thisSender, new Step(Rule.Input, Phase.Start, input));
 				inputEquation = DifferentiateEquation(input);
 				if (inputEquation.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 				newEquation.Add(inputEquation);
@@ -232,26 +233,24 @@ namespace Maths_solver.Maths
 			//if bracket is to a power perform x^n -> nx^n-1
 			else if (exponent.IsConstant())
 			{
-				//add n to front
-				newEquation.Add(exponent);
-				newEquation.Add(new Operation(OperationEnum.Multiplication));
+				Equation xRule = new Equation
+				{
+					exponent, new Operation(OperationEnum.Multiplication), new Operation(OperationEnum.OpenBracket),
+					input, new Operation(OperationEnum.ClosedBracket), new Operation(OperationEnum.Power),
+					new Term(((Term)exponent[0]).coeficient - 1), new Operation(OperationEnum.Multiplication)
+				};
 
-				//adds power to brackets to must always be there
-				newEquation.Add(new Operation(OperationEnum.OpenBracket));
+				ShowSteps?.Invoke(thisSender, new Step(Rule.x, Phase.End, input, xRule));
+				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
+				newEquation.Add(xRule);
 
-				//add x
-				newEquation.Add(input);
-
-				newEquation.Add(new Operation(OperationEnum.ClosedBracket));
-
-				//add n-1
-				newEquation.Add(new Operation(OperationEnum.Power));
-				newEquation.Add(new Term(((Term)exponent[0]).coeficient - 1));
-
-				newEquation.Add(new Operation(OperationEnum.Multiplication));
-
+				ShowSteps?.Invoke(thisSender, new Step(Rule.Input, Phase.Start, input));
 				//multiply by differential
 				inputEquation = DifferentiateEquation(input);
+				ShowSteps?.Invoke(thisSender, new Step(Phase.End));
+
+				ShowSteps?.Invoke(thisSender, new Step(Rule.xRule, Phase.End, inputEquation, xRule));
+				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 
 				//if differential term isn't just 1
 				if (!inputEquation.EquationsEqual(new Equation { new Term(1) }) ||
@@ -521,7 +520,13 @@ namespace Maths_solver.Maths
 			multiplier.Add(term.exponent);
 			if (term.exponent.requiresBrackets()) multiplier.Add(new Operation(OperationEnum.ClosedBracket));
 
+			ShowSteps?.Invoke(thisSender, new Step(Rule.PowerRule, Phase.End, new Equation { function }, multiplier));
+			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
+
 			Equation multiplierDifferential = DifferentiateEquation(multiplier);
+			ShowSteps?.Invoke(thisSender, new Step(Phase.End));
+			ShowSteps?.Invoke(thisSender, new Step(Phase.End));
+
 			differential.Add(new Operation(OperationEnum.Multiplication));
 
 			if (multiplierDifferential.requiresBrackets()) differential.Add(new Operation(OperationEnum.OpenBracket));
@@ -544,7 +549,13 @@ namespace Maths_solver.Maths
 			multiplier.Add(exponent);
 			if (exponent.requiresBrackets()) multiplier.Add(new Operation(OperationEnum.ClosedBracket));
 
+			ShowSteps?.Invoke(thisSender, new Step(Rule.PowerRule, Phase.End, differential, multiplier));
+			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
+
 			Equation multiplierDifferential = DifferentiateEquation(multiplier);
+			ShowSteps?.Invoke(thisSender, new Step(Phase.End));
+			ShowSteps?.Invoke(thisSender, new Step(Phase.End));
+
 			differential.Add(new Operation(OperationEnum.Multiplication));
 
 			if (multiplierDifferential.requiresBrackets()) differential.Add(new Operation(OperationEnum.OpenBracket));

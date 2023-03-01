@@ -72,9 +72,15 @@ namespace Maths_solver
 							break;
 
 						case Rule.xRule:
-							StepsBox.Text += $"Multiply the standard differential ( {input} ) " +
+							StepsBox.Text += $"Multiply the differential ( {input} ) " +
 								$"by x rule result " +
 								$"( {output} ) using the chain rule for exponents.\n";
+							break;
+
+						case Rule.PowerRule:
+							StepsBox.Text += $"Multiply the function ( {input} ) " +
+								$"by the differential of " +
+								$"( {output} ) using the power rule.\n";
 							break;
 
 						default:

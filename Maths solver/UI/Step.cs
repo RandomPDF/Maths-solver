@@ -4,7 +4,7 @@ namespace Maths_solver.UI
 {
 	public enum Rule
 	{
-		Standard, x, xRule, Product, Constant, Input, Exponent, ln, None
+		Standard, x, xRule, PowerRule, Product, Constant, Input, Exponent, ln, None
 	}
 
 	public enum Phase
