@@ -35,42 +35,42 @@
 			this.DifferentiateButton = new System.Windows.Forms.Button();
 			this.StepsButton = new System.Windows.Forms.Button();
 			this.ExitButton = new System.Windows.Forms.Button();
-			this.button1 = new System.Windows.Forms.Button();
-			this.button2 = new System.Windows.Forms.Button();
-			this.button3 = new System.Windows.Forms.Button();
-			this.button4 = new System.Windows.Forms.Button();
-			this.button5 = new System.Windows.Forms.Button();
-			this.button6 = new System.Windows.Forms.Button();
-			this.button7 = new System.Windows.Forms.Button();
-			this.button8 = new System.Windows.Forms.Button();
-			this.button9 = new System.Windows.Forms.Button();
-			this.button10 = new System.Windows.Forms.Button();
-			this.button11 = new System.Windows.Forms.Button();
-			this.button12 = new System.Windows.Forms.Button();
-			this.button13 = new System.Windows.Forms.Button();
-			this.button14 = new System.Windows.Forms.Button();
-			this.button15 = new System.Windows.Forms.Button();
-			this.button17 = new System.Windows.Forms.Button();
-			this.button18 = new System.Windows.Forms.Button();
+			this.eButton = new System.Windows.Forms.Button();
+			this.sinButton = new System.Windows.Forms.Button();
+			this.cosButton = new System.Windows.Forms.Button();
+			this.tanButton = new System.Windows.Forms.Button();
+			this.cosecButton = new System.Windows.Forms.Button();
+			this.secButton = new System.Windows.Forms.Button();
+			this.cotButton = new System.Windows.Forms.Button();
+			this.xButton = new System.Windows.Forms.Button();
+			this.lnButton = new System.Windows.Forms.Button();
+			this.cothButton = new System.Windows.Forms.Button();
+			this.sechButton = new System.Windows.Forms.Button();
+			this.cosechButton = new System.Windows.Forms.Button();
+			this.tanhButton = new System.Windows.Forms.Button();
+			this.coshButton = new System.Windows.Forms.Button();
+			this.sinhButton = new System.Windows.Forms.Button();
+			this.additionButton = new System.Windows.Forms.Button();
+			this.subtractionButton = new System.Windows.Forms.Button();
 			this.SuperscriptCheckbox = new System.Windows.Forms.CheckBox();
-			this.button16 = new System.Windows.Forms.Button();
-			this.button19 = new System.Windows.Forms.Button();
-			this.button20 = new System.Windows.Forms.Button();
-			this.button21 = new System.Windows.Forms.Button();
-			this.button22 = new System.Windows.Forms.Button();
-			this.button23 = new System.Windows.Forms.Button();
-			this.button24 = new System.Windows.Forms.Button();
-			this.button25 = new System.Windows.Forms.Button();
-			this.button26 = new System.Windows.Forms.Button();
-			this.button27 = new System.Windows.Forms.Button();
+			this.OneButton = new System.Windows.Forms.Button();
+			this.TwoButton = new System.Windows.Forms.Button();
+			this.threeButton = new System.Windows.Forms.Button();
+			this.sixButton = new System.Windows.Forms.Button();
+			this.fiveButton = new System.Windows.Forms.Button();
+			this.fourButton = new System.Windows.Forms.Button();
+			this.nineButton = new System.Windows.Forms.Button();
+			this.eightButton = new System.Windows.Forms.Button();
+			this.sevenButton = new System.Windows.Forms.Button();
+			this.zeroButton = new System.Windows.Forms.Button();
 			this.Realtime = new System.Windows.Forms.CheckBox();
 			this.ErrorLabel = new System.Windows.Forms.Label();
 			this.ErrorBox = new System.Windows.Forms.RichTextBox();
-			this.button28 = new System.Windows.Forms.Button();
+			this.decimalButton = new System.Windows.Forms.Button();
 			this.DifferentiateOutputButton = new System.Windows.Forms.Button();
-			this.button29 = new System.Windows.Forms.Button();
-			this.button30 = new System.Windows.Forms.Button();
-			this.button31 = new System.Windows.Forms.Button();
+			this.multiplicationButton = new System.Windows.Forms.Button();
+			this.ClosedBracketButton = new System.Windows.Forms.Button();
+			this.OpenBracketButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// InputBox
@@ -163,209 +163,209 @@
 			this.ExitButton.UseVisualStyleBackColor = true;
 			this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
 			// 
-			// button1
+			// eButton
 			// 
-			this.button1.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button1.Location = new System.Drawing.Point(1022, 237);
-			this.button1.Margin = new System.Windows.Forms.Padding(4);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(52, 40);
-			this.button1.TabIndex = 12;
-			this.button1.Text = "e";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new System.EventHandler(this.ConstantClick);
+			this.eButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.eButton.Location = new System.Drawing.Point(1022, 237);
+			this.eButton.Margin = new System.Windows.Forms.Padding(4);
+			this.eButton.Name = "eButton";
+			this.eButton.Size = new System.Drawing.Size(52, 40);
+			this.eButton.TabIndex = 12;
+			this.eButton.Text = "e";
+			this.eButton.UseVisualStyleBackColor = true;
+			this.eButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button2
+			// sinButton
 			// 
-			this.button2.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button2.Location = new System.Drawing.Point(158, 240);
-			this.button2.Margin = new System.Windows.Forms.Padding(4);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(112, 37);
-			this.button2.TabIndex = 13;
-			this.button2.Text = "sin";
-			this.button2.UseVisualStyleBackColor = true;
-			this.button2.Click += new System.EventHandler(this.FunctionClick);
+			this.sinButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.sinButton.Location = new System.Drawing.Point(158, 240);
+			this.sinButton.Margin = new System.Windows.Forms.Padding(4);
+			this.sinButton.Name = "sinButton";
+			this.sinButton.Size = new System.Drawing.Size(112, 37);
+			this.sinButton.TabIndex = 13;
+			this.sinButton.Text = "sin";
+			this.sinButton.UseVisualStyleBackColor = true;
+			this.sinButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button3
+			// cosButton
 			// 
-			this.button3.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button3.Location = new System.Drawing.Point(278, 240);
-			this.button3.Margin = new System.Windows.Forms.Padding(4);
-			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(112, 37);
-			this.button3.TabIndex = 14;
-			this.button3.Text = "cos";
-			this.button3.UseVisualStyleBackColor = true;
-			this.button3.Click += new System.EventHandler(this.FunctionClick);
+			this.cosButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.cosButton.Location = new System.Drawing.Point(278, 240);
+			this.cosButton.Margin = new System.Windows.Forms.Padding(4);
+			this.cosButton.Name = "cosButton";
+			this.cosButton.Size = new System.Drawing.Size(112, 37);
+			this.cosButton.TabIndex = 14;
+			this.cosButton.Text = "cos";
+			this.cosButton.UseVisualStyleBackColor = true;
+			this.cosButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button4
+			// tanButton
 			// 
-			this.button4.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button4.Location = new System.Drawing.Point(398, 240);
-			this.button4.Margin = new System.Windows.Forms.Padding(4);
-			this.button4.Name = "button4";
-			this.button4.Size = new System.Drawing.Size(112, 37);
-			this.button4.TabIndex = 15;
-			this.button4.Text = "tan";
-			this.button4.UseVisualStyleBackColor = true;
-			this.button4.Click += new System.EventHandler(this.FunctionClick);
+			this.tanButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tanButton.Location = new System.Drawing.Point(398, 240);
+			this.tanButton.Margin = new System.Windows.Forms.Padding(4);
+			this.tanButton.Name = "tanButton";
+			this.tanButton.Size = new System.Drawing.Size(112, 37);
+			this.tanButton.TabIndex = 15;
+			this.tanButton.Text = "tan";
+			this.tanButton.UseVisualStyleBackColor = true;
+			this.tanButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button5
+			// cosecButton
 			// 
-			this.button5.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button5.Location = new System.Drawing.Point(158, 285);
-			this.button5.Margin = new System.Windows.Forms.Padding(4);
-			this.button5.Name = "button5";
-			this.button5.Size = new System.Drawing.Size(112, 37);
-			this.button5.TabIndex = 16;
-			this.button5.Text = "cosec";
-			this.button5.UseVisualStyleBackColor = true;
-			this.button5.Click += new System.EventHandler(this.FunctionClick);
+			this.cosecButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.cosecButton.Location = new System.Drawing.Point(158, 285);
+			this.cosecButton.Margin = new System.Windows.Forms.Padding(4);
+			this.cosecButton.Name = "cosecButton";
+			this.cosecButton.Size = new System.Drawing.Size(112, 37);
+			this.cosecButton.TabIndex = 16;
+			this.cosecButton.Text = "cosec";
+			this.cosecButton.UseVisualStyleBackColor = true;
+			this.cosecButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button6
+			// secButton
 			// 
-			this.button6.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button6.Location = new System.Drawing.Point(278, 285);
-			this.button6.Margin = new System.Windows.Forms.Padding(4);
-			this.button6.Name = "button6";
-			this.button6.Size = new System.Drawing.Size(112, 37);
-			this.button6.TabIndex = 17;
-			this.button6.Text = "sec";
-			this.button6.UseVisualStyleBackColor = true;
-			this.button6.Click += new System.EventHandler(this.FunctionClick);
+			this.secButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.secButton.Location = new System.Drawing.Point(278, 285);
+			this.secButton.Margin = new System.Windows.Forms.Padding(4);
+			this.secButton.Name = "secButton";
+			this.secButton.Size = new System.Drawing.Size(112, 37);
+			this.secButton.TabIndex = 17;
+			this.secButton.Text = "sec";
+			this.secButton.UseVisualStyleBackColor = true;
+			this.secButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button7
+			// cotButton
 			// 
-			this.button7.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button7.Location = new System.Drawing.Point(398, 285);
-			this.button7.Margin = new System.Windows.Forms.Padding(4);
-			this.button7.Name = "button7";
-			this.button7.Size = new System.Drawing.Size(112, 37);
-			this.button7.TabIndex = 18;
-			this.button7.Text = "cot";
-			this.button7.UseVisualStyleBackColor = true;
-			this.button7.Click += new System.EventHandler(this.FunctionClick);
+			this.cotButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.cotButton.Location = new System.Drawing.Point(398, 285);
+			this.cotButton.Margin = new System.Windows.Forms.Padding(4);
+			this.cotButton.Name = "cotButton";
+			this.cotButton.Size = new System.Drawing.Size(112, 37);
+			this.cotButton.TabIndex = 18;
+			this.cotButton.Text = "cot";
+			this.cotButton.UseVisualStyleBackColor = true;
+			this.cotButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button8
+			// xButton
 			// 
-			this.button8.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button8.Location = new System.Drawing.Point(1082, 237);
-			this.button8.Margin = new System.Windows.Forms.Padding(4);
-			this.button8.Name = "button8";
-			this.button8.Size = new System.Drawing.Size(52, 40);
-			this.button8.TabIndex = 19;
-			this.button8.Text = "x";
-			this.button8.UseVisualStyleBackColor = true;
-			this.button8.Click += new System.EventHandler(this.ConstantClick);
+			this.xButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.xButton.Location = new System.Drawing.Point(1082, 237);
+			this.xButton.Margin = new System.Windows.Forms.Padding(4);
+			this.xButton.Name = "xButton";
+			this.xButton.Size = new System.Drawing.Size(52, 40);
+			this.xButton.TabIndex = 19;
+			this.xButton.Text = "x";
+			this.xButton.UseVisualStyleBackColor = true;
+			this.xButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button9
+			// lnButton
 			// 
-			this.button9.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button9.Location = new System.Drawing.Point(306, 447);
-			this.button9.Margin = new System.Windows.Forms.Padding(4);
-			this.button9.Name = "button9";
-			this.button9.Size = new System.Drawing.Size(52, 37);
-			this.button9.TabIndex = 20;
-			this.button9.Text = "ln";
-			this.button9.UseVisualStyleBackColor = true;
-			this.button9.Click += new System.EventHandler(this.FunctionClick);
+			this.lnButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lnButton.Location = new System.Drawing.Point(306, 447);
+			this.lnButton.Margin = new System.Windows.Forms.Padding(4);
+			this.lnButton.Name = "lnButton";
+			this.lnButton.Size = new System.Drawing.Size(52, 37);
+			this.lnButton.TabIndex = 20;
+			this.lnButton.Text = "ln";
+			this.lnButton.UseVisualStyleBackColor = true;
+			this.lnButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button10
+			// cothButton
 			// 
-			this.button10.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button10.Location = new System.Drawing.Point(398, 392);
-			this.button10.Margin = new System.Windows.Forms.Padding(4);
-			this.button10.Name = "button10";
-			this.button10.Size = new System.Drawing.Size(112, 37);
-			this.button10.TabIndex = 26;
-			this.button10.Text = "coth";
-			this.button10.UseVisualStyleBackColor = true;
-			this.button10.Click += new System.EventHandler(this.FunctionClick);
+			this.cothButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.cothButton.Location = new System.Drawing.Point(398, 392);
+			this.cothButton.Margin = new System.Windows.Forms.Padding(4);
+			this.cothButton.Name = "cothButton";
+			this.cothButton.Size = new System.Drawing.Size(112, 37);
+			this.cothButton.TabIndex = 26;
+			this.cothButton.Text = "coth";
+			this.cothButton.UseVisualStyleBackColor = true;
+			this.cothButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button11
+			// sechButton
 			// 
-			this.button11.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button11.Location = new System.Drawing.Point(278, 392);
-			this.button11.Margin = new System.Windows.Forms.Padding(4);
-			this.button11.Name = "button11";
-			this.button11.Size = new System.Drawing.Size(112, 37);
-			this.button11.TabIndex = 25;
-			this.button11.Text = "sech";
-			this.button11.UseVisualStyleBackColor = true;
-			this.button11.Click += new System.EventHandler(this.FunctionClick);
+			this.sechButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.sechButton.Location = new System.Drawing.Point(278, 392);
+			this.sechButton.Margin = new System.Windows.Forms.Padding(4);
+			this.sechButton.Name = "sechButton";
+			this.sechButton.Size = new System.Drawing.Size(112, 37);
+			this.sechButton.TabIndex = 25;
+			this.sechButton.Text = "sech";
+			this.sechButton.UseVisualStyleBackColor = true;
+			this.sechButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button12
+			// cosechButton
 			// 
-			this.button12.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button12.Location = new System.Drawing.Point(158, 392);
-			this.button12.Margin = new System.Windows.Forms.Padding(4);
-			this.button12.Name = "button12";
-			this.button12.Size = new System.Drawing.Size(112, 37);
-			this.button12.TabIndex = 24;
-			this.button12.Text = "cosech";
-			this.button12.UseVisualStyleBackColor = true;
-			this.button12.Click += new System.EventHandler(this.FunctionClick);
+			this.cosechButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.cosechButton.Location = new System.Drawing.Point(158, 392);
+			this.cosechButton.Margin = new System.Windows.Forms.Padding(4);
+			this.cosechButton.Name = "cosechButton";
+			this.cosechButton.Size = new System.Drawing.Size(112, 37);
+			this.cosechButton.TabIndex = 24;
+			this.cosechButton.Text = "cosech";
+			this.cosechButton.UseVisualStyleBackColor = true;
+			this.cosechButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button13
+			// tanhButton
 			// 
-			this.button13.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button13.Location = new System.Drawing.Point(398, 347);
-			this.button13.Margin = new System.Windows.Forms.Padding(4);
-			this.button13.Name = "button13";
-			this.button13.Size = new System.Drawing.Size(112, 37);
-			this.button13.TabIndex = 23;
-			this.button13.Text = "tanh";
-			this.button13.UseVisualStyleBackColor = true;
-			this.button13.Click += new System.EventHandler(this.FunctionClick);
+			this.tanhButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tanhButton.Location = new System.Drawing.Point(398, 347);
+			this.tanhButton.Margin = new System.Windows.Forms.Padding(4);
+			this.tanhButton.Name = "tanhButton";
+			this.tanhButton.Size = new System.Drawing.Size(112, 37);
+			this.tanhButton.TabIndex = 23;
+			this.tanhButton.Text = "tanh";
+			this.tanhButton.UseVisualStyleBackColor = true;
+			this.tanhButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button14
+			// coshButton
 			// 
-			this.button14.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button14.Location = new System.Drawing.Point(278, 347);
-			this.button14.Margin = new System.Windows.Forms.Padding(4);
-			this.button14.Name = "button14";
-			this.button14.Size = new System.Drawing.Size(112, 37);
-			this.button14.TabIndex = 22;
-			this.button14.Text = "cosh";
-			this.button14.UseVisualStyleBackColor = true;
-			this.button14.Click += new System.EventHandler(this.FunctionClick);
+			this.coshButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.coshButton.Location = new System.Drawing.Point(278, 347);
+			this.coshButton.Margin = new System.Windows.Forms.Padding(4);
+			this.coshButton.Name = "coshButton";
+			this.coshButton.Size = new System.Drawing.Size(112, 37);
+			this.coshButton.TabIndex = 22;
+			this.coshButton.Text = "cosh";
+			this.coshButton.UseVisualStyleBackColor = true;
+			this.coshButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button15
+			// sinhButton
 			// 
-			this.button15.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button15.Location = new System.Drawing.Point(158, 347);
-			this.button15.Margin = new System.Windows.Forms.Padding(4);
-			this.button15.Name = "button15";
-			this.button15.Size = new System.Drawing.Size(112, 37);
-			this.button15.TabIndex = 21;
-			this.button15.Text = "sinh";
-			this.button15.UseVisualStyleBackColor = true;
-			this.button15.Click += new System.EventHandler(this.FunctionClick);
+			this.sinhButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.sinhButton.Location = new System.Drawing.Point(158, 347);
+			this.sinhButton.Margin = new System.Windows.Forms.Padding(4);
+			this.sinhButton.Name = "sinhButton";
+			this.sinhButton.Size = new System.Drawing.Size(112, 37);
+			this.sinhButton.TabIndex = 21;
+			this.sinhButton.Text = "sinh";
+			this.sinhButton.UseVisualStyleBackColor = true;
+			this.sinhButton.Click += new System.EventHandler(this.FunctionClick);
 			// 
-			// button17
+			// additionButton
 			// 
-			this.button17.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button17.Location = new System.Drawing.Point(583, 285);
-			this.button17.Margin = new System.Windows.Forms.Padding(4);
-			this.button17.Name = "button17";
-			this.button17.Size = new System.Drawing.Size(52, 40);
-			this.button17.TabIndex = 28;
-			this.button17.Text = "+";
-			this.button17.UseVisualStyleBackColor = true;
-			this.button17.Click += new System.EventHandler(this.ConstantClick);
+			this.additionButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.additionButton.Location = new System.Drawing.Point(583, 285);
+			this.additionButton.Margin = new System.Windows.Forms.Padding(4);
+			this.additionButton.Name = "additionButton";
+			this.additionButton.Size = new System.Drawing.Size(52, 40);
+			this.additionButton.TabIndex = 28;
+			this.additionButton.Text = "+";
+			this.additionButton.UseVisualStyleBackColor = true;
+			this.additionButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button18
+			// subtractionButton
 			// 
-			this.button18.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button18.Location = new System.Drawing.Point(583, 330);
-			this.button18.Margin = new System.Windows.Forms.Padding(4);
-			this.button18.Name = "button18";
-			this.button18.Size = new System.Drawing.Size(52, 40);
-			this.button18.TabIndex = 29;
-			this.button18.Text = "-";
-			this.button18.UseVisualStyleBackColor = true;
-			this.button18.Click += new System.EventHandler(this.ConstantClick);
+			this.subtractionButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.subtractionButton.Location = new System.Drawing.Point(583, 330);
+			this.subtractionButton.Margin = new System.Windows.Forms.Padding(4);
+			this.subtractionButton.Name = "subtractionButton";
+			this.subtractionButton.Size = new System.Drawing.Size(52, 40);
+			this.subtractionButton.TabIndex = 29;
+			this.subtractionButton.Text = "-";
+			this.subtractionButton.UseVisualStyleBackColor = true;
+			this.subtractionButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
 			// SuperscriptCheckbox
 			// 
@@ -385,125 +385,125 @@
 			this.SuperscriptCheckbox.UseVisualStyleBackColor = false;
 			this.SuperscriptCheckbox.Click += new System.EventHandler(this.SuperscriptButton);
 			// 
-			// button16
+			// OneButton
 			// 
-			this.button16.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button16.Location = new System.Drawing.Point(992, 282);
-			this.button16.Margin = new System.Windows.Forms.Padding(4);
-			this.button16.Name = "button16";
-			this.button16.Size = new System.Drawing.Size(52, 40);
-			this.button16.TabIndex = 31;
-			this.button16.Text = "1";
-			this.button16.UseVisualStyleBackColor = true;
-			this.button16.Click += new System.EventHandler(this.ConstantClick);
+			this.OneButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.OneButton.Location = new System.Drawing.Point(992, 282);
+			this.OneButton.Margin = new System.Windows.Forms.Padding(4);
+			this.OneButton.Name = "OneButton";
+			this.OneButton.Size = new System.Drawing.Size(52, 40);
+			this.OneButton.TabIndex = 31;
+			this.OneButton.Text = "1";
+			this.OneButton.UseVisualStyleBackColor = true;
+			this.OneButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button19
+			// TwoButton
 			// 
-			this.button19.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button19.Location = new System.Drawing.Point(1052, 282);
-			this.button19.Margin = new System.Windows.Forms.Padding(4);
-			this.button19.Name = "button19";
-			this.button19.Size = new System.Drawing.Size(52, 40);
-			this.button19.TabIndex = 32;
-			this.button19.Text = "2";
-			this.button19.UseVisualStyleBackColor = true;
-			this.button19.Click += new System.EventHandler(this.ConstantClick);
+			this.TwoButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.TwoButton.Location = new System.Drawing.Point(1052, 282);
+			this.TwoButton.Margin = new System.Windows.Forms.Padding(4);
+			this.TwoButton.Name = "TwoButton";
+			this.TwoButton.Size = new System.Drawing.Size(52, 40);
+			this.TwoButton.TabIndex = 32;
+			this.TwoButton.Text = "2";
+			this.TwoButton.UseVisualStyleBackColor = true;
+			this.TwoButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button20
+			// threeButton
 			// 
-			this.button20.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button20.Location = new System.Drawing.Point(1112, 282);
-			this.button20.Margin = new System.Windows.Forms.Padding(4);
-			this.button20.Name = "button20";
-			this.button20.Size = new System.Drawing.Size(52, 40);
-			this.button20.TabIndex = 33;
-			this.button20.Text = "3";
-			this.button20.UseVisualStyleBackColor = true;
-			this.button20.Click += new System.EventHandler(this.ConstantClick);
+			this.threeButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.threeButton.Location = new System.Drawing.Point(1112, 282);
+			this.threeButton.Margin = new System.Windows.Forms.Padding(4);
+			this.threeButton.Name = "threeButton";
+			this.threeButton.Size = new System.Drawing.Size(52, 40);
+			this.threeButton.TabIndex = 33;
+			this.threeButton.Text = "3";
+			this.threeButton.UseVisualStyleBackColor = true;
+			this.threeButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button21
+			// sixButton
 			// 
-			this.button21.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button21.Location = new System.Drawing.Point(1112, 326);
-			this.button21.Margin = new System.Windows.Forms.Padding(4);
-			this.button21.Name = "button21";
-			this.button21.Size = new System.Drawing.Size(52, 40);
-			this.button21.TabIndex = 36;
-			this.button21.Text = "6";
-			this.button21.UseVisualStyleBackColor = true;
-			this.button21.Click += new System.EventHandler(this.ConstantClick);
+			this.sixButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.sixButton.Location = new System.Drawing.Point(1112, 326);
+			this.sixButton.Margin = new System.Windows.Forms.Padding(4);
+			this.sixButton.Name = "sixButton";
+			this.sixButton.Size = new System.Drawing.Size(52, 40);
+			this.sixButton.TabIndex = 36;
+			this.sixButton.Text = "6";
+			this.sixButton.UseVisualStyleBackColor = true;
+			this.sixButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button22
+			// fiveButton
 			// 
-			this.button22.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button22.Location = new System.Drawing.Point(1052, 326);
-			this.button22.Margin = new System.Windows.Forms.Padding(4);
-			this.button22.Name = "button22";
-			this.button22.Size = new System.Drawing.Size(52, 40);
-			this.button22.TabIndex = 35;
-			this.button22.Text = "5";
-			this.button22.UseVisualStyleBackColor = true;
-			this.button22.Click += new System.EventHandler(this.ConstantClick);
+			this.fiveButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.fiveButton.Location = new System.Drawing.Point(1052, 326);
+			this.fiveButton.Margin = new System.Windows.Forms.Padding(4);
+			this.fiveButton.Name = "fiveButton";
+			this.fiveButton.Size = new System.Drawing.Size(52, 40);
+			this.fiveButton.TabIndex = 35;
+			this.fiveButton.Text = "5";
+			this.fiveButton.UseVisualStyleBackColor = true;
+			this.fiveButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button23
+			// fourButton
 			// 
-			this.button23.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button23.Location = new System.Drawing.Point(992, 326);
-			this.button23.Margin = new System.Windows.Forms.Padding(4);
-			this.button23.Name = "button23";
-			this.button23.Size = new System.Drawing.Size(52, 40);
-			this.button23.TabIndex = 34;
-			this.button23.Text = "4";
-			this.button23.UseVisualStyleBackColor = true;
-			this.button23.Click += new System.EventHandler(this.ConstantClick);
+			this.fourButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.fourButton.Location = new System.Drawing.Point(992, 326);
+			this.fourButton.Margin = new System.Windows.Forms.Padding(4);
+			this.fourButton.Name = "fourButton";
+			this.fourButton.Size = new System.Drawing.Size(52, 40);
+			this.fourButton.TabIndex = 34;
+			this.fourButton.Text = "4";
+			this.fourButton.UseVisualStyleBackColor = true;
+			this.fourButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button24
+			// nineButton
 			// 
-			this.button24.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button24.Location = new System.Drawing.Point(1112, 370);
-			this.button24.Margin = new System.Windows.Forms.Padding(4);
-			this.button24.Name = "button24";
-			this.button24.Size = new System.Drawing.Size(52, 40);
-			this.button24.TabIndex = 39;
-			this.button24.Text = "9";
-			this.button24.UseVisualStyleBackColor = true;
-			this.button24.Click += new System.EventHandler(this.ConstantClick);
+			this.nineButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.nineButton.Location = new System.Drawing.Point(1112, 370);
+			this.nineButton.Margin = new System.Windows.Forms.Padding(4);
+			this.nineButton.Name = "nineButton";
+			this.nineButton.Size = new System.Drawing.Size(52, 40);
+			this.nineButton.TabIndex = 39;
+			this.nineButton.Text = "9";
+			this.nineButton.UseVisualStyleBackColor = true;
+			this.nineButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button25
+			// eightButton
 			// 
-			this.button25.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button25.Location = new System.Drawing.Point(1052, 370);
-			this.button25.Margin = new System.Windows.Forms.Padding(4);
-			this.button25.Name = "button25";
-			this.button25.Size = new System.Drawing.Size(52, 40);
-			this.button25.TabIndex = 38;
-			this.button25.Text = "8";
-			this.button25.UseVisualStyleBackColor = true;
-			this.button25.Click += new System.EventHandler(this.ConstantClick);
+			this.eightButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.eightButton.Location = new System.Drawing.Point(1052, 370);
+			this.eightButton.Margin = new System.Windows.Forms.Padding(4);
+			this.eightButton.Name = "eightButton";
+			this.eightButton.Size = new System.Drawing.Size(52, 40);
+			this.eightButton.TabIndex = 38;
+			this.eightButton.Text = "8";
+			this.eightButton.UseVisualStyleBackColor = true;
+			this.eightButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button26
+			// sevenButton
 			// 
-			this.button26.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button26.Location = new System.Drawing.Point(992, 370);
-			this.button26.Margin = new System.Windows.Forms.Padding(4);
-			this.button26.Name = "button26";
-			this.button26.Size = new System.Drawing.Size(52, 40);
-			this.button26.TabIndex = 37;
-			this.button26.Text = "7";
-			this.button26.UseVisualStyleBackColor = true;
-			this.button26.Click += new System.EventHandler(this.ConstantClick);
+			this.sevenButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.sevenButton.Location = new System.Drawing.Point(992, 370);
+			this.sevenButton.Margin = new System.Windows.Forms.Padding(4);
+			this.sevenButton.Name = "sevenButton";
+			this.sevenButton.Size = new System.Drawing.Size(52, 40);
+			this.sevenButton.TabIndex = 37;
+			this.sevenButton.Text = "7";
+			this.sevenButton.UseVisualStyleBackColor = true;
+			this.sevenButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button27
+			// zeroButton
 			// 
-			this.button27.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button27.Location = new System.Drawing.Point(1022, 415);
-			this.button27.Margin = new System.Windows.Forms.Padding(4);
-			this.button27.Name = "button27";
-			this.button27.Size = new System.Drawing.Size(52, 40);
-			this.button27.TabIndex = 40;
-			this.button27.Text = "0";
-			this.button27.UseVisualStyleBackColor = true;
-			this.button27.Click += new System.EventHandler(this.ConstantClick);
+			this.zeroButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.zeroButton.Location = new System.Drawing.Point(1022, 415);
+			this.zeroButton.Margin = new System.Windows.Forms.Padding(4);
+			this.zeroButton.Name = "zeroButton";
+			this.zeroButton.Size = new System.Drawing.Size(52, 40);
+			this.zeroButton.TabIndex = 40;
+			this.zeroButton.Text = "0";
+			this.zeroButton.UseVisualStyleBackColor = true;
+			this.zeroButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
 			// Realtime
 			// 
@@ -539,17 +539,17 @@
 			this.ErrorBox.Text = "";
 			this.ErrorBox.WordWrap = false;
 			// 
-			// button28
+			// decimalButton
 			// 
-			this.button28.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button28.Location = new System.Drawing.Point(1082, 415);
-			this.button28.Margin = new System.Windows.Forms.Padding(4);
-			this.button28.Name = "button28";
-			this.button28.Size = new System.Drawing.Size(52, 40);
-			this.button28.TabIndex = 45;
-			this.button28.Text = ".";
-			this.button28.UseVisualStyleBackColor = true;
-			this.button28.Click += new System.EventHandler(this.ConstantClick);
+			this.decimalButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.decimalButton.Location = new System.Drawing.Point(1082, 415);
+			this.decimalButton.Margin = new System.Windows.Forms.Padding(4);
+			this.decimalButton.Name = "decimalButton";
+			this.decimalButton.Size = new System.Drawing.Size(52, 40);
+			this.decimalButton.TabIndex = 45;
+			this.decimalButton.Text = ".";
+			this.decimalButton.UseVisualStyleBackColor = true;
+			this.decimalButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
 			// DifferentiateOutputButton
 			// 
@@ -563,83 +563,83 @@
 			this.DifferentiateOutputButton.UseVisualStyleBackColor = true;
 			this.DifferentiateOutputButton.Click += new System.EventHandler(this.DifferentiateOutputButton_Click);
 			// 
-			// button29
+			// multiplicationButton
 			// 
-			this.button29.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button29.Location = new System.Drawing.Point(583, 375);
-			this.button29.Margin = new System.Windows.Forms.Padding(4);
-			this.button29.Name = "button29";
-			this.button29.Size = new System.Drawing.Size(52, 40);
-			this.button29.TabIndex = 47;
-			this.button29.Text = "*";
-			this.button29.UseVisualStyleBackColor = true;
-			this.button29.Click += new System.EventHandler(this.ConstantClick);
+			this.multiplicationButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.multiplicationButton.Location = new System.Drawing.Point(583, 375);
+			this.multiplicationButton.Margin = new System.Windows.Forms.Padding(4);
+			this.multiplicationButton.Name = "multiplicationButton";
+			this.multiplicationButton.Size = new System.Drawing.Size(52, 40);
+			this.multiplicationButton.TabIndex = 47;
+			this.multiplicationButton.Text = "*";
+			this.multiplicationButton.UseVisualStyleBackColor = true;
+			this.multiplicationButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button30
+			// ClosedBracketButton
 			// 
-			this.button30.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button30.Location = new System.Drawing.Point(643, 330);
-			this.button30.Margin = new System.Windows.Forms.Padding(4);
-			this.button30.Name = "button30";
-			this.button30.Size = new System.Drawing.Size(52, 40);
-			this.button30.TabIndex = 49;
-			this.button30.Text = ")";
-			this.button30.UseVisualStyleBackColor = true;
-			this.button30.Click += new System.EventHandler(this.ConstantClick);
+			this.ClosedBracketButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ClosedBracketButton.Location = new System.Drawing.Point(643, 330);
+			this.ClosedBracketButton.Margin = new System.Windows.Forms.Padding(4);
+			this.ClosedBracketButton.Name = "ClosedBracketButton";
+			this.ClosedBracketButton.Size = new System.Drawing.Size(52, 40);
+			this.ClosedBracketButton.TabIndex = 49;
+			this.ClosedBracketButton.Text = ")";
+			this.ClosedBracketButton.UseVisualStyleBackColor = true;
+			this.ClosedBracketButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
-			// button31
+			// OpenBracketButton
 			// 
-			this.button31.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button31.Location = new System.Drawing.Point(643, 285);
-			this.button31.Margin = new System.Windows.Forms.Padding(4);
-			this.button31.Name = "button31";
-			this.button31.Size = new System.Drawing.Size(52, 40);
-			this.button31.TabIndex = 48;
-			this.button31.Text = "(";
-			this.button31.UseVisualStyleBackColor = true;
-			this.button31.Click += new System.EventHandler(this.ConstantClick);
+			this.OpenBracketButton.Font = new System.Drawing.Font("Cambria", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.OpenBracketButton.Location = new System.Drawing.Point(643, 285);
+			this.OpenBracketButton.Margin = new System.Windows.Forms.Padding(4);
+			this.OpenBracketButton.Name = "OpenBracketButton";
+			this.OpenBracketButton.Size = new System.Drawing.Size(52, 40);
+			this.OpenBracketButton.TabIndex = 48;
+			this.OpenBracketButton.Text = "(";
+			this.OpenBracketButton.UseVisualStyleBackColor = true;
+			this.OpenBracketButton.Click += new System.EventHandler(this.ConstantClick);
 			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1902, 1033);
-			this.Controls.Add(this.button30);
-			this.Controls.Add(this.button31);
-			this.Controls.Add(this.button29);
+			this.Controls.Add(this.ClosedBracketButton);
+			this.Controls.Add(this.OpenBracketButton);
+			this.Controls.Add(this.multiplicationButton);
 			this.Controls.Add(this.DifferentiateOutputButton);
-			this.Controls.Add(this.button28);
+			this.Controls.Add(this.decimalButton);
 			this.Controls.Add(this.ErrorLabel);
 			this.Controls.Add(this.ErrorBox);
 			this.Controls.Add(this.Realtime);
-			this.Controls.Add(this.button27);
-			this.Controls.Add(this.button24);
-			this.Controls.Add(this.button25);
-			this.Controls.Add(this.button26);
-			this.Controls.Add(this.button21);
-			this.Controls.Add(this.button22);
-			this.Controls.Add(this.button23);
-			this.Controls.Add(this.button20);
-			this.Controls.Add(this.button19);
-			this.Controls.Add(this.button16);
+			this.Controls.Add(this.zeroButton);
+			this.Controls.Add(this.nineButton);
+			this.Controls.Add(this.eightButton);
+			this.Controls.Add(this.sevenButton);
+			this.Controls.Add(this.sixButton);
+			this.Controls.Add(this.fiveButton);
+			this.Controls.Add(this.fourButton);
+			this.Controls.Add(this.threeButton);
+			this.Controls.Add(this.TwoButton);
+			this.Controls.Add(this.OneButton);
 			this.Controls.Add(this.SuperscriptCheckbox);
-			this.Controls.Add(this.button18);
-			this.Controls.Add(this.button17);
-			this.Controls.Add(this.button10);
-			this.Controls.Add(this.button11);
-			this.Controls.Add(this.button12);
-			this.Controls.Add(this.button13);
-			this.Controls.Add(this.button14);
-			this.Controls.Add(this.button15);
-			this.Controls.Add(this.button9);
-			this.Controls.Add(this.button8);
-			this.Controls.Add(this.button7);
-			this.Controls.Add(this.button6);
-			this.Controls.Add(this.button5);
-			this.Controls.Add(this.button4);
-			this.Controls.Add(this.button3);
-			this.Controls.Add(this.button2);
-			this.Controls.Add(this.button1);
+			this.Controls.Add(this.subtractionButton);
+			this.Controls.Add(this.additionButton);
+			this.Controls.Add(this.cothButton);
+			this.Controls.Add(this.sechButton);
+			this.Controls.Add(this.cosechButton);
+			this.Controls.Add(this.tanhButton);
+			this.Controls.Add(this.coshButton);
+			this.Controls.Add(this.sinhButton);
+			this.Controls.Add(this.lnButton);
+			this.Controls.Add(this.xButton);
+			this.Controls.Add(this.cotButton);
+			this.Controls.Add(this.secButton);
+			this.Controls.Add(this.cosecButton);
+			this.Controls.Add(this.tanButton);
+			this.Controls.Add(this.cosButton);
+			this.Controls.Add(this.sinButton);
+			this.Controls.Add(this.eButton);
 			this.Controls.Add(this.ExitButton);
 			this.Controls.Add(this.StepsButton);
 			this.Controls.Add(this.DifferentiateButton);
@@ -663,42 +663,42 @@
 		private System.Windows.Forms.Button DifferentiateButton;
 		private System.Windows.Forms.Button StepsButton;
         private System.Windows.Forms.Button ExitButton;
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.Button button4;
-		private System.Windows.Forms.Button button5;
-		private System.Windows.Forms.Button button6;
-		private System.Windows.Forms.Button button7;
-		private System.Windows.Forms.Button button8;
-		private System.Windows.Forms.Button button9;
-		private System.Windows.Forms.Button button10;
-		private System.Windows.Forms.Button button11;
-		private System.Windows.Forms.Button button12;
-		private System.Windows.Forms.Button button13;
-		private System.Windows.Forms.Button button14;
-		private System.Windows.Forms.Button button15;
-		private System.Windows.Forms.Button button17;
-		private System.Windows.Forms.Button button18;
+		private System.Windows.Forms.Button eButton;
+		private System.Windows.Forms.Button sinButton;
+		private System.Windows.Forms.Button cosButton;
+		private System.Windows.Forms.Button tanButton;
+		private System.Windows.Forms.Button cosecButton;
+		private System.Windows.Forms.Button secButton;
+		private System.Windows.Forms.Button cotButton;
+		private System.Windows.Forms.Button xButton;
+		private System.Windows.Forms.Button lnButton;
+		private System.Windows.Forms.Button cothButton;
+		private System.Windows.Forms.Button sechButton;
+		private System.Windows.Forms.Button cosechButton;
+		private System.Windows.Forms.Button tanhButton;
+		private System.Windows.Forms.Button coshButton;
+		private System.Windows.Forms.Button sinhButton;
+		private System.Windows.Forms.Button additionButton;
+		private System.Windows.Forms.Button subtractionButton;
 		private System.Windows.Forms.CheckBox SuperscriptCheckbox;
-        private System.Windows.Forms.Button button16;
-        private System.Windows.Forms.Button button19;
-        private System.Windows.Forms.Button button20;
-        private System.Windows.Forms.Button button21;
-        private System.Windows.Forms.Button button22;
-        private System.Windows.Forms.Button button23;
-        private System.Windows.Forms.Button button24;
-        private System.Windows.Forms.Button button25;
-        private System.Windows.Forms.Button button26;
-        private System.Windows.Forms.Button button27;
+        private System.Windows.Forms.Button OneButton;
+        private System.Windows.Forms.Button TwoButton;
+        private System.Windows.Forms.Button threeButton;
+        private System.Windows.Forms.Button sixButton;
+        private System.Windows.Forms.Button fiveButton;
+        private System.Windows.Forms.Button fourButton;
+        private System.Windows.Forms.Button nineButton;
+        private System.Windows.Forms.Button eightButton;
+        private System.Windows.Forms.Button sevenButton;
+        private System.Windows.Forms.Button zeroButton;
 		private System.Windows.Forms.CheckBox Realtime;
 		private System.Windows.Forms.Label ErrorLabel;
 		private System.Windows.Forms.RichTextBox ErrorBox;
-		private System.Windows.Forms.Button button28;
+		private System.Windows.Forms.Button decimalButton;
 		private System.Windows.Forms.Button DifferentiateOutputButton;
-		private System.Windows.Forms.Button button29;
-		private System.Windows.Forms.Button button30;
-		private System.Windows.Forms.Button button31;
+		private System.Windows.Forms.Button multiplicationButton;
+		private System.Windows.Forms.Button ClosedBracketButton;
+		private System.Windows.Forms.Button OpenBracketButton;
 	}
 }
 

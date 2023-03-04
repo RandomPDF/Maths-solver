@@ -256,7 +256,7 @@ namespace Maths_solver.Maths
 			if (item.GetType() != typeof(Term)) return;
 
 			Term newTerm = (Term)item;
-			if (newTerm.coeficient != 0) FormatTerm(newTerm);
+			if (newTerm.coeficient != 0 && newTerm != null) FormatTerm(newTerm);
 		}
 
 		private void FormatTerm(Term newTerm)
