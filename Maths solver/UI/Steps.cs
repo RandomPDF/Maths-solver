@@ -61,7 +61,7 @@ namespace Maths_solver
 						case Rule.Exponent:
 							StepsBox.Text += $"Multiply the exponent differential " +
 								$"( {input} ) by the term " +
-								$"( {output} ) using the chain rule" +
+								$"( {output} ) using the chain rule " +
 								$"keeping the exponent the same.\n";
 							break;
 

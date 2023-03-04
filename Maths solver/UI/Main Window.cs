@@ -79,7 +79,7 @@ namespace Maths_solver.UI
 
 			if (input.Count(f => f == '(') != input.Count(f => f == ')'))
 			{
-				ErrorBox.Text += $"The equation '{input}' has a bracket imbalance. There must be an equal number of closed and open brackets. (If your using an exponent with a function requiring an input, that exponent must be after the brackets. You also must explicitly use the multiplication sign (×) and it respective superscript version (*)) \n";
+				ErrorBox.Text += $"The equation '{input}' has a bracket imbalance. There must be an equal number of closed and open brackets. (If you're using an exponent with a function requiring an input, that exponent must be after the brackets. You also must explicitly use the multiplication sign (×) and its respective superscript version (*)) \n";
 
 				return false;
 			}
