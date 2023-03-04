@@ -626,7 +626,7 @@ namespace Maths_solver.UI
 		}
 
 		#region Buttons
-		private void StepsButton_Click(object sender, EventArgs e) { StepsForm.Show(); }
+		private void StepsButton_Click(object sender, EventArgs e) { StepsForm.Show(); StepsForm.Focus(); }
 
 		private void DifferentaiteButton_Click(object sender, EventArgs e)
 		{

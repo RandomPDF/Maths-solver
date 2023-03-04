@@ -83,6 +83,12 @@ namespace Maths_solver
 								$"( {output} ) using the power rule.\n";
 							break;
 
+						case Rule.Product:
+							StepsBox.Text += $"Multiply ( {input} ) " +
+								$"by the differential of ( {output} ) and add that to the " +
+								$"product of the ( {output} ) and the differential of ( {input} )\n";
+							break;
+
 						default:
 							StepsBox.Text += $"Using the {step.rule.ToString()} rule: " +
 								$"{input} → " +
@@ -115,9 +121,7 @@ namespace Maths_solver
 							break;
 
 						case Rule.Product:
-							StepsBox.Text += $"Perform product rule: Multiply ( {input} ) " +
-								$"by the differential of ( {output} ) and add that to the " +
-								$"product of the ( {output} ) and the differential of ( {input} )\n";
+							StepsBox.Text += $"Perform product rule on {input}:\n";
 							break;
 
 						case Rule.None:

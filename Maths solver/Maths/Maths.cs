@@ -127,7 +127,10 @@ namespace Maths_solver.Maths
 
 		private void DifferentiateProduct(Equation equation1, Equation equation2, ref Equation newEquation)
 		{
-			ShowSteps?.Invoke(thisSender, new Step(Rule.Product, Phase.Start, equation1, equation2));
+			Equation equation = new Equation { equation1,
+				new Operation(OperationEnum.Multiplication), equation2 };
+
+			ShowSteps?.Invoke(thisSender, new Step(Rule.Product, Phase.Start, equation));
 
 			if (equation1.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.OpenBracket));
 			newEquation.Add(equation1);
@@ -156,7 +159,8 @@ namespace Maths_solver.Maths
 			if (differential1.requiresBrackets()) newEquation.Add(new Operation(OperationEnum.ClosedBracket));
 
 			ShowSteps?.Invoke(thisSender, new Step(Phase.End));
-			ShowSteps?.Invoke(thisSender, new Step(Phase.End));
+			ShowSteps?.Invoke(thisSender, new Step(Rule.Product, Phase.End, equation1, equation2));
+			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 		}
 
 		private void FindBrackets(Equation equation, ref int index, ref Stack<OperationEnum> brackets,
@@ -222,6 +226,15 @@ namespace Maths_solver.Maths
 			//if exponent 0, is just a constant so differentiates to 0
 			if (exponent.EquationsEqual(new Equation { new Term(0f) })) return;
 
+			Equation inputTerm = new Equation();
+			if (input.requiresBrackets()) inputTerm.Add(new Operation(OperationEnum.OpenBracket));
+			inputTerm.Add(input);
+			if (input.requiresBrackets()) inputTerm.Add(new Operation(OperationEnum.ClosedBracket));
+			inputTerm.Add(new Operation(OperationEnum.Power));
+			if (exponent.requiresBrackets()) inputTerm.Add(new Operation(OperationEnum.OpenBracket));
+			inputTerm.Add(exponent);
+			if (exponent.requiresBrackets()) inputTerm.Add(new Operation(OperationEnum.ClosedBracket));
+
 			//if bracket is to the power of 1, differentiate input and add brackets if required
 			if (exponent.Count == 0 || exponent.EquationsEqual(new Equation { new Term(1) }))
 			{
@@ -241,11 +254,12 @@ namespace Maths_solver.Maths
 					new Term(((Term)exponent[0]).coeficient - 1), new Operation(OperationEnum.Multiplication)
 				};
 
-				ShowSteps?.Invoke(thisSender, new Step(Rule.x, Phase.End, input, xRule));
+				ShowSteps?.Invoke(thisSender, new Step(Rule.x, Phase.End, inputTerm , xRule));
 				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 				differential.Add(xRule);
 
 				ShowSteps?.Invoke(thisSender, new Step(Rule.Input, Phase.Start, input));
+
 				//multiply by differential
 				inputEquation = DifferentiateEquation(input);
 				ShowSteps?.Invoke(thisSender, new Step(Phase.End));
@@ -279,7 +293,8 @@ namespace Maths_solver.Maths
 				differential.Add(PowerRule(equation, input, exponent));
 			}
 
-			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, input, differential));
+			ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, inputTerm, differential));
+			ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 
 			newEquation.Add(differential);
 			index++;
@@ -346,9 +361,8 @@ namespace Maths_solver.Maths
 
 			Equation.Format(ref newEquation);
 
-			if (newEquation != null && newEquation.Count > 0)
+			if (newEquation != null && newEquation.Count > 0 && equation.Count > 1)
 			{
-				ShowSteps?.Invoke(thisSender, new Step(Phase.End));
 				ShowSteps?.Invoke(thisSender, new Step(Rule.None, Phase.End, equation, newEquation));
 				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 			}
@@ -455,6 +469,7 @@ namespace Maths_solver.Maths
 						{
 							ShowSteps?.Invoke(thisSender, new Step(Phase.End));
 							ShowSteps?.Invoke(thisSender, new Step(Rule.xRule, Phase.End, newTermEquation, xRule));
+							ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 						}
 
 						newTermEquation.Add(xRule);
@@ -483,6 +498,8 @@ namespace Maths_solver.Maths
 
 					ShowSteps?.Invoke(thisSender,
 					new Step(Rule.Input, Phase.End, inputDifferential, shownDifferential));
+
+					ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 				}
 
 				Equation.Format(ref newTermEquation);
@@ -652,7 +669,11 @@ namespace Maths_solver.Maths
 				ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
 
 				if (differential.Count > 0 && standardResult.Count > 0)
+				{
+					ShowSteps?.Invoke(thisSender, new Step(Phase.End));
 					ShowSteps?.Invoke(thisSender, new Step(Rule.ln, Phase.End, differential, standardResult));
+					ShowSteps?.Invoke(thisSender, new Step(Phase.Start));
+				}
 				else ShowSteps?.Invoke(thisSender, new Step(Phase.End));
 			}
 			else
@@ -748,7 +769,8 @@ namespace Maths_solver.Maths
 
 			if (chainExponent) newTerm.Add(term);
 
-			if (term.exponent != null && term.exponent.Count > 0 && term.exponent[0].GetType() == typeof(Term))
+			if (term.exponent != null && 
+				term.exponent.Count > 0 && term.exponent[0].GetType() == typeof(Term))
 			{
 				Equation termExponent = term.exponent;
 				Term firstExponentTerm = (Term)termExponent[0];
