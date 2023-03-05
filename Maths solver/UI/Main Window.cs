@@ -58,10 +58,8 @@ namespace Maths_solver.UI
 		{
 			InitializeComponent();
 
-			FormBorderStyle = FormBorderStyle.None;
 			WindowState = FormWindowState.Maximized;
 
-			StepsForm.FormBorderStyle = FormBorderStyle.None;
 			StepsForm.WindowState = FormWindowState.Maximized;
 			StepsForm.Hide();
 		}
@@ -235,6 +233,11 @@ namespace Maths_solver.UI
 			if (brackets.Count != 0 || currentPart.Length < 2) return;
 
 			Equation inputEquation = StringToEquation(currentPart.Substring(1, currentPart.Length - 2));
+
+			if (inputEquation == null || inputEquation.Count == 0)
+			{
+				ErrorBox.Text += $"The input {currentPart} cannot be found.\n";
+			}
 
 			//input is within brackets
 			if (function == Function.NONE || function == Function.constant)
