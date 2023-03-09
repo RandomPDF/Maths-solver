@@ -548,7 +548,7 @@ namespace Maths_solver.Maths
 
 		public bool IsConstant()
 		{
-			if (this[0].GetType() != typeof(Term)) return false;
+			if (this.Count > 0 && this[0].GetType() != typeof(Term)) return false;
 
 			//if exponent just a constant
 			return Count == 1 && ((Term)this[0]).function == Function.constant;

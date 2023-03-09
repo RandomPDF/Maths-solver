@@ -538,7 +538,7 @@ namespace Maths_solver.UI
 			}
 
 			//must be copy pasted
-			if(currentInput.Length - previousInput.Length > 1) isSuperscript = false;
+			if (currentInput.Length - previousInput.Length > 1) isSuperscript = false;
 
 			int newCharIndex = int.MinValue;
 			char newChar = '\0';
